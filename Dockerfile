@@ -22,6 +22,9 @@ RUN pip install --no-cache-dir -e "."
 # Runtime
 COPY demo_corpus/ ./demo_corpus/
 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 EXPOSE 8000
 
-CMD uvicorn nexus.api.main:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD ["/docker-entrypoint.sh"]
