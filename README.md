@@ -193,7 +193,7 @@ nexus/
 
 ## Freelance Context
 
-NEXUS is a portfolio project by **SKAY (Oussama Iskia)** targeting AI engineering clients at $5k–$15k per implementation.
+NEXUS is a portfolio project by **SKAY (Oussama skia)** targeting AI engineering clients at $5k–$15k per implementation.
 
 **Target verticals**: HR, legal/compliance, customer support, sales enablement.
 
