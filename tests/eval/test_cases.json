@@ -1,0 +1,82 @@
+[
+  {
+    "question": "How many days per week can TechCorp employees work remotely?",
+    "ground_truth": "According to the 2023 HR policy, employees may work remotely up to 3 days per week. The 2024 policy updated this to 2 days per week."
+  },
+  {
+    "question": "What was TechCorp's marketing budget spent in Q3 2023?",
+    "ground_truth": "The Q3 2023 Financial Summary reports marketing spend of $450,000, while the Q4 2023 full-year review lists Q3 marketing spend as $380,000."
+  },
+  {
+    "question": "What is the employee equipment allowance at TechCorp?",
+    "ground_truth": "The 2023 HR policy provides an $800 equipment allowance. The 2024 HR policy increased it to $1,200."
+  },
+  {
+    "question": "What is TechCorp's parental leave policy?",
+    "ground_truth": "The 2024 HR policy introduced 16 weeks of paid parental leave. The 2023 policy did not include a parental leave section."
+  },
+  {
+    "question": "What was TechCorp's total revenue for FY2023?",
+    "ground_truth": "TechCorp's full-year 2023 revenue was $47.2 million according to the Q4 2023 Financial Summary."
+  },
+  {
+    "question": "What is the status of Project Atlas?",
+    "ground_truth": "According to the 2024 Product Roadmap, Project Atlas was completed in Q4 2023 and moved to maintenance phase. However, no completion report exists in the knowledge base."
+  },
+  {
+    "question": "How many employees does TechCorp have?",
+    "ground_truth": "As of Q3 2023, TechCorp had 312 employees. By year-end 2023 (Q4 report), headcount grew to 334."
+  },
+  {
+    "question": "What is Project Helios?",
+    "ground_truth": "Project Helios is a new AI features initiative targeting a Q2 2024 launch, listed in the 2024 Product Roadmap."
+  },
+  {
+    "question": "What is TechCorp's annual PTO policy?",
+    "ground_truth": "TechCorp provides 20 days of paid time off per year, as documented in both the 2023 and 2024 HR policies."
+  },
+  {
+    "question": "Who is TechCorp's CFO?",
+    "ground_truth": "TechCorp's CFO is Marcus Webb, who authored the Q3 and Q4 2023 financial summaries."
+  },
+  {
+    "question": "What was TechCorp's Q4 2023 revenue?",
+    "ground_truth": "TechCorp's Q4 2023 revenue was $14.1 million, as reported in the Q4 2023 Financial Summary."
+  },
+  {
+    "question": "What is the performance review schedule at TechCorp?",
+    "ground_truth": "TechCorp conducts annual performance reviews, as described in the HR policy documents."
+  },
+  {
+    "question": "What is Project Mercury?",
+    "ground_truth": "Project Mercury is a mobile app development initiative targeting a Q3 2024 launch, listed in the 2024 Product Roadmap."
+  },
+  {
+    "question": "What is TechCorp's total product budget for 2024?",
+    "ground_truth": "TechCorp's total product budget for 2024 is $9.6 million, as outlined in the Product Roadmap."
+  },
+  {
+    "question": "Who authored the TechCorp HR policies?",
+    "ground_truth": "Both the 2023 and 2024 HR policies were authored by Sarah Chen, VP of People Operations."
+  },
+  {
+    "question": "What happened to TechCorp's headcount between Q3 and Q4 2023?",
+    "ground_truth": "TechCorp grew from 312 employees at end of Q3 2023 to 334 employees by year-end 2023."
+  },
+  {
+    "question": "Is there a completion report for Project Atlas?",
+    "ground_truth": "No completion report for Project Atlas exists in the knowledge base, even though the Product Roadmap lists it as completed in Q4 2023."
+  },
+  {
+    "question": "What remote work policy applies to TechCorp employees in 2024?",
+    "ground_truth": "The 2024 HR policy states employees may work remotely up to 2 days per week, reduced from 3 days per week in the 2023 policy."
+  },
+  {
+    "question": "What was TechCorp's Q3 2023 total revenue?",
+    "ground_truth": "TechCorp's Q3 2023 total revenue was $12.4 million, as reported in the Q3 2023 Financial Summary."
+  },
+  {
+    "question": "What are the main product initiatives in TechCorp's 2024 roadmap?",
+    "ground_truth": "The 2024 Product Roadmap includes Project Helios (AI features, Q2 launch), Project Mercury (mobile app, Q3), Project Atlas maintenance, Analytics V2, UK International expansion, and Self-Service Portal."
+  }
+]

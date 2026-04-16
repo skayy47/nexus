@@ -1,0 +1,104 @@
+TECHCORP INDUSTRIES
+HUMAN RESOURCES POLICY MANUAL
+Effective Date: January 1, 2024
+Revision: 5.0
+Prepared by: Sarah Chen, VP of People Operations
+Approved by: David Harmon, Chief Executive Officer
+
+----------------------------------------------------------------
+SECTION 1 — SCOPE AND PURPOSE
+----------------------------------------------------------------
+
+This policy manual applies to all full-time and part-time employees of TechCorp Industries and its wholly owned subsidiaries. It supersedes all prior HR policy documents, including Revision 4.2 dated January 1, 2023. Employees are expected to review this document upon hire and whenever a revision is issued.
+
+Questions regarding any policy in this manual should be directed to the People Operations team at hr@techcorp.io or through the HRConnect portal. A policy FAQ document is maintained on the internal wiki under People > Policies.
+
+----------------------------------------------------------------
+SECTION 2 — REMOTE WORK POLICY
+----------------------------------------------------------------
+
+UPDATED FOR 2024 — PLEASE READ CAREFULLY
+
+Following an internal review of collaboration effectiveness and office utilization data collected throughout 2023, TechCorp Industries has revised its hybrid work policy for the 2024 calendar year.
+
+Eligible employees may work remotely for up to TWO (2) days per week. Employees are required to be present in their assigned office location a minimum of three (3) days per week to support cross-functional collaboration, spontaneous problem-solving, and team cohesion.
+
+This change reflects feedback from department leaders and project data indicating that in-person collaboration improved sprint velocity and reduced handoff errors on key Q3 and Q4 2023 initiatives.
+
+Remote workdays must be pre-approved by the employee's direct manager and logged in Workday no later than 48 hours in advance. Core collaboration hours remain 10:00 AM – 3:00 PM in the employee's primary time zone.
+
+Employees in roles designated as "on-site required" are not eligible for remote work arrangements. A full list of such roles is maintained in HRConnect under Workforce Classification.
+
+----------------------------------------------------------------
+SECTION 3 — PAID TIME OFF (PTO)
+----------------------------------------------------------------
+
+Full-time employees accrue twenty (20) days of paid time off per calendar year. PTO accrues at a rate of 1.67 days per month beginning on the first day of employment.
+
+Up to five (5) unused PTO days may be rolled over into the following calendar year. Any PTO balance exceeding the rollover cap is forfeited on December 31.
+
+PTO requests must be submitted a minimum of five (5) business days in advance for absences of three or more consecutive days. Shorter-notice requests may be approved at manager discretion.
+
+----------------------------------------------------------------
+SECTION 4 — PARENTAL LEAVE (NEW IN 2024)
+----------------------------------------------------------------
+
+Effective January 1, 2024, TechCorp Industries offers sixteen (16) weeks of fully paid parental leave to all eligible employees following the birth, adoption, or foster placement of a child. This policy applies equally to all parents regardless of gender.
+
+To be eligible, employees must have been employed for a minimum of twelve (12) consecutive months prior to the leave start date.
+
+Leave may be taken in one continuous block or in two separate periods within the first twelve months of the child's birth or placement, subject to manager and People Operations approval.
+
+Employees on parental leave continue to accrue PTO and remain fully enrolled in company benefits.
+
+----------------------------------------------------------------
+SECTION 5 — PERFORMANCE REVIEWS
+----------------------------------------------------------------
+
+TechCorp conducts formal performance reviews on an annual basis. Review periods run January through December, with evaluations completed in January of the following year.
+
+The process includes a self-assessment, manager evaluation, and department-level calibration session. Final ratings are communicated to employees by February 15. Merit increases effective March 1.
+
+Beginning in 2024, managers will also conduct a structured mid-year check-in (June/July) to provide interim feedback and allow employees to adjust goals. Mid-year check-ins do not result in ratings or compensation changes.
+
+----------------------------------------------------------------
+SECTION 6 — ONBOARDING
+----------------------------------------------------------------
+
+New employees complete a 30-day onboarding program covering system access, compliance training (security awareness, data handling, anti-harassment, AI tool usage policy), role-specific technical orientation, and cultural immersion. Each new hire is assigned an onboarding buddy for the first 60 days.
+
+An updated onboarding checklist reflecting 2024 tooling (including the Nexus knowledge platform and the new internal AI assistant) is available in HRConnect.
+
+----------------------------------------------------------------
+SECTION 7 — EQUIPMENT AND HOME OFFICE ALLOWANCE
+----------------------------------------------------------------
+
+Employees approved for hybrid or remote work arrangements are eligible for a one-time equipment allowance of $1,200 (increased from $800 in the prior policy) to support a functional home office. Eligible purchases include monitors, keyboards, webcams, ergonomic chairs, desk accessories, and networking equipment.
+
+Receipts must be submitted through Concur within 90 days of start date or policy approval date. TechCorp will continue to provide a company laptop and required software licenses to all employees.
+
+----------------------------------------------------------------
+SECTION 8 — TRAVEL AND EXPENSE REIMBURSEMENT
+----------------------------------------------------------------
+
+Business travel requires pre-approval from the employee's department head. Flights must be booked through Egencia (corporate travel portal). Economy class is required for domestic flights; business class is permitted for international flights exceeding six hours.
+
+Hotel bookings are capped at $250 per night in Tier 1 markets and $175 per night in all other markets. Meal reimbursement is up to $75 per day with itemized receipts. Alcohol is not reimbursable.
+
+Expense reports must be submitted within 30 days of trip completion.
+
+----------------------------------------------------------------
+SECTION 9 — CODE OF CONDUCT
+----------------------------------------------------------------
+
+TechCorp expects all employees to act with integrity, respect, and professionalism in all interactions. Discrimination, harassment, and retaliation of any kind are strictly prohibited. Violations are subject to disciplinary action up to and including termination.
+
+Employees must report suspected violations to People Operations or through the anonymous Ethics Hotline (1-800-555-0192). Beginning in 2024, all employees must complete a refreshed anti-harassment training module (approximately 45 minutes) by March 31, 2024.
+
+----------------------------------------------------------------
+
+Signed,
+Sarah Chen
+VP of People Operations
+TechCorp Industries
+January 1, 2024

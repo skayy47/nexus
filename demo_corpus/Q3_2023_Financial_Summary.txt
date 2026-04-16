@@ -1,0 +1,110 @@
+TECHCORP INDUSTRIES
+QUARTERLY FINANCIAL SUMMARY — Q3 2023
+Period: July 1, 2023 – September 30, 2023
+Classification: Internal — Finance and Executive Distribution Only
+Prepared by: Marcus Webb, Chief Financial Officer
+Reviewed by: Audit Committee, October 18, 2023
+Distribution Date: October 20, 2023
+
+----------------------------------------------------------------
+EXECUTIVE SUMMARY
+----------------------------------------------------------------
+
+TechCorp Industries delivered a strong third quarter in 2023, with total revenue of $12.4 million representing a 14% year-over-year increase from Q3 2022 ($10.9M). Net operating income for the quarter was $2.1 million (16.9% margin), consistent with our full-year profitability targets. Headcount at quarter close stood at 312 full-time employees, an increase of 18 from the Q2 close of 294.
+
+The quarter saw above-plan performance in our Enterprise Solutions division, offset by moderate underperformance in the SMB segment, which continues to face longer sales cycles attributed to macroeconomic caution among smaller buyers.
+
+----------------------------------------------------------------
+REVENUE BREAKDOWN BY DIVISION
+----------------------------------------------------------------
+
+Enterprise Solutions Division:
+  Subscription Revenue:        $6,200,000
+  Professional Services:       $1,850,000
+  Division Total:              $8,050,000   (64.9% of total)
+
+SMB and Mid-Market Division:
+  Subscription Revenue:        $2,910,000
+  Professional Services:         $640,000
+  Division Total:              $3,550,000   (28.6% of total)
+
+Other (Partner Referrals, Licensing):
+  Total:                         $800,000   (6.5% of total)
+
+TOTAL Q3 REVENUE:             $12,400,000
+
+----------------------------------------------------------------
+OPERATING EXPENSES
+----------------------------------------------------------------
+
+Personnel (salaries, benefits, contractor fees):   $7,340,000
+Marketing and Demand Generation:                     $450,000
+Infrastructure and Cloud Services:                   $620,000
+Research and Development:                            $890,000
+General and Administrative:                          $490,000
+                                                  -----------
+TOTAL OPERATING EXPENSES:                          $9,790,000
+
+OPERATING INCOME (EBIT):                           $2,610,000
+Less: Interest Expense and Other:                    $510,000
+NET OPERATING INCOME:                              $2,100,000
+
+Note on Marketing Spend: The Q3 marketing budget of $450,000 was fully deployed across four campaigns: the "Intelligent Enterprise" demand generation campaign ($180,000), the Q3 partner co-marketing program ($95,000), the Chicago and Austin regional event series ($110,000), and the brand refresh initiative ($65,000). Campaign-attributed pipeline for Q3 totaled $8.7M in new opportunities.
+
+----------------------------------------------------------------
+HEADCOUNT SUMMARY
+----------------------------------------------------------------
+
+Total Employees at Q3 Close:    312
+  Engineering and Product:      114
+  Sales and Revenue:             78
+  Marketing:                     31
+  Customer Success:              47
+  Finance and Legal:             22
+  People Operations and G&A:     20
+
+Q3 New Hires: 24
+Q3 Departures: 6 (attrition rate: 1.9% for quarter)
+
+Open Requisitions at Quarter End: 21 (primarily Engineering and Customer Success)
+
+----------------------------------------------------------------
+KEY CLIENT ACTIVITY
+----------------------------------------------------------------
+
+Top 5 Clients by Q3 Revenue Contribution:
+  1. Meridian Financial Group — $1.24M
+  2. Arcon Healthcare Systems — $980,000
+  3. Pellucid Logistics — $870,000
+  4. Vantage Capital Partners — $760,000
+  5. Northgate Manufacturing — $640,000
+
+New Enterprise Logos (Q3): 7 new clients onboarded with ACV > $200K
+Renewals Executed (Q3): 14 renewals, 100% retention, 3 with upsell
+Churn: 0 enterprise churns; 2 SMB churns (combined ACV: $84,000)
+
+----------------------------------------------------------------
+Q4 2023 FORECAST
+----------------------------------------------------------------
+
+Based on current pipeline visibility and signed commitments, TechCorp projects Q4 2023 revenue of $13.8M – $14.4M, representing 11–16% YoY growth. Full-year 2023 revenue guidance is maintained at $46.5M – $47.5M.
+
+Key assumptions: continued Enterprise momentum, at least 5 new logo closings before December 31, and no material customer churn. The sales pipeline entering Q4 stands at $34.2M in qualified opportunities, of which $18.6M is in late-stage (Stage 4+).
+
+Project Atlas, the legacy data migration initiative, is expected to complete in Q4 2023, which will reduce infrastructure costs by an estimated $85,000 per quarter beginning Q1 2024.
+
+----------------------------------------------------------------
+NOTES AND DISCLOSURES
+----------------------------------------------------------------
+
+This document is prepared for internal management reporting purposes and does not constitute audited financial statements. Final audited results for fiscal year 2023 will be prepared by TechCorp's external auditor, Deloitte & Touche LLP, and made available to the Board of Directors in Q1 2024.
+
+All figures are in USD. Rounding may result in minor discrepancies in totals.
+
+----------------------------------------------------------------
+
+Prepared and certified by:
+Marcus Webb
+Chief Financial Officer
+TechCorp Industries
+October 20, 2023

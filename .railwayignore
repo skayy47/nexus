@@ -1,0 +1,7 @@
+nexus-frontend/
+tests/
+docs/
+_archive/
+.github/
+*.md
+!README.md

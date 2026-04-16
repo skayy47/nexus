@@ -1,0 +1,181 @@
+TECHCORP INDUSTRIES
+PRODUCT ROADMAP — FISCAL YEAR 2024
+Document Type: Strategic Planning — Internal Distribution
+Version: 1.3 (Updated post-Q4 2023 review)
+Prepared by: Priya Nair, VP of Product Management
+Contributors: Engineering Leadership, Revenue Operations, Finance
+Approved by: David Harmon, CEO
+Distribution Date: January 30, 2024
+
+----------------------------------------------------------------
+OVERVIEW
+----------------------------------------------------------------
+
+This document outlines TechCorp Industries' product strategy and initiative roadmap for fiscal year 2024. It reflects commitments made during the Q4 2023 planning cycle, updated for final Q4 actuals and revised resource allocation.
+
+FY2024 product investment totals $9.6 million across six strategic initiatives. Priorities were set in alignment with our three corporate objectives for 2024: (1) accelerate enterprise expansion, (2) achieve platform parity on mobile, and (3) establish AI-augmented workflows as a core product differentiator.
+
+----------------------------------------------------------------
+INITIATIVE 1 — PROJECT HELIOS (AI Feature Suite)
+----------------------------------------------------------------
+
+Owner: Arjun Mehta, Director of AI Engineering
+Status: In Development
+Target Launch: Q2 2024 (June 30, 2024)
+Budget Allocation: $3,200,000
+
+Description:
+Project Helios delivers a suite of AI-powered features embedded across the TechCorp platform, including intelligent document summarization, anomaly detection in operational datasets, and a conversational assistant for enterprise analytics dashboards.
+
+This initiative is the centerpiece of TechCorp's 2024 product strategy and directly supports the FY2024 revenue target by enabling premium-tier upsell to existing Enterprise customers.
+
+Key Milestones:
+  Q1 2024 — Complete model selection and API integration layer
+  Q1 2024 — Beta launch to 10 design partner customers
+  Q2 2024 — Full general availability launch for Enterprise tier
+  Q3 2024 — Expand to Professional tier; measure adoption and NPS impact
+
+Risks: Dependency on third-party AI API availability and rate limits. Mitigation: dual-vendor strategy and cached inference for high-frequency queries.
+
+----------------------------------------------------------------
+INITIATIVE 2 — PROJECT MERCURY (Mobile Platform)
+----------------------------------------------------------------
+
+Owner: Danielle Osei, Director of Mobile Engineering
+Status: In Development
+Target Launch: Q3 2024 (September 30, 2024)
+Budget Allocation: $2,100,000
+
+Description:
+Project Mercury delivers TechCorp's first native mobile applications for iOS and Android, enabling field sales representatives and customer success managers to access dashboards, run reports, and receive alerts without requiring a laptop.
+
+Key Milestones:
+  Q1 2024 — Finalize core feature set based on sales team interviews
+  Q2 2024 — Internal alpha testing with 25 TechCorp employees
+  Q2 2024 — Closed beta with 5 enterprise customers
+  Q3 2024 — Public launch on Apple App Store and Google Play
+
+Risks: Mobile feature parity with web platform will require ongoing investment beyond FY2024. MVP scope is intentionally limited to read-only dashboards and alerting.
+
+----------------------------------------------------------------
+INITIATIVE 3 — PROJECT ATLAS (Legacy Infrastructure Migration)
+----------------------------------------------------------------
+
+Owner: Kevin Strauss, VP of Engineering
+Status: COMPLETED — Q4 2023 (Maintenance Phase)
+Budget Allocation: $480,000 (fully expended in FY2023)
+FY2024 Allocation: $120,000 (maintenance and monitoring only)
+
+Description:
+Project Atlas, the multi-year initiative to migrate TechCorp's on-premise data infrastructure to a fully cloud-native architecture, was completed in Q4 2023. The migration encompassed seven legacy database clusters, two on-premise application servers, and the decommissioning of TechCorp's colocated data center in Denver, Colorado.
+
+With Atlas complete, TechCorp now operates entirely on cloud infrastructure, yielding an estimated $85,000 per quarter in reduced hosting and facilities costs beginning Q1 2024.
+
+The FY2024 Atlas budget covers ongoing monitoring tooling, a post-migration security audit scheduled for Q1 2024, and hypercare support during the first two quarters of the maintenance phase.
+
+The engineering resources previously dedicated to Atlas (12 FTEs) have been reallocated to Project Helios and Project Mercury.
+
+----------------------------------------------------------------
+INITIATIVE 4 — ENTERPRISE ANALYTICS V2
+----------------------------------------------------------------
+
+Owner: Sofia Yamamoto, Senior Product Manager
+Status: Planning
+Target Launch: Q2 2024
+Budget Allocation: $1,400,000
+
+Description:
+Building on the strong adoption of the Enterprise Analytics module launched in Q4 2023 (34 customers in 60 days), this initiative delivers second-generation capabilities including custom dashboard builder, multi-source data blending, and scheduled report distribution.
+
+Key Milestones:
+  Q1 2024 — Customer discovery sessions with top 15 analytics users
+  Q1 2024 — Requirements locked; design sprints complete
+  Q2 2024 — Launch alongside Project Helios
+
+----------------------------------------------------------------
+INITIATIVE 5 — INTERNATIONAL PLATFORM READINESS (UK)
+----------------------------------------------------------------
+
+Owner: Priya Nair, VP of Product Management
+Status: Planning
+Target Launch: Q3 2024
+Budget Allocation: $900,000
+
+Description:
+In preparation for TechCorp's planned UK market entry in H2 2024, this initiative covers GDPR/UK GDPR compliance updates, data residency controls (EU-West hosting region), localization of the product UI, and integration with UK-standard payment and billing systems.
+
+Legal review is underway in partnership with outside counsel (Clifford Chance LLP).
+
+----------------------------------------------------------------
+INITIATIVE 6 — CUSTOMER SELF-SERVICE PORTAL
+----------------------------------------------------------------
+
+Owner: Tomas Reyes, Director of Customer Experience
+Status: Discovery
+Target Launch: Q4 2024
+Budget Allocation: $1,400,000
+
+Description:
+A self-service portal for enterprise customers to manage user seats, billing, integration configurations, and support tickets without routing through TechCorp account managers. This initiative directly reduces Customer Success team load and improves time-to-resolution for common administrative requests.
+
+Customer research phase begins February 2024.
+
+----------------------------------------------------------------
+BUDGET SUMMARY
+----------------------------------------------------------------
+
+Initiative                              FY2024 Budget
+------------------------------------------  -----------
+Project Helios (AI Suite)               $3,200,000
+Project Mercury (Mobile)                $2,100,000
+Project Atlas (Maintenance only)          $120,000
+Enterprise Analytics V2                 $1,400,000
+International Readiness (UK)              $900,000
+Customer Self-Service Portal            $1,400,000
+                                        -----------
+TOTAL PRODUCT INVESTMENT FY2024:        $9,120,000
+
+Remaining budget reserve (contingency):   $480,000
+TOTAL AUTHORIZED PRODUCT BUDGET:        $9,600,000
+
+----------------------------------------------------------------
+QUARTERLY MILESTONE SUMMARY
+----------------------------------------------------------------
+
+Q1 2024 (January – March):
+  - Helios: model integration and beta with design partners
+  - Mercury: feature definition complete
+  - Analytics V2: customer discovery, requirements lock
+  - Atlas: post-migration security audit
+
+Q2 2024 (April – June):
+  - Helios: GA launch (Enterprise tier)
+  - Analytics V2: GA launch
+  - Mercury: internal alpha and closed beta
+
+Q3 2024 (July – September):
+  - Mercury: public launch
+  - Helios: expansion to Professional tier
+  - International: UK platform readiness complete
+
+Q4 2024 (October – December):
+  - Self-Service Portal: GA launch
+  - International: UK sales motion launch
+  - Full-year retrospective and FY2025 planning
+
+----------------------------------------------------------------
+REVISION HISTORY
+----------------------------------------------------------------
+
+  v1.0 — December 12, 2023 — Initial draft, Priya Nair
+  v1.1 — January 8, 2024 — Updated Atlas status post-Q4 close
+  v1.2 — January 15, 2024 — Budget revised after Finance approval
+  v1.3 — January 30, 2024 — Final version distributed to leadership
+
+----------------------------------------------------------------
+
+Approved by:
+Priya Nair, VP of Product Management
+David Harmon, Chief Executive Officer
+TechCorp Industries
+January 30, 2024

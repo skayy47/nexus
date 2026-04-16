@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+
+# Data (generated at runtime)
+data/
+*.db
+
+# Type checking / lint caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Supabase local
+supabase/.temp/
+
+# Archive (keep in repo for reference but ignore in CI)
+# _archive/
+
+# Models cache
+models/
+
+# Next.js
+nexus-frontend/.next/
+nexus-frontend/node_modules/
+nexus-frontend/.env.local
+
+# Claude Code local settings
+.claude/

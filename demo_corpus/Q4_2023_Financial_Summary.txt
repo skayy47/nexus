@@ -1,0 +1,127 @@
+TECHCORP INDUSTRIES
+QUARTERLY FINANCIAL SUMMARY — Q4 2023 AND FULL YEAR REVIEW
+Period: October 1, 2023 – December 31, 2023
+Classification: Internal — Finance and Executive Distribution Only
+Prepared by: Marcus Webb, Chief Financial Officer
+Reviewed by: Audit Committee, January 17, 2024
+Distribution Date: January 22, 2024
+
+----------------------------------------------------------------
+EXECUTIVE SUMMARY
+----------------------------------------------------------------
+
+TechCorp Industries closed fiscal year 2023 with full-year revenue of $47.2 million, exceeding the top end of our revised guidance range ($46.5M – $47.5M). Q4 2023 revenue was $14.1 million, representing 15% year-over-year growth against Q4 2022 ($12.3M) and the strongest quarter in company history. Year-end headcount was 334 full-time employees.
+
+Net operating income for Q4 was $2.6 million (18.4% margin), bringing full-year net operating income to $8.9 million (18.9% margin). The Finance team is pleased to report that every division met or exceeded its full-year operating plan.
+
+This document provides Q4 results as well as a full-year retrospective across revenue, expenses, headcount, and strategic milestones. Audited statements will be issued separately by Deloitte & Touche LLP.
+
+----------------------------------------------------------------
+Q4 2023 REVENUE BREAKDOWN
+----------------------------------------------------------------
+
+Enterprise Solutions Division:
+  Subscription Revenue:        $7,100,000
+  Professional Services:       $1,980,000
+  Division Total:              $9,080,000   (64.4% of total)
+
+SMB and Mid-Market Division:
+  Subscription Revenue:        $3,350,000
+  Professional Services:         $710,000
+  Division Total:              $4,060,000   (28.8% of total)
+
+Other (Partner Referrals, Licensing):
+  Total:                         $960,000   (6.8% of total)
+
+TOTAL Q4 REVENUE:             $14,100,000
+
+FULL YEAR 2023 REVENUE:       $47,200,000
+  Q1:  $10,600,000
+  Q2:  $10,100,000
+  Q3:  $12,400,000
+  Q4:  $14,100,000
+
+----------------------------------------------------------------
+FULL YEAR OPERATING EXPENSE REVIEW
+----------------------------------------------------------------
+
+Personnel (salaries, benefits, contractor fees):  $27,800,000
+Infrastructure and Cloud Services:                 $2,310,000
+Research and Development:                          $3,420,000
+Marketing and Demand Generation (Full Year):       $1,490,000
+  Of which, Q1 Marketing:                           $320,000
+  Of which, Q2 Marketing:                           $390,000
+  Of which, Q3 Marketing:                           $380,000
+  Of which, Q4 Marketing:                           $400,000
+General and Administrative:                        $1,880,000
+                                                 -----------
+TOTAL OPERATING EXPENSES (FY2023):               $36,900,000
+
+FULL YEAR OPERATING INCOME (EBIT):               $10,300,000
+Less: Interest, Tax Provisions, Other:             $1,400,000
+NET OPERATING INCOME (FY2023):                    $8,900,000
+
+----------------------------------------------------------------
+HEADCOUNT SUMMARY
+----------------------------------------------------------------
+
+Year-End Headcount (December 31, 2023):   334 employees
+  Engineering and Product:                122
+  Sales and Revenue:                       84
+  Marketing:                               33
+  Customer Success:                        52
+  Finance and Legal:                       24
+  People Operations and G&A:              19
+
+Full Year New Hires: 62
+Full Year Departures: 17 (5.4% annual attrition — below industry benchmark of 8.2%)
+Q4 New Hires: 16
+Q4 Departures: 5
+
+----------------------------------------------------------------
+Q4 KEY CLIENT AND PIPELINE ACTIVITY
+----------------------------------------------------------------
+
+New Enterprise Logos Closed (Q4): 9 new clients with ACV > $200K
+Renewals Executed (Q4): 18 renewals, 100% enterprise retention
+Full Year Gross Retention: 97.8%
+Full Year Net Revenue Retention: 112% (upsell and expansion)
+
+Top Q4 New Logo: Castlepoint Insurance Group — ACV $1.1M, 3-year term
+
+----------------------------------------------------------------
+STRATEGIC MILESTONE REVIEW — FY2023
+----------------------------------------------------------------
+
+Project Atlas (Legacy Infrastructure Migration):
+Status as of Q4 close is in final validation phase. While substantial completion was targeted for Q4 2023, full sign-off has been deferred to Q1 2024 pending a final audit of migrated data integrity. Estimated Q1 2024 infrastructure cost savings of $85,000/quarter remain on track pending completion sign-off.
+
+Product Platform:
+The Enterprise Analytics module launched in November 2023 has been adopted by 34 existing customers within 60 days of release, generating $680,000 in expansion revenue in Q4 alone.
+
+Partnerships:
+A new reseller agreement with Kinsella Technology Partners was signed in December 2023, projected to contribute $1.2M in partner-sourced ARR in FY2024.
+
+----------------------------------------------------------------
+FY2024 OUTLOOK
+----------------------------------------------------------------
+
+Based on current ARR base, pipeline, and headcount plan, TechCorp enters 2024 with guidance of $54M – $57M in full-year revenue. Key growth drivers include the Helios AI feature suite (targeted Q2 launch), the Mercury mobile platform (Q3), international expansion into the UK market (H2), and continued Enterprise upsell motion.
+
+Full-year 2024 operating expense budget is $41.2M, reflecting planned headcount growth to approximately 380 employees and increased R&D investment in AI capabilities.
+
+----------------------------------------------------------------
+NOTES AND DISCLOSURES
+----------------------------------------------------------------
+
+This document is an internal management report and does not constitute audited financial statements. Audited annual financials for FY2023 will be provided to the Board and relevant stakeholders upon completion of the Deloitte & Touche LLP audit, expected by March 14, 2024.
+
+All figures in USD. Rounding may produce minor discrepancies.
+
+----------------------------------------------------------------
+
+Prepared and certified by:
+Marcus Webb
+Chief Financial Officer
+TechCorp Industries
+January 22, 2024
