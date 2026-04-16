@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
 
@@ -18,37 +19,47 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 
+async def _warmup_background() -> None:
+    """Load the embedding model and rebuild BM25 without blocking uvicorn startup."""
+    try:
+        logger.info("Background warmup starting...")
+
+        from nexus.rag.embeddings import get_embedder
+        get_embedder()
+        logger.info("Embedding model loaded")
+
+        try:
+            from nexus.index.bm25_index import get_bm25_index
+            from nexus.index.supabase_store import get_all_chunks
+
+            all_chunks = await get_all_chunks()
+            get_bm25_index().build(all_chunks if all_chunks else [])
+            logger.info("BM25 index ready", chunk_count=len(all_chunks or []))
+        except Exception as e:
+            logger.warning("BM25 warmup failed (non-fatal)", error=str(e))
+
+        logger.info("Background warmup complete")
+    except Exception as e:
+        logger.error("Background warmup error", error=str(e))
+
+
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Application lifespan: warm up models and configure logging on startup."""
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
+    """Start background warmup immediately so /health responds without delay."""
     settings = get_settings()
     setup_logging(log_level=settings.log_level, log_format=settings.log_format)
 
-    # Warm up embedding model on startup (avoid cold-start latency)
-    from nexus.rag.embeddings import get_embedder
-
-    get_embedder()
-
-    # Warm up BM25 index from Supabase (survives restarts — dense still works without it)
-    try:
-        from nexus.index.bm25_index import get_bm25_index
-        from nexus.index.supabase_store import get_all_chunks
-
-        all_chunks = await get_all_chunks()
-        if all_chunks:
-            get_bm25_index().build(all_chunks)
-            logger.info("BM25 index warmed up", chunk_count=len(all_chunks))
-        else:
-            logger.info("BM25 index empty — no documents indexed yet")
-    except Exception as e:
-        logger.warning("BM25 warmup failed (non-fatal)", error=str(e))
-
     logger.info(
-        "NEXUS started",
+        "NEXUS starting",
         llm_backend=settings.llm_backend.value,
         embed_model=settings.embed_model,
     )
+
+    # Fire-and-forget: uvicorn is ready to serve requests immediately
+    asyncio.create_task(_warmup_background())
+
     yield
+
     logger.info("NEXUS shutting down")
 
 
@@ -71,13 +82,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Register routes
     from nexus.api.routes import router
-
     app.include_router(router)
 
     return app
 
 
-# Module-level app instance for uvicorn
 app = create_app()

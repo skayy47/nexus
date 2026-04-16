@@ -78,14 +78,10 @@ class ChatRequest(BaseModel):
 
 @router.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    """Health check with indexed chunk count."""
-    try:
-        count = await get_chunk_count()
-    except Exception:
-        count = -1
+    """Instant health check — never blocks on Supabase or model loading."""
     return HealthResponse(
         status="ok",
-        indexed_chunks=count,
+        indexed_chunks=0,
         llm_backend=settings.llm_backend.value,
         version="0.1.0",
     )
