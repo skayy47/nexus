@@ -13,7 +13,10 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
-# Install package with all deps
+# Install CPU-only torch first — avoids pulling 2.5 GB CUDA wheels
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install the rest of the package
 RUN pip install --no-cache-dir -e "."
 
 # Runtime
