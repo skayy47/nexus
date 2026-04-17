@@ -6,6 +6,7 @@ __version__ = "0.1.0"
 # which were removed in langchain 0.3. Patch them back before any LangChain imports.
 try:
     import langchain as _lc
+
     for _attr, _default in [("verbose", False), ("debug", False), ("llm_cache", None)]:
         if not hasattr(_lc, _attr):
             setattr(_lc, _attr, _default)

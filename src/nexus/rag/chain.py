@@ -65,7 +65,7 @@ def format_context(chunks: list[RetrievedChunk]) -> str:
     parts = []
     for i, chunk in enumerate(ordered, 1):
         parts.append(
-            f"<document index=\"{i}\" source=\"{chunk.document_name}\" page=\"{chunk.page_number}\">\n"
+            f'<document index="{i}" source="{chunk.document_name}" page="{chunk.page_number}">\n'
             f"{chunk.content}\n"
             f"</document>"
         )

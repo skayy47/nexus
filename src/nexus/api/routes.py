@@ -159,6 +159,7 @@ async def clear_documents():
     deleted = await clear_all_chunks()
 
     from nexus.index.bm25_index import get_bm25_index
+
     get_bm25_index().build([])
 
     logger.info("All documents cleared", deleted=deleted)

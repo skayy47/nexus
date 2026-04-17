@@ -73,10 +73,7 @@ class BM25Index:
             reverse=True,
         )
 
-        return [
-            BM25Result(chunk=chunk, score=float(score))
-            for chunk, score in scored[:k]
-        ]
+        return [BM25Result(chunk=chunk, score=float(score)) for chunk, score in scored[:k]]
 
 
 # Module-level singleton — rebuilt when corpus changes

@@ -25,6 +25,7 @@ async def _warmup_background() -> None:
         logger.info("Background warmup starting...")
 
         from nexus.rag.embeddings import get_embedder
+
         get_embedder()
         logger.info("Embedding model loaded")
 
@@ -83,6 +84,7 @@ def create_app() -> FastAPI:
     )
 
     from nexus.api.routes import router
+
     app.include_router(router)
 
     return app

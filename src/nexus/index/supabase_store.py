@@ -165,10 +165,7 @@ async def delete_chunks_by_name(document_name: str) -> int:
     """Delete all chunks for a specific document. Returns number deleted."""
     client = await _get_client()
     result = (
-        await client.table("document_chunks")
-        .delete()
-        .eq("document_name", document_name)
-        .execute()
+        await client.table("document_chunks").delete().eq("document_name", document_name).execute()
     )
     return len(result.data or [])
 

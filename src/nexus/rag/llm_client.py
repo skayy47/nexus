@@ -83,7 +83,8 @@ async def stream_tokens(
             last_exc = exc
             if attempt < 2:
                 import asyncio
-                wait = 2 ** attempt * 2  # 2s, 4s
+
+                wait = 2**attempt * 2  # 2s, 4s
                 logger.warning("LLM stream error, retrying", attempt=attempt + 1, error=str(exc))
                 await asyncio.sleep(wait)
 
