@@ -199,4 +199,4 @@ nexus/
 
 ---
 
-Built by [Oussama Iskia](https://github.com/skayy47)
+Built by [Oussama skia](https://github.com/skayy47)
