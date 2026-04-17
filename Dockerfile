@@ -19,6 +19,9 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Install the rest of the package
 RUN pip install --no-cache-dir -e "."
 
+# Pre-download the embedding model into the image so cold starts are instant
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+
 # Runtime
 COPY demo_corpus/ ./demo_corpus/
 
