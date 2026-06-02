@@ -1,5 +1,50 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+// ── Cold-start handling ──────────────────────────────────────────────────────
+// The backend runs on a free HF Space that sleeps after ~48h idle. The first
+// request after sleep must wait for the container to wake (~30–60s). We poll
+// /health with backoff so the demo never fails just because the box was asleep.
+
+async function fetchWithTimeout(url: string, opts: RequestInit = {}, ms = 10000) {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), ms)
+  try {
+    return await fetch(url, { ...opts, signal: ctrl.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
+ * Poll /health until the backend is awake (or maxWaitMs elapses).
+ * onWaking() fires once we detect the box was actually asleep, so the UI can
+ * switch to a "waking up" message.
+ */
+export async function warmupBackend(
+  onWaking?: () => void,
+  maxWaitMs = 75000
+): Promise<void> {
+  const start = Date.now()
+  let delay = 1500
+  let firstTry = true
+
+  while (Date.now() - start < maxWaitMs) {
+    try {
+      const res = await fetchWithTimeout(`${API_URL}/health`, {}, 8000)
+      if (res.ok) return
+    } catch {
+      // network error / abort → backend is asleep, keep polling
+    }
+    if (firstTry) {
+      onWaking?.()
+      firstTry = false
+    }
+    await new Promise(r => setTimeout(r, delay))
+    delay = Math.min(delay * 1.4, 5000)
+  }
+  throw new Error('Backend did not wake up in time.')
+}
+
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export interface SourceRef {
@@ -47,7 +92,8 @@ export interface DocumentListResponse {
 // ── API calls ──────────────────────────────────────────────────────────────
 
 export async function loadDemo(): Promise<void> {
-  const res = await fetch(`${API_URL}/demo`, { method: 'POST' })
+  // Generous timeout: cold CPU embeds 52 chunks + builds BM25 + scans contradictions.
+  const res = await fetchWithTimeout(`${API_URL}/demo`, { method: 'POST' }, 120000)
   if (!res.ok) throw new Error(`Demo load failed: ${res.statusText}`)
 }
 

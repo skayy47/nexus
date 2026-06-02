@@ -9,7 +9,7 @@ import {
   useSpring,
 } from 'framer-motion'
 import { Zap, Search, FileText, BarChart2, Github } from 'lucide-react'
-import { loadDemo } from '@/lib/api'
+import { loadDemo, warmupBackend } from '@/lib/api'
 import { SmoothScroll } from './SmoothScroll'
 import { ParticleField } from './ParticleField'
 
@@ -58,10 +58,13 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 }
 
+type DemoStatus = 'idle' | 'waking' | 'loading' | 'error'
+
 export function LandingHero() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [demoStatus, setDemoStatus] = useState<DemoStatus>('idle')
   const [demoError, setDemoError] = useState<string | null>(null)
+  const loading = demoStatus === 'waking' || demoStatus === 'loading'
 
   // Parallax layers — each element scrolls at a different Y rate
   const { scrollY } = useScroll()
@@ -81,16 +84,27 @@ export function LandingHero() {
   const bgY      = useSpring(rawBgY,      springConfig)
 
   async function handleTryDemo() {
-    setLoading(true)
     setDemoError(null)
+    setDemoStatus('loading')
     try {
+      // Wake the free backend if it's asleep (switches UI to "waking" on first miss),
+      // then load the demo corpus.
+      await warmupBackend(() => setDemoStatus('waking'))
+      setDemoStatus('loading')
       await loadDemo()
       router.push('/chat?mode=demo')
-    } catch (err) {
-      setLoading(false)
-      setDemoError(err instanceof Error ? err.message : 'Could not connect to backend.')
+    } catch {
+      setDemoStatus('error')
+      setDemoError('The demo server is taking longer than usual to wake up.')
     }
   }
+
+  const demoLabel =
+    demoStatus === 'waking'
+      ? 'Waking the server…'
+      : demoStatus === 'loading'
+      ? 'Indexing 5 documents…'
+      : 'Try Demo'
 
   return (
     <SmoothScroll>
@@ -102,7 +116,7 @@ export function LandingHero() {
             NEX<span className="text-indigo-400">US</span>
           </span>
           <a
-            href="https://github.com/skay-dev/nexus"
+            href="https://github.com/skayy47/nexus"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
@@ -181,32 +195,48 @@ export function LandingHero() {
                 <button
                   onClick={handleTryDemo}
                   disabled={loading}
-                  className="px-8 py-3.5 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-semibold rounded-xl transition-all shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-60 disabled:cursor-wait text-white font-semibold rounded-xl transition-all shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
                 >
-                  {loading ? 'Loading demo...' : 'Try Demo'}
+                  {loading && (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  )}
+                  {demoLabel}
                 </button>
                 <button
                   onClick={() => router.push('/chat?mode=upload')}
-                  className="px-8 py-3.5 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-slate-100 font-semibold rounded-xl transition-all hover:-translate-y-0.5"
+                  disabled={loading}
+                  className="px-8 py-3.5 border border-slate-700 hover:border-slate-500 disabled:opacity-50 text-slate-300 hover:text-slate-100 font-semibold rounded-xl transition-all hover:-translate-y-0.5"
                 >
                   Upload Docs
                 </button>
               </div>
 
-              {demoError && (
+              {/* Cold-start expectation-setter — turns a free-tier delay into context */}
+              {demoStatus === 'waking' && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs text-slate-500 max-w-xs text-center"
+                >
+                  First visit in a while — the free server is waking up (~30–60s).
+                  This only happens once.
+                </motion.p>
+              )}
+
+              {demoStatus === 'error' && (
                 <motion.div
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-center gap-1"
+                  className="flex flex-col items-center gap-1.5"
                 >
-                  <p className="text-xs text-red-400">
-                    Backend unreachable — make sure the server is running.
+                  <p className="text-xs text-slate-400 text-center max-w-xs">
+                    {demoError} Give it a few seconds and try again.
                   </p>
                   <button
-                    onClick={() => router.push('/chat?mode=demo')}
-                    className="text-xs text-indigo-400 underline hover:text-indigo-300"
+                    onClick={handleTryDemo}
+                    className="text-xs font-medium text-indigo-400 underline hover:text-indigo-300"
                   >
-                    Go to chat anyway →
+                    Retry →
                   </button>
                 </motion.div>
               )}
