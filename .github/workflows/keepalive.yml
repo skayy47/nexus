@@ -1,0 +1,33 @@
+name: Keep-alive ping
+
+# Pings the live demo backend every 3 days to:
+#   1. Reset Supabase free-tier 7-day inactivity pause timer
+#   2. Keep HF Space warm (it sleeps after 48h idle)
+# No secrets needed — /health and /stats are public GET endpoints.
+
+on:
+  schedule:
+    - cron: "0 9 */3 * *"   # every 3 days at 09:00 UTC
+  workflow_dispatch:         # allow manual trigger from Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /health
+        run: |
+          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/health \
+            && echo "health OK" \
+            || echo "health unreachable (Space may be sleeping — manual check needed)"
+
+      - name: Ping /stats (touches Supabase — resets inactivity timer)
+        run: |
+          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/stats \
+            && echo "stats OK (Supabase inactivity timer reset)" \
+            || echo "stats unreachable"
+
+      - name: Ping /documents (second Supabase touch)
+        run: |
+          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/documents \
+            && echo "documents OK" \
+            || echo "documents unreachable"

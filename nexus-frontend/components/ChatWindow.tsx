@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useId } from 'react'
+import { useState, useRef, useId, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Loader2 } from 'lucide-react'
 import { streamChat, ConfidenceResult, ContradictionResult, SourceRef } from '@/lib/api'
@@ -20,9 +20,37 @@ interface Message {
 
 interface Props {
   onContradiction?: () => void
+  isDemoMode?: boolean
 }
 
-export function ChatWindow({ onContradiction }: Props) {
+const DEMO_SUGGESTIONS = [
+  {
+    label: 'Remote work policy',
+    question: 'What is the remote work policy and how many days per week are allowed?',
+    badge: '⚡ Contradiction',
+    badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
+  },
+  {
+    label: 'Q3 marketing budget',
+    question: 'What was the Q3 2023 marketing budget?',
+    badge: '⚡ Contradiction',
+    badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
+  },
+  {
+    label: 'Project Atlas status',
+    question: 'What is the current status of Project Atlas?',
+    badge: '🕳 Knowledge gap',
+    badgeClass: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+  },
+  {
+    label: '2024 product roadmap',
+    question: 'What are the key product priorities in the 2024 roadmap?',
+    badge: '📄 Sources',
+    badgeClass: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
+  },
+]
+
+export function ChatWindow({ onContradiction, isDemoMode }: Props) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -31,11 +59,9 @@ export function ChatWindow({ onContradiction }: Props) {
   const idPrefix = useId()
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!input.trim() || streaming || queryCount.current >= 20) return
+  const submitQuestion = useCallback(async (question: string) => {
+    if (!question.trim() || streaming || queryCount.current >= 20) return
 
-    const question = input.trim()
     setInput('')
     queryCount.current++
 
@@ -101,12 +127,16 @@ export function ChatWindow({ onContradiction }: Props) {
         prev.map(m => (m.id === aid ? { ...m, content: msg, done: true } : m))
       )
     } finally {
-      // Mark the assistant message as done so ContradictionBadge renders
       setMessages(prev =>
         prev.map(m => (m.id === aid ? { ...m, done: true } : m))
       )
       setStreaming(false)
     }
+  }, [streaming, idPrefix, onContradiction])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    await submitQuestion(input.trim())
   }
 
   const atLimit = queryCount.current >= 20
@@ -117,14 +147,58 @@ export function ChatWindow({ onContradiction }: Props) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence initial={false}>
           {messages.length === 0 && (
-            <motion.p
+            <motion.div
               key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-slate-500 text-center mt-16 text-sm"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-col items-center justify-center mt-8 px-4"
             >
-              Ask anything about your documents.
-            </motion.p>
+              {isDemoMode ? (
+                <>
+                  <div className="text-center mb-8">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Demo corpus loaded · 5 documents
+                    </div>
+                    <h2 className="text-slate-200 text-base font-semibold mb-1">
+                      Ask anything — or pick a question below
+                    </h2>
+                    <p className="text-slate-500 text-sm max-w-md">
+                      Each question is designed to show a different NEXUS capability.
+                      Watch for the contradiction badge, confidence bar, and source cards.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+                    {DEMO_SUGGESTIONS.map((s) => (
+                      <button
+                        key={s.label}
+                        onClick={() => submitQuestion(s.question)}
+                        disabled={streaming}
+                        className="group text-left rounded-xl p-4 bg-slate-800/60 border border-slate-700/60 hover:border-indigo-500/50 hover:bg-slate-800 transition-all duration-200 disabled:opacity-50 cursor-pointer"
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <span className="text-slate-200 text-sm font-medium group-hover:text-indigo-300 transition-colors">
+                            {s.label}
+                          </span>
+                          <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full border ${s.badgeClass}`}>
+                            {s.badge}
+                          </span>
+                        </div>
+                        <p className="text-slate-500 text-xs leading-relaxed">
+                          {s.question}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="text-slate-500 text-center mt-16 text-sm">
+                  Ask anything about your documents.
+                </p>
+              )}
+            </motion.div>
           )}
 
           {messages.map(msg => (

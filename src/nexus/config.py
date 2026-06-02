@@ -7,6 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 # Project root = two levels up from this file (src/nexus/config.py → nexus/)
@@ -30,6 +31,12 @@ class Settings(BaseSettings):
     # ── Groq (hosted demo) ───────────────────────────
     groq_api_key: str = ""
     groq_model: str = "llama-3.3-70b-versatile"
+
+    @field_validator("groq_api_key", "supabase_key", "supabase_url", mode="before")
+    @classmethod
+    def strip_whitespace(cls, v: str) -> str:
+        """Strip accidental whitespace/newlines from secrets (common paste issue)."""
+        return v.strip() if isinstance(v, str) else v
 
     # ── Ollama (local dev) ───────────────────────────
     ollama_base_url: str = "http://localhost:11434"

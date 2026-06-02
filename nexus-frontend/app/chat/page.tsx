@@ -50,7 +50,10 @@ function ChatPage() {
             />
           </div>
         )}
-        <ChatWindow onContradiction={() => setContradictionCount(n => n + 1)} />
+        <ChatWindow
+          onContradiction={() => setContradictionCount(n => n + 1)}
+          isDemoMode={mode === 'demo'}
+        />
       </main>
     </div>
   )
