@@ -13,13 +13,13 @@ export const metadata: Metadata = {
     'contradiction detection',
     'document intelligence',
   ],
-  authors: [{ name: 'Oussama Iskia', url: 'https://skay.dev' }],
-  metadataBase: new URL('https://nexus.skay.dev'),
+  authors: [{ name: 'Oussama Skia', url: 'https://github.com/skayy47' }],
+  metadataBase: new URL('https://nexussss-two.vercel.app'),
   openGraph: {
     title: 'NEXUS — Institutional Memory Engine',
     description:
       "Companies lose 42% of their knowledge when senior employees leave. NEXUS doesn't let that happen.",
-    url: 'https://nexus.skay.dev',
+    url: 'https://nexussss-two.vercel.app',
     siteName: 'NEXUS',
     type: 'website',
   },

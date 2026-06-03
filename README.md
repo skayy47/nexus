@@ -199,4 +199,4 @@ nexus/
 
 MIT — see [`LICENSE`](LICENSE).
 
-Built by **[Oussama Iskia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection.
+Built by **[Oussama Skia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection.

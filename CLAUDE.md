@@ -5,7 +5,7 @@
 
 ## Project Identity
 
-**NEXUS** is a RAG-powered institutional memory engine built by SKAY (Oussama Iskia).
+**NEXUS** is a RAG-powered institutional memory engine built by SKAY (Oussama Skia).
 It's a portfolio project targeting freelance AI engineering clients ($5k-$15k/project).
 Every decision must balance: portfolio impressiveness, free cost, 4-week timeline.
 

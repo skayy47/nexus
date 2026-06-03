@@ -210,7 +210,7 @@ export function LandingHero() {
         </section>
 
         <footer className="border-t border-white/[0.06] py-8 px-6 text-center text-slate-500 text-[13px]">
-          Built by Oussama Iskia (SKAY) · RAG · hybrid retrieval · contradiction detection · MIT licensed
+          Built by Oussama Skia (SKAY) · RAG · hybrid retrieval · contradiction detection · MIT licensed
         </footer>
       </div>
     </SmoothScroll>
