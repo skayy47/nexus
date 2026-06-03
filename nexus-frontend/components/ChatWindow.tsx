@@ -29,24 +29,28 @@ const DEMO_SUGGESTIONS = [
     question: 'What is the remote work policy and how many days per week are allowed?',
     badge: '⚡ Contradiction',
     badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
+    dotClass: 'bg-red-400',
   },
   {
     label: 'Q3 marketing budget',
     question: 'What was the Q3 2023 marketing budget?',
     badge: '⚡ Contradiction',
     badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
+    dotClass: 'bg-red-400',
   },
   {
     label: 'Project Atlas status',
     question: 'What is the current status of Project Atlas?',
     badge: '🕳 Knowledge gap',
     badgeClass: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+    dotClass: 'bg-amber-400',
   },
   {
     label: '2024 product roadmap',
     question: 'What are the key product priorities in the 2024 roadmap?',
     badge: '📄 Sources',
     badgeClass: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
+    dotClass: 'bg-indigo-400',
   },
 ]
 
@@ -265,6 +269,24 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
 
       {/* Input */}
       <div className="border-t border-slate-800 p-4">
+        {/* Persistent suggestion chips — stay available after the first question */}
+        {isDemoMode && messages.length > 0 && !atLimit && (
+          <div className="flex gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <span className="shrink-0 text-[11px] text-slate-500 self-center pr-1">Try:</span>
+            {DEMO_SUGGESTIONS.map((s) => (
+              <button
+                key={s.label}
+                onClick={() => submitQuestion(s.question)}
+                disabled={streaming}
+                title={s.question}
+                className="shrink-0 inline-flex items-center gap-1.5 text-xs text-slate-300 bg-slate-800/70 border border-slate-700/60 hover:border-indigo-500/50 hover:text-white rounded-full px-3 py-1.5 transition-all disabled:opacity-40 cursor-pointer"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${s.dotClass}`} />
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
         {atLimit && (
           <p className="text-xs text-amber-400 mb-2">
             Session limit reached (20 queries). Refresh to start a new session.

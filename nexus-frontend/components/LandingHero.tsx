@@ -254,6 +254,10 @@ function HeroSection({ loading, demoStatus, demoLabel, spinner, onTryDemo }: {
               View source ↗
             </a>
           </div>
+          <a href="/chat?mode=upload"
+            className="text-[13px] text-slate-500 hover:text-indigo-300 transition-colors">
+            or upload your own documents →
+          </a>
           {demoStatus === 'waking' && (
             <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
               className="text-xs text-slate-500 max-w-xs">
