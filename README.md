@@ -10,7 +10,7 @@
 
 **[▶ Live demo](https://nexussss-two.vercel.app)** · **[API health](https://SKAY00-nexus-backend.hf.space/health)** · one click loads a corpus with built-in contradictions — no signup.
 
-NEXUS is a production-grade RAG system that goes **beyond question answering**. It retrieves with a hybrid dense+sparse engine, detects factual contradictions across documents, attributes every answer to its exact source, and quantifies its own confidence — giving users a reason to trust (or challenge) every response.
+NEXUS is a production-grade RAG system that goes **beyond question answering**. It retrieves with a hybrid dense+sparse engine, detects factual contradictions across documents, attributes every answer to its exact source, and **grounds every answer** — verifying claim-by-claim how much of the response is actually backed by the cited evidence. The full interface and the AI answers are **bilingual (EN / FR)**.
 
 ---
 
@@ -19,9 +19,10 @@ NEXUS is a production-grade RAG system that goes **beyond question answering**. 
 Most RAG pipelines retrieve context and generate an answer. NEXUS adds three layers of **epistemic hygiene** on top:
 
 - **⚡ Contradiction Radar** — a second structured LLM pass compares retrieved chunks across documents and surfaces conflicts, with both sides quoted verbatim and a severity rating.
-- **📊 Radical Transparency** — every answer ships with a deterministic confidence score (0–1), the reasoning behind it, and collapsible source cards showing the exact document, page, and excerpt.
+- **📊 Answer Grounding** — every answer is verified claim-by-claim against its cited sources. You get a coverage score, a verdict (grounded / partial / ungrounded), and inline `[n]` citations showing which statements are backed — not an opaque confidence number. It's the visible expression of RAGAS *faithfulness*, computed with the in-stack embeddings (no extra LLM call).
 - **🕳️ Knowledge Gaps** — when the corpus has no real answer, NEXUS says so instead of hallucinating one.
 - **🔀 Hybrid Retrieval** — BM25 keyword search fused with dense vector search via Reciprocal Rank Fusion (k=60), consistently outperforming either method alone on keyword-heavy queries.
+- **🌐 Bilingual (EN / FR)** — full `next-intl` localization with a premium animated language toggle. Choose French and the RAG answers, contradiction explanations, and knowledge-gap reports all come back in French — end-to-end, not just the labels.
 
 All answers stream token-by-token over SSE, and document content is wrapped in `<document>` tags to neutralise prompt injection.
 
@@ -40,10 +41,10 @@ graph LR
     RRF --> CTX[Context]
     CTX --> LLM[Groq · Llama 3.3 70B]
     CTX --> CD[Contradiction Detector]
-    CTX --> TS[Confidence Scorer]
+    LLM --> GR[Answer Grounding]
     LLM -->|token stream · SSE| FE
     CD -->|contradiction event · SSE| FE
-    TS -->|transparency event · SSE| FE
+    GR -->|grounding event · SSE| FE
 ```
 
 ### Request lifecycle
@@ -51,8 +52,8 @@ graph LR
 1. **Embed** — the query is encoded with `all-MiniLM-L6-v2` (384-dim, CPU, baked into the Docker image).
 2. **Retrieve** — BM25 and pgvector each return top-k candidates; RRF merges the ranked lists.
 3. **Generate** — an LCEL chain streams an answer from Groq Llama 3.3 70B token-by-token via SSE.
-4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; a deterministic scorer evaluates retrieval quality and source agreement.
-5. **Stream** — four SSE event types (`token`, `transparency`, `contradiction`, `gap`) let the frontend update incrementally.
+4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; a deterministic grounding pass embeds each answer claim and matches it against the cited sources (reusing `all-MiniLM`, no extra LLM call).
+5. **Stream** — four SSE event types (`token`, `grounding`, `contradiction`, `gap`) let the frontend update incrementally.
 
 ---
 
@@ -62,6 +63,7 @@ graph LR
 |-------|-----------|
 | Frontend | Next.js 14 · TypeScript · App Router |
 | UI | TailwindCSS · Framer Motion · custom components · neural-canvas hero |
+| i18n | next-intl — bilingual EN / FR, premium toggle, locale-aware answers |
 | Backend | FastAPI · Python 3.11 · async throughout |
 | RAG framework | LangChain (LCEL only) |
 | LLM | Groq → Llama 3.3 70B |
@@ -180,11 +182,11 @@ nexus/
 │   ├── ingest/            # Document loading, chunking, metadata extraction
 │   ├── index/             # pgvector store, BM25 index, hybrid retriever, RRF, migrations
 │   ├── rag/               # LCEL chain, Groq streaming client, versioned prompts
-│   ├── features/          # Contradiction detection, confidence scoring, gap detection
+│   ├── features/          # Contradiction detection, answer grounding, gap detection
 │   └── config.py          # Pydantic settings (whitespace-stripped secrets, env validation)
 ├── nexus-frontend/
-│   ├── app/               # Next.js App Router — landing + chat
-│   ├── components/        # LandingHero, NeuralCanvas, ChatWindow, ConfidenceBar, ContradictionBadge, SourceCard, DocumentZone …
+│   ├── app/               # Next.js App Router — [locale]/ landing + chat (EN/FR)
+│   ├── components/        # LandingHero, NeuralCanvas, ChatWindow, GroundingPanel, ContradictionBadge, SourceCard, LanguageSwitcher, DocumentZone …
 │   └── lib/               # API client (SSE + REST, cold-start warmup), blob store
 ├── demo_corpus/           # 5 curated documents with intentional contradictions
 ├── tests/                 # unit · integration · eval (RAGAS harness + 20 QA pairs)
@@ -199,4 +201,6 @@ nexus/
 
 MIT — see [`LICENSE`](LICENSE).
 
-Built by **[Oussama Skia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection.
+**Part of a three-system portfolio:** [🎼 MAESTRO](https://github.com/skayy47/maestro) — multi-agent AI · 🧠 nexus · [🔬 AURA](https://github.com/skayy47/AURA) — full-stack data AI
+
+Built by **[Oussama Skia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection · answer grounding.
