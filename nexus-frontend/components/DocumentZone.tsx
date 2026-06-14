@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UploadCloud, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 import { uploadDocument, clearDocuments } from '@/lib/api'
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export function DocumentZone({ onClear, onUpload }: Props) {
+  const t = useTranslations('documentZone')
   const [state, setState] = useState<ZoneState>('idle')
   const [progressText, setProgressText] = useState('')
   const [results, setResults] = useState<FileResult[]>([])
@@ -49,7 +51,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      setProgressText(`Processing ${i + 1}/${files.length}: ${file.name}`)
+      setProgressText(t('processing', { current: i + 1, total: files.length, name: file.name }))
 
       try {
         const result = await uploadDocument(file)
@@ -59,7 +61,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
       } catch (err) {
         newResults.push({
           name: file.name,
-          error: err instanceof Error ? err.message : 'Upload failed',
+          error: err instanceof Error ? err.message : t('uploadFailed'),
         })
       }
     }
@@ -80,7 +82,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
       setResults([])
     } catch (err) {
       setState('error')
-      setProgressText(err instanceof Error ? err.message : 'Clear failed.')
+      setProgressText(err instanceof Error ? err.message : t('clearFailed'))
     }
   }
 
@@ -136,9 +138,9 @@ export function DocumentZone({ onClear, onUpload }: Props) {
             >
               <UploadCloud size={24} className="text-slate-500" />
               <p className="text-sm text-slate-400">
-                Drop files or <span className="text-indigo-400">browse</span>
+                {t('dropFiles')} <span className="text-indigo-400">{t('browse')}</span>
               </p>
-              <p className="text-xs text-slate-600">PDF, DOCX, TXT, MD — max 20 MB · multiple files supported</p>
+              <p className="text-xs text-slate-600">{t('formats')}</p>
             </motion.div>
           )}
 
@@ -150,7 +152,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
                 <Trash2 size={24} className="text-amber-400" />
               </motion.div>
-              <p className="text-sm text-slate-400">Clearing previous documents...</p>
+              <p className="text-sm text-slate-400">{t('clearing')}</p>
             </motion.div>
           )}
 
@@ -182,8 +184,8 @@ export function DocumentZone({ onClear, onUpload }: Props) {
             >
               <CheckCircle size={24} className={errorCount === 0 ? 'text-emerald-400' : 'text-amber-400'} />
               <p className={`text-sm font-medium ${errorCount === 0 ? 'text-emerald-300' : 'text-amber-300'}`}>
-                {successCount} document{successCount !== 1 ? 's' : ''} loaded
-                {errorCount > 0 && `, ${errorCount} failed`}
+                {t('loaded', { count: successCount })}
+                {errorCount > 0 && t('failed', { count: errorCount })}
               </p>
               {/* Per-file results */}
               <ul className="w-full max-w-xs text-left space-y-0.5 mt-1">
@@ -196,7 +198,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
                       {r.name}
                     </span>
                     {r.chunks !== undefined && (
-                      <span className="text-slate-600 shrink-0">{r.chunks} chunks</span>
+                      <span className="text-slate-600 shrink-0">{t('chunks', { count: r.chunks })}</span>
                     )}
                   </li>
                 ))}
@@ -205,7 +207,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
                 onClick={e => { e.stopPropagation(); setState('idle'); setResults([]) }}
                 className="text-xs text-slate-500 hover:text-slate-300 underline mt-1"
               >
-                Upload more
+                {t('uploadMore')}
               </button>
             </motion.div>
           )}
@@ -221,7 +223,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
                 onClick={e => { e.stopPropagation(); setState('idle') }}
                 className="text-xs text-slate-500 hover:text-slate-300 underline mt-1"
               >
-                Try again
+                {t('tryAgain')}
               </button>
             </motion.div>
           )}
@@ -235,7 +237,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
           className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-400 transition-colors"
         >
           <Trash2 size={12} />
-          Clear all documents
+          {t('clearAll')}
         </motion.button>
       )}
     </div>

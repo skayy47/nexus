@@ -12,7 +12,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from nexus.config import get_settings
-from nexus.features.transparency import build_transparency
+from nexus.features.transparency import build_grounding
 from nexus.index.hybrid_retriever import hybrid_retrieve
 from nexus.index.supabase_store import (
     clear_all_chunks,
@@ -75,6 +75,7 @@ class ChatRequest(BaseModel):
     question: str
     session_id: str = ""
     transparency_mode: bool = True
+    language: str = "en"  # UI locale ("en" | "fr") — drives the answer language
 
 
 # ── Health ───────────────────────────────────────────────────────────────────
@@ -306,13 +307,17 @@ async def chat(request: ChatRequest) -> StreamingResponse:
     _session_counts[session_id] += 1
 
     return StreamingResponse(
-        _generate_stream(request.question, session_id, request.transparency_mode),
+        _generate_stream(
+            request.question, session_id, request.transparency_mode, request.language
+        ),
         media_type="text/event-stream",
         headers={"X-Session-ID": session_id},
     )
 
 
-async def _generate_stream(question: str, session_id: str, transparency: bool):
+async def _generate_stream(
+    question: str, session_id: str, transparency: bool, language: str = "en"
+):
     try:
         query_vec = embed_query(question)
         chunks = await hybrid_retrieve(question, query_vec, k=settings.retrieval_k)
@@ -323,28 +328,28 @@ async def _generate_stream(question: str, session_id: str, transparency: bool):
 
         # Stream answer tokens
         answer_tokens: list[str] = []
-        async for token in generate_answer(question, chunks):
+        async for token in generate_answer(question, chunks, language):
             answer_tokens.append(token)
             yield _sse("token", {"text": token})
 
         full_answer = "".join(answer_tokens)
 
-        # Transparency
+        # Transparency — grounding / source verification of the generated answer
         if transparency:
-            transparency_result = build_transparency(chunks)
-            yield _sse("transparency", transparency_result.model_dump())
+            grounding = build_grounding(full_answer, chunks)
+            yield _sse("grounding", grounding.model_dump())
 
-            # Knowledge Gap detection — only fires when confidence is low AND
-            # the answer itself signals it couldn't find the information.
-            # Prevents false gaps when NEXUS found a good answer despite low cosine scores.
-            if transparency_result.confidence_score < 0.45 and _answer_is_non_answer(full_answer):
+            # Knowledge Gap detection — only fires when grounding coverage is low
+            # AND the answer itself signals it couldn't find the information.
+            # Prevents false gaps when NEXUS produced a well-grounded answer.
+            if grounding.coverage < 0.45 and _answer_is_non_answer(full_answer):
                 try:
                     from nexus.features.gap_detector import detect_gaps
                     from nexus.index.supabase_store import get_document_list
 
                     docs = await get_document_list()
                     doc_names = [d["name"] for d in docs]
-                    gap = await detect_gaps(question, transparency_result.confidence_score, doc_names)
+                    gap = await detect_gaps(question, grounding.coverage, doc_names, language)
                     if gap:
                         _session_gaps[session_id].append(gap.model_dump())
                         yield _sse("gap", gap.model_dump())
@@ -354,7 +359,7 @@ async def _generate_stream(question: str, session_id: str, transparency: bool):
         # Contradiction check
         from nexus.features.contradiction import detect_contradictions
 
-        contradiction = await detect_contradictions(chunks)
+        contradiction = await detect_contradictions(chunks, language)
         if contradiction:
             yield _sse("contradiction", contradiction.model_dump())
 
@@ -377,6 +382,12 @@ def _answer_is_non_answer(text: str) -> bool:
         "based on the available documents, i cannot",
         "the documents do not", "the document does not",
         "no relevant information", "unable to determine",
+        # French
+        "je ne peux pas", "je ne trouve pas", "aucune information",
+        "non mentionné", "ne mentionne pas", "ne mentionnent pas",
+        "ne contient pas", "ne contiennent pas", "non disponible",
+        "impossible de déterminer", "aucune mention", "non documenté",
+        "pas trouvé", "aucune information pertinente", "les documents ne",
     )
     return any(s in low for s in signals)
 

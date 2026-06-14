@@ -53,11 +53,21 @@ export interface SourceRef {
   excerpt: string
 }
 
-export interface ConfidenceResult {
-  score: number
-  label: 'high' | 'moderate' | 'low'
-  reasoning: string
+export interface GroundedClaim {
+  text: string
+  supported: boolean
+  source_index: number | null
+  similarity: number
+}
+
+export interface GroundingResult {
+  verdict: 'grounded' | 'partial' | 'ungrounded'
+  coverage: number
+  supported_count: number
+  claim_count: number
+  claims: GroundedClaim[]
   sources: SourceRef[]
+  single_source: boolean
 }
 
 export interface ContradictionResult {
@@ -69,7 +79,7 @@ export interface ContradictionResult {
 }
 
 export interface ChatEvent {
-  type: 'token' | 'transparency' | 'contradiction' | 'done' | 'error'
+  type: 'token' | 'grounding' | 'contradiction' | 'gap' | 'done' | 'error'
   data: Record<string, unknown>
 }
 
@@ -131,12 +141,13 @@ export async function clearDocuments(): Promise<{ status: string; deleted: numbe
 
 export async function* streamChat(
   question: string,
-  sessionId: string
+  sessionId: string,
+  locale = 'en'
 ): AsyncGenerator<ChatEvent> {
   const res = await fetch(`${API_URL}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question, session_id: sessionId }),
+    body: JSON.stringify({ question, session_id: sessionId, language: locale }),
   })
 
   if (!res.ok) {

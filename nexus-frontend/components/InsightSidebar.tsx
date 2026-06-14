@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Zap, Search, FileText, ChevronDown, ChevronRight, ExternalLink, X } from 'lucide-react'
 import { deleteDocument } from '@/lib/api'
@@ -20,6 +21,7 @@ export function InsightSidebar({
   documents = [],
   onDeleteDocument,
 }: Props) {
+  const t = useTranslations('sidebar')
   const [docsOpen, setDocsOpen] = useState(true)
   const [deletingDoc, setDeletingDoc] = useState<string | null>(null)
 
@@ -48,13 +50,13 @@ export function InsightSidebar({
   return (
     <div className="p-4 h-full flex flex-col overflow-y-auto">
       <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">
-        Knowledge Insights
+        {t('insights')}
       </h2>
 
       <div className="space-y-1">
         <StatRow
           icon={<Zap size={14} />}
-          label="Contradictions"
+          label={t('contradictions')}
           value={contradictionCount}
           accent="text-red-400"
           bg="bg-red-500/10"
@@ -62,14 +64,14 @@ export function InsightSidebar({
         />
         <StatRow
           icon={<Search size={14} />}
-          label="Knowledge Gaps"
+          label={t('gaps')}
           value={0}
           accent="text-amber-400"
           bg="bg-amber-500/10"
         />
         <StatRow
           icon={<FileText size={14} />}
-          label="Documents"
+          label={t('documents')}
           value={documentCount}
           accent="text-indigo-400"
           bg="bg-indigo-500/10"
@@ -84,7 +86,7 @@ export function InsightSidebar({
             className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors w-full mb-2"
           >
             {docsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-            Loaded Documents
+            {t('loadedDocuments')}
           </button>
 
           <AnimatePresence initial={false}>
@@ -154,8 +156,7 @@ export function InsightSidebar({
           className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
         >
           <p className="text-xs text-red-400 leading-relaxed">
-            {contradictionCount} contradiction{contradictionCount !== 1 ? 's' : ''} detected.
-            Review flagged responses.
+            {t('contradictionMsg', { count: contradictionCount })}
           </p>
         </motion.div>
       )}

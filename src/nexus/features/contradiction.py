@@ -89,8 +89,17 @@ def _format_chunks_for_contradiction(chunks: list[RetrievedChunk]) -> str:
     return "\n\n---\n\n".join(parts)
 
 
+# Appended to JSON-producing prompts when the UI locale is French: localize the
+# free-text values, keep the keys/enums stable so parsing still works.
+_FR_JSON_DIRECTIVE = (
+    '\n\nWrite every natural-language value (such as "explanation") in French. '
+    "Keep the JSON keys and any enum values (e.g. severity) exactly as specified."
+)
+
+
 async def detect_contradictions(
     chunks: list[RetrievedChunk],
+    language: str = "en",
 ) -> ContradictionResult | None:
     """Detect contradictions among retrieved chunks via second LLM call.
 
@@ -106,6 +115,8 @@ async def detect_contradictions(
 
     doc_text = _format_chunks_for_contradiction(chunks)
     prompt = _CONTRADICTION_PROMPT.format(documents=doc_text)
+    if (language or "en").strip().lower().startswith("fr"):
+        prompt = prompt + _FR_JSON_DIRECTIVE
 
     try:
         raw = await single_call(prompt, max_tokens=400, temperature=0.0)

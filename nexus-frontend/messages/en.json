@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "title": "NEXUS — Institutional Memory Engine",
+    "description": "Companies lose 42% of their knowledge when senior employees leave. NEXUS is a RAG system that detects contradictions in your documents and grounds every answer in its sources."
+  },
+  "nav": {
+    "howItWorks": "How it works",
+    "features": "Features",
+    "liveDemo": "Live demo",
+    "github": "GitHub"
+  },
+  "hero": {
+    "badge": "Institutional Memory Engine · Live",
+    "titlePre": "Companies lose ",
+    "titlePercent": "42%",
+    "titlePost": " of their knowledge when senior employees leave.",
+    "sub": "NEXUS turns your documents into an institution that remembers — answering with cited sources, grounding every claim in the evidence, and catching the moment two documents disagree.",
+    "tryDemo": "Try the live demo",
+    "waking": "Waking the server…",
+    "indexing": "Indexing 5 documents…",
+    "viewSource": "View source ↗",
+    "uploadOwn": "or upload your own documents →",
+    "wakingNote": "First visit in a while — the free server is waking up (~30–60s). This only happens once.",
+    "errorRetry": "The demo server is taking a moment — retry →",
+    "scroll": "Scroll"
+  },
+  "pipeline": {
+    "eyebrow": "The pipeline",
+    "titlePre": "From documents to ",
+    "titleAccent": "defensible answers",
+    "lead": "Every query runs through four stages — and every stage is auditable.",
+    "step1Title": "1 · Ingest & chunk",
+    "step1Desc": "PDF, DOCX, TXT parsed via Unstructured, split into 800-token semantic chunks with overlap and section headers.",
+    "step1Tag": "Unstructured · semantic chunking",
+    "step2Title": "2 · Hybrid retrieve",
+    "step2Desc": "Dense pgvector search and sparse BM25 run in parallel, then fuse with Reciprocal Rank Fusion (k=60) — beating vector-only on keyword-heavy queries.",
+    "step2Tag": "BM25 + pgvector · RRF",
+    "step3Title": "3 · Generate",
+    "step3Desc": "Groq Llama 3.3 70B streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection.",
+    "step3Tag": "Groq · LCEL · SSE streaming",
+    "step4Title": "4 · Verify",
+    "step4Desc": "Answer grounding checks every claim against the cited sources, plus a second LLM pass that compares them — surfacing contradictions and knowledge gaps before you trust the answer.",
+    "step4Tag": "Grounding · Contradiction Radar"
+  },
+  "features": {
+    "eyebrow": "What NEXUS detects",
+    "title": "Beyond chat-with-docs",
+    "lead": "Four capabilities that make answers trustworthy — not just fluent.",
+    "item1Title": "Contradiction Radar",
+    "item1Desc": "A second structured LLM pass compares retrieved chunks across documents and flags conflicting statements with a severity rating.",
+    "item2Title": "Knowledge Gaps",
+    "item2Desc": "Flags when the corpus has no real answer instead of hallucinating one — telling you what your documents are missing.",
+    "item3Title": "Source Attribution",
+    "item3Desc": "Every answer cites its exact document, page, and excerpt — expandable inline, never a black box.",
+    "item4Title": "Answer Grounding",
+    "item4Desc": "Checks how much of each answer is backed by the cited sources — a transparent coverage score, not an opaque confidence number."
+  },
+  "showcase": {
+    "eyebrow": "See it think",
+    "titlePre": "It tells you when your own docs ",
+    "titleAccent": "disagree",
+    "lead": "A real exchange from the demo corpus — two HR policies, one year apart.",
+    "tab": "nexus · chat",
+    "question": "What is the remote work policy? How many days per week?",
+    "answerPre": "According to the 2024 HR Policy, employees may work remotely up to ",
+    "answer2days": "two (2) days/week",
+    "answerMid": ". The 2023 version allowed up to ",
+    "answer3days": "three (3) days/week",
+    "answerPost": ".",
+    "groundingLabel": "Grounding",
+    "groundingValue": "Partial · 67%",
+    "contradictionTitle": "Contradiction detected · medium severity",
+    "contradictionDesc": "These two policies disagree on the remote-work limit. The 2024 version appears more recent and may supersede the 2023 policy.",
+    "policy2023Limit": "up to 3 days / week",
+    "policy2024Limit": "up to 2 days / week"
+  },
+  "cta": {
+    "titlePre": "Give your documents ",
+    "titleAccent": "a memory.",
+    "sub": "One click loads a live corpus with built-in contradictions. No signup.",
+    "errorRetry": "Server's waking up — retry →"
+  },
+  "footer": {
+    "tagline": "Built by Oussama Skia (SKAY) · RAG · hybrid retrieval · contradiction detection · MIT licensed"
+  },
+  "chat": {
+    "docsInContext": "{count} documents in context",
+    "noDocuments": "No documents loaded",
+    "upload": "Upload documents",
+    "close": "Close"
+  },
+  "chatWindow": {
+    "demoLoaded": "Demo corpus loaded · 5 documents",
+    "askOrPick": "Ask anything — or pick a question below",
+    "eachQuestion": "Each question is designed to show a different NEXUS capability. Watch for the contradiction badge, grounding panel, and source cards.",
+    "askAnything": "Ask anything about your documents.",
+    "sessionLimit": "Session limit reached (20 queries). Refresh to start a new session.",
+    "placeholder": "Ask about your documents...",
+    "tryLabel": "Try:",
+    "s1Label": "Remote work policy",
+    "s1Question": "What is the remote work policy and how many days per week are allowed?",
+    "s1Badge": "⚡ Contradiction",
+    "s2Label": "Q3 marketing budget",
+    "s2Question": "What was the Q3 2023 marketing budget?",
+    "s2Badge": "⚡ Contradiction",
+    "s3Label": "Project Atlas status",
+    "s3Question": "What is the current status of Project Atlas?",
+    "s3Badge": "🕳 Knowledge gap",
+    "s4Label": "2024 product roadmap",
+    "s4Question": "What are the key product priorities in the 2024 roadmap?",
+    "s4Badge": "📄 Sources"
+  },
+  "grounding": {
+    "grounded": "Grounded",
+    "partial": "Partially grounded",
+    "ungrounded": "Ungrounded",
+    "cited": "{supported}/{total} cited · {pct}%",
+    "showCheck": "Show claim check",
+    "hideCheck": "Hide claim check",
+    "singleSource": "Based on a single document source."
+  },
+  "contradiction": {
+    "none": "No contradictions detected",
+    "detected": "Contradiction Detected"
+  },
+  "sidebar": {
+    "insights": "Knowledge Insights",
+    "contradictions": "Contradictions",
+    "gaps": "Knowledge Gaps",
+    "documents": "Documents",
+    "loadedDocuments": "Loaded Documents",
+    "contradictionMsg": "{count, plural, one {# contradiction detected.} other {# contradictions detected.}} Review flagged responses."
+  },
+  "documentZone": {
+    "dropFiles": "Drop files or",
+    "browse": "browse",
+    "formats": "PDF, DOCX, TXT, MD — max 20 MB · multiple files supported",
+    "clearing": "Clearing previous documents...",
+    "processing": "Processing {current}/{total}: {name}",
+    "loaded": "{count, plural, one {# document loaded} other {# documents loaded}}",
+    "failed": ", {count} failed",
+    "chunks": "{count} chunks",
+    "uploadMore": "Upload more",
+    "tryAgain": "Try again",
+    "clearAll": "Clear all documents",
+    "uploadFailed": "Upload failed",
+    "clearFailed": "Clear failed."
+  }
+}

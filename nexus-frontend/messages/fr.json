@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "title": "NEXUS — Moteur de mémoire institutionnelle",
+    "description": "Les entreprises perdent 42 % de leurs connaissances au départ des employés expérimentés. NEXUS est un système RAG qui détecte les contradictions dans vos documents et ancre chaque réponse dans ses sources."
+  },
+  "nav": {
+    "howItWorks": "Comment ça marche",
+    "features": "Fonctionnalités",
+    "liveDemo": "Démo en direct",
+    "github": "GitHub"
+  },
+  "hero": {
+    "badge": "Moteur de mémoire institutionnelle · En direct",
+    "titlePre": "Les entreprises perdent ",
+    "titlePercent": "42 %",
+    "titlePost": " de leurs connaissances au départ des employés expérimentés.",
+    "sub": "NEXUS transforme vos documents en une institution qui se souvient — en répondant avec des sources citées, en ancrant chaque affirmation dans les preuves, et en détectant l'instant où deux documents se contredisent.",
+    "tryDemo": "Essayer la démo en direct",
+    "waking": "Réveil du serveur…",
+    "indexing": "Indexation de 5 documents…",
+    "viewSource": "Voir le code ↗",
+    "uploadOwn": "ou importez vos propres documents →",
+    "wakingNote": "Première visite depuis un moment — le serveur gratuit se réveille (~30–60 s). Cela n'arrive qu'une fois.",
+    "errorRetry": "Le serveur de démo prend un instant — réessayer →",
+    "scroll": "Défiler"
+  },
+  "pipeline": {
+    "eyebrow": "Le pipeline",
+    "titlePre": "Des documents à des ",
+    "titleAccent": "réponses défendables",
+    "lead": "Chaque requête passe par quatre étapes — et chaque étape est auditable.",
+    "step1Title": "1 · Ingestion & découpage",
+    "step1Desc": "PDF, DOCX, TXT analysés via Unstructured, découpés en fragments sémantiques de 800 tokens avec chevauchement et en-têtes de section.",
+    "step1Tag": "Unstructured · découpage sémantique",
+    "step2Title": "2 · Récupération hybride",
+    "step2Desc": "La recherche dense pgvector et la recherche creuse BM25 s'exécutent en parallèle, puis fusionnent via Reciprocal Rank Fusion (k=60) — surpassant le vectoriel seul sur les requêtes riches en mots-clés.",
+    "step2Tag": "BM25 + pgvector · RRF",
+    "step3Title": "3 · Génération",
+    "step3Desc": "Groq Llama 3.3 70B diffuse la réponse token par token via une chaîne LCEL — le contexte est encadré de balises documentaires pour neutraliser l'injection de prompt.",
+    "step3Tag": "Groq · LCEL · streaming SSE",
+    "step4Title": "4 · Vérification",
+    "step4Desc": "L'ancrage des réponses vérifie chaque affirmation par rapport aux sources citées, plus une seconde passe LLM qui les compare — révélant contradictions et lacunes avant que vous ne fassiez confiance à la réponse.",
+    "step4Tag": "Ancrage · Radar de contradictions"
+  },
+  "features": {
+    "eyebrow": "Ce que NEXUS détecte",
+    "title": "Au-delà du chat-avec-documents",
+    "lead": "Quatre capacités qui rendent les réponses dignes de confiance — pas seulement fluides.",
+    "item1Title": "Radar de contradictions",
+    "item1Desc": "Une seconde passe LLM structurée compare les fragments récupérés entre les documents et signale les affirmations contradictoires avec un niveau de gravité.",
+    "item2Title": "Lacunes de connaissances",
+    "item2Desc": "Signale quand le corpus n'a pas de vraie réponse au lieu d'en halluciner une — vous indiquant ce qui manque à vos documents.",
+    "item3Title": "Attribution des sources",
+    "item3Desc": "Chaque réponse cite son document, sa page et son extrait exacts — dépliable en ligne, jamais une boîte noire.",
+    "item4Title": "Ancrage des réponses",
+    "item4Desc": "Vérifie quelle part de chaque réponse est étayée par les sources citées — un taux de couverture transparent, pas un score de confiance opaque."
+  },
+  "showcase": {
+    "eyebrow": "Voyez-le réfléchir",
+    "titlePre": "Il vous dit quand vos propres documents ",
+    "titleAccent": "se contredisent",
+    "lead": "Un échange réel du corpus de démo — deux politiques RH, à un an d'écart.",
+    "tab": "nexus · chat",
+    "question": "Quelle est la politique de télétravail ? Combien de jours par semaine ?",
+    "answerPre": "Selon la politique RH 2024, les employés peuvent télétravailler jusqu'à ",
+    "answer2days": "deux (2) jours/semaine",
+    "answerMid": ". La version 2023 autorisait jusqu'à ",
+    "answer3days": "trois (3) jours/semaine",
+    "answerPost": ".",
+    "groundingLabel": "Ancrage",
+    "groundingValue": "Partiel · 67 %",
+    "contradictionTitle": "Contradiction détectée · gravité moyenne",
+    "contradictionDesc": "Ces deux politiques divergent sur la limite de télétravail. La version 2024 semble plus récente et pourrait remplacer la politique 2023.",
+    "policy2023Limit": "jusqu'à 3 jours / semaine",
+    "policy2024Limit": "jusqu'à 2 jours / semaine"
+  },
+  "cta": {
+    "titlePre": "Offrez une mémoire à ",
+    "titleAccent": "vos documents.",
+    "sub": "Un seul clic charge un corpus en direct avec des contradictions intégrées. Sans inscription.",
+    "errorRetry": "Le serveur se réveille — réessayer →"
+  },
+  "footer": {
+    "tagline": "Conçu par Oussama Skia (SKAY) · RAG · récupération hybride · détection de contradictions · sous licence MIT"
+  },
+  "chat": {
+    "docsInContext": "{count} documents dans le contexte",
+    "noDocuments": "Aucun document chargé",
+    "upload": "Importer des documents",
+    "close": "Fermer"
+  },
+  "chatWindow": {
+    "demoLoaded": "Corpus de démo chargé · 5 documents",
+    "askOrPick": "Posez une question — ou choisissez ci-dessous",
+    "eachQuestion": "Chaque question illustre une capacité différente de NEXUS. Repérez le badge de contradiction, le panneau d'ancrage et les fiches de sources.",
+    "askAnything": "Posez n'importe quelle question sur vos documents.",
+    "sessionLimit": "Limite de session atteinte (20 requêtes). Actualisez pour démarrer une nouvelle session.",
+    "placeholder": "Interrogez vos documents...",
+    "tryLabel": "Essayez :",
+    "s1Label": "Politique de télétravail",
+    "s1Question": "Quelle est la politique de télétravail et combien de jours par semaine sont autorisés ?",
+    "s1Badge": "⚡ Contradiction",
+    "s2Label": "Budget marketing T3",
+    "s2Question": "Quel était le budget marketing du T3 2023 ?",
+    "s2Badge": "⚡ Contradiction",
+    "s3Label": "Statut du projet Atlas",
+    "s3Question": "Quel est le statut actuel du projet Atlas ?",
+    "s3Badge": "🕳 Lacune",
+    "s4Label": "Feuille de route produit 2024",
+    "s4Question": "Quelles sont les priorités produit clés de la feuille de route 2024 ?",
+    "s4Badge": "📄 Sources"
+  },
+  "grounding": {
+    "grounded": "Ancré",
+    "partial": "Partiellement ancré",
+    "ungrounded": "Non ancré",
+    "cited": "{supported}/{total} cités · {pct} %",
+    "showCheck": "Afficher la vérification",
+    "hideCheck": "Masquer la vérification",
+    "singleSource": "Basé sur une seule source documentaire."
+  },
+  "contradiction": {
+    "none": "Aucune contradiction détectée",
+    "detected": "Contradiction détectée"
+  },
+  "sidebar": {
+    "insights": "Analyses de connaissances",
+    "contradictions": "Contradictions",
+    "gaps": "Lacunes",
+    "documents": "Documents",
+    "loadedDocuments": "Documents chargés",
+    "contradictionMsg": "{count, plural, one {# contradiction détectée.} other {# contradictions détectées.}} Examinez les réponses signalées."
+  },
+  "documentZone": {
+    "dropFiles": "Déposez des fichiers ou",
+    "browse": "parcourez",
+    "formats": "PDF, DOCX, TXT, MD — max 20 Mo · plusieurs fichiers possibles",
+    "clearing": "Suppression des documents précédents...",
+    "processing": "Traitement {current}/{total} : {name}",
+    "loaded": "{count, plural, one {# document chargé} other {# documents chargés}}",
+    "failed": ", {count} en échec",
+    "chunks": "{count} fragments",
+    "uploadMore": "Importer plus",
+    "tryAgain": "Réessayer",
+    "clearAll": "Effacer tous les documents",
+    "uploadFailed": "Échec de l'importation",
+    "clearFailed": "Échec de la suppression."
+  }
+}

@@ -73,19 +73,32 @@ def format_context(chunks: list[RetrievedChunk]) -> str:
     return "\n\n".join(parts)
 
 
+# Appended to the system prompt when the UI locale is French so the whole answer
+# comes back in French — RAG quality on par with English.
+_FR_DIRECTIVE = (
+    "\n\nIMPORTANT: Respond entirely in French. Write the full answer in French, "
+    "keeping document names, citations, numbers, and figures exactly as they appear."
+)
+
+
 def build_messages(
     question: str,
     context: str,
+    language: str = "en",
 ) -> list[dict[str, str]]:
     """Build the message list for the LLM call.
 
-    Uses the versioned system prompt and formats the user message
-    with context and question.
+    Uses the versioned system prompt and formats the user message with context
+    and question. When *language* is French, a directive forces a French answer.
     """
     user_content = f"Document excerpts:\n\n{context}\n\nQuestion: {question}"
 
+    system_prompt = SYSTEM_PROMPT
+    if (language or "en").strip().lower().startswith("fr"):
+        system_prompt = system_prompt + _FR_DIRECTIVE
+
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_content},
     ]
 
@@ -93,16 +106,17 @@ def build_messages(
 async def generate_answer(
     question: str,
     chunks: list[RetrievedChunk],
+    language: str = "en",
 ) -> AsyncGenerator[str, None]:
     """Full LCEL-style chain: format context → build messages → stream answer.
 
-    Yields tokens as they arrive from the LLM.
-    Logs which prompt version produced the answer.
+    Yields tokens as they arrive from the LLM. When *language* is French, the
+    answer is generated in French. Logs which prompt version produced the answer.
     """
     from nexus.rag.llm_client import stream_tokens
 
     context = format_context(chunks)
-    messages = build_messages(question, context)
+    messages = build_messages(question, context, language)
 
     logger.info(
         "Generating answer",

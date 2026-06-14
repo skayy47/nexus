@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { ContradictionResult } from '@/lib/api'
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
  *  - Contradiction detected: red ⚠️ expandable block
  */
 export function ContradictionBadge({ contradiction }: Props) {
+  const t = useTranslations('contradiction')
   const [expanded, setExpanded] = useState(false)
 
   if (!contradiction) {
@@ -27,7 +29,7 @@ export function ContradictionBadge({ contradiction }: Props) {
           color: '#22c55e',
         }}
       >
-        ✅ No contradictions detected
+        ✅ {t('none')}
       </div>
     )
   }
@@ -53,7 +55,7 @@ export function ContradictionBadge({ contradiction }: Props) {
           color: '#ef4444',
         }}
       >
-        <span>⚠️ Contradiction Detected</span>
+        <span>⚠️ {t('detected')}</span>
         {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
       </motion.button>
 

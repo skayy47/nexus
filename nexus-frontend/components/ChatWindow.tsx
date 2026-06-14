@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useRef, useId, useCallback } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Loader2 } from 'lucide-react'
-import { streamChat, ConfidenceResult, ContradictionResult, SourceRef } from '@/lib/api'
-import { ConfidenceBar } from './ConfidenceBar'
+import { streamChat, GroundingResult, ContradictionResult, SourceRef } from '@/lib/api'
+import { GroundingPanel } from './GroundingPanel'
 import { ContradictionBadge } from './ContradictionBadge'
 import { SourceCard } from './SourceCard'
 
@@ -13,7 +14,7 @@ interface Message {
   role: 'user' | 'assistant'
   content: string
   done?: boolean
-  confidence?: ConfidenceResult
+  grounding?: GroundingResult
   contradiction?: ContradictionResult
   sources?: SourceRef[]
 }
@@ -23,36 +24,13 @@ interface Props {
   isDemoMode?: boolean
 }
 
-const DEMO_SUGGESTIONS = [
-  {
-    label: 'Remote work policy',
-    question: 'What is the remote work policy and how many days per week are allowed?',
-    badge: '⚡ Contradiction',
-    badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
-    dotClass: 'bg-red-400',
-  },
-  {
-    label: 'Q3 marketing budget',
-    question: 'What was the Q3 2023 marketing budget?',
-    badge: '⚡ Contradiction',
-    badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20',
-    dotClass: 'bg-red-400',
-  },
-  {
-    label: 'Project Atlas status',
-    question: 'What is the current status of Project Atlas?',
-    badge: '🕳 Knowledge gap',
-    badgeClass: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    dotClass: 'bg-amber-400',
-  },
-  {
-    label: '2024 product roadmap',
-    question: 'What are the key product priorities in the 2024 roadmap?',
-    badge: '📄 Sources',
-    badgeClass: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
-    dotClass: 'bg-indigo-400',
-  },
-]
+// Styling per demo suggestion; the copy lives in messages (chatWindow.s{n}*).
+const SUGGESTION_META = [
+  { key: 's1', badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20', dotClass: 'bg-red-400' },
+  { key: 's2', badgeClass: 'text-red-400 bg-red-400/10 border-red-400/20', dotClass: 'bg-red-400' },
+  { key: 's3', badgeClass: 'text-amber-400 bg-amber-400/10 border-amber-400/20', dotClass: 'bg-amber-400' },
+  { key: 's4', badgeClass: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20', dotClass: 'bg-indigo-400' },
+] as const
 
 export function ChatWindow({ onContradiction, isDemoMode }: Props) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -62,6 +40,15 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
   const queryCount = useRef(0)
   const idPrefix = useId()
   const bottomRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations('chatWindow')
+  const locale = useLocale()
+  const suggestions = SUGGESTION_META.map((m) => ({
+    label: t(`${m.key}Label`),
+    question: t(`${m.key}Question`),
+    badge: t(`${m.key}Badge`),
+    badgeClass: m.badgeClass,
+    dotClass: m.dotClass,
+  }))
 
   const submitQuestion = useCallback(async (question: string) => {
     if (!question.trim() || streaming || queryCount.current >= 20) return
@@ -82,7 +69,7 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
 
     try {
-      for await (const event of streamChat(question, sessionId.current)) {
+      for await (const event of streamChat(question, sessionId.current, locale)) {
         if (event.type === 'token') {
           setMessages(prev =>
             prev.map(m =>
@@ -92,26 +79,12 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
             )
           )
           setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 10)
-        } else if (event.type === 'transparency') {
-          const t = event.data as unknown as {
-            confidence: string
-            confidence_score: number
-            reasoning: string
-            sources: SourceRef[]
-          }
+        } else if (event.type === 'grounding') {
+          const g = event.data as unknown as GroundingResult
           setMessages(prev =>
             prev.map(m =>
               m.id === aid
-                ? {
-                    ...m,
-                    confidence: {
-                      score: t.confidence_score,
-                      label: t.confidence as 'high' | 'moderate' | 'low',
-                      reasoning: t.reasoning,
-                      sources: t.sources ?? [],
-                    },
-                    sources: t.sources ?? [],
-                  }
+                ? { ...m, grounding: g, sources: g.sources ?? [] }
                 : m
             )
           )
@@ -136,7 +109,7 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
       )
       setStreaming(false)
     }
-  }, [streaming, idPrefix, onContradiction])
+  }, [streaming, idPrefix, onContradiction, locale])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -163,19 +136,18 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Demo corpus loaded · 5 documents
+                      {t('demoLoaded')}
                     </div>
                     <h2 className="text-slate-200 text-base font-semibold mb-1">
-                      Ask anything — or pick a question below
+                      {t('askOrPick')}
                     </h2>
                     <p className="text-slate-500 text-sm max-w-md">
-                      Each question is designed to show a different NEXUS capability.
-                      Watch for the contradiction badge, confidence bar, and source cards.
+                      {t('eachQuestion')}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
-                    {DEMO_SUGGESTIONS.map((s) => (
+                    {suggestions.map((s) => (
                       <button
                         key={s.label}
                         onClick={() => submitQuestion(s.question)}
@@ -199,7 +171,7 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
                 </>
               ) : (
                 <p className="text-slate-500 text-center mt-16 text-sm">
-                  Ask anything about your documents.
+                  {t('askAnything')}
                 </p>
               )}
             </motion.div>
@@ -236,14 +208,8 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
                     )}
                   </p>
 
-                  {/* Confidence bar — only after we have the data */}
-                  {msg.confidence && (
-                    <ConfidenceBar
-                      score={msg.confidence.score}
-                      label={msg.confidence.label}
-                      reasoning={msg.confidence.reasoning}
-                    />
-                  )}
+                  {/* Grounding — source verification of the answer */}
+                  {msg.grounding && <GroundingPanel grounding={msg.grounding} />}
 
                   {/* Source cards */}
                   {msg.sources && msg.sources.length > 0 && (
@@ -272,8 +238,8 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
         {/* Persistent suggestion chips — stay available after the first question */}
         {isDemoMode && messages.length > 0 && !atLimit && (
           <div className="flex gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <span className="shrink-0 text-[11px] text-slate-500 self-center pr-1">Try:</span>
-            {DEMO_SUGGESTIONS.map((s) => (
+            <span className="shrink-0 text-[11px] text-slate-500 self-center pr-1">{t('tryLabel')}</span>
+            {suggestions.map((s) => (
               <button
                 key={s.label}
                 onClick={() => submitQuestion(s.question)}
@@ -289,14 +255,14 @@ export function ChatWindow({ onContradiction, isDemoMode }: Props) {
         )}
         {atLimit && (
           <p className="text-xs text-amber-400 mb-2">
-            Session limit reached (20 queries). Refresh to start a new session.
+            {t('sessionLimit')}
           </p>
         )}
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder="Ask about your documents..."
+            placeholder={t('placeholder')}
             disabled={streaming || atLimit}
             className="flex-1 bg-slate-800 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 disabled:opacity-50 transition"
           />
