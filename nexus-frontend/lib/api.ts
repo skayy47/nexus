@@ -110,7 +110,8 @@ export async function loadDemo(): Promise<void> {
 export async function uploadDocument(file: File): Promise<{ document_id: string; chunk_count: number }> {
   const form = new FormData()
   form.append('file', file)
-  const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: form })
+  // 3-minute ceiling: HF free-CPU embedding can be slow for large docs.
+  const res = await fetchWithTimeout(`${API_URL}/upload`, { method: 'POST', body: form }, 180000)
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
     throw new Error(err.detail || `Upload failed (${res.status})`)
