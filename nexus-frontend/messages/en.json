@@ -36,8 +36,8 @@
     "step2Desc": "Dense pgvector search and sparse BM25 run in parallel, then fuse with Reciprocal Rank Fusion (k=60) — beating vector-only on keyword-heavy queries.",
     "step2Tag": "BM25 + pgvector · RRF",
     "step3Title": "3 · Generate",
-    "step3Desc": "Groq Llama 3.3 70B streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection.",
-    "step3Tag": "Groq · LCEL · SSE streaming",
+    "step3Desc": "Gemini 2.0 Flash streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection. Natively bilingual: English and French.",
+    "step3Tag": "Gemini 2.0 Flash · LCEL · SSE streaming",
     "step4Title": "4 · Verify",
     "step4Desc": "Answer grounding checks every claim against the cited sources, plus a second LLM pass that compares them — surfacing contradictions and knowledge gaps before you trust the answer.",
     "step4Tag": "Grounding · Contradiction Radar"
@@ -92,7 +92,7 @@
   "chatWindow": {
     "demoLoaded": "Demo corpus loaded · 5 documents",
     "askOrPick": "Ask anything — or pick a question below",
-    "eachQuestion": "Each question is designed to show a different NEXUS capability. Watch for the contradiction badge, grounding panel, and source cards.",
+    "eachQuestion": "Each question showcases a different NEXUS capability. Watch for the contradiction badge, grounding panel, and source cards.",
     "askAnything": "Ask anything about your documents.",
     "sessionLimit": "Session limit reached (20 queries). Refresh to start a new session.",
     "placeholder": "Ask about your documents...",
@@ -108,7 +108,20 @@
     "s3Badge": "🕳 Knowledge gap",
     "s4Label": "2024 product roadmap",
     "s4Question": "What are the key product priorities in the 2024 roadmap?",
-    "s4Badge": "📄 Sources"
+    "s4Badge": "📄 Sources",
+    "uploadTitle": "Upload your first document",
+    "uploadDesc": "Drop your files into the panel above — or click \"Upload documents\" in the top bar. PDF, DOCX, TXT and MD are supported.",
+    "uploadAction": "Upload documents",
+    "workspaceReadyTitle": "Your workspace is ready",
+    "workspaceReadyDesc": "{count, plural, one {# document indexed} other {# documents indexed}} — ask your first question.",
+    "workspaceS1Label": "Key topics",
+    "workspaceS1Question": "What are the main topics covered across my documents?",
+    "workspaceS2Label": "Contradictions",
+    "workspaceS2Question": "Are there any contradictions or conflicting information in my documents?",
+    "workspaceS3Label": "Summary",
+    "workspaceS3Question": "Give me a concise summary of all my documents.",
+    "modeBadgeDemo": "DEMO",
+    "modeBadgeWorkspace": "WORKSPACE"
   },
   "grounding": {
     "grounded": "Grounded",

@@ -1,0 +1,60 @@
+{
+  "project": "NEXUS",
+  "version": "1.0.0",
+  "description": "Institutional Memory Engine - RAG-Powered Document Assistant",
+  "installedSkills": [
+    {
+      "id": "rag-architect",
+      "name": "RAG Architect",
+      "source": "https://github.com/jeffallen/claude-skills",
+      "category": "core",
+      "phase": "week-1",
+      "purpose": "Design and architect RAG pipeline for NEXUS",
+      "usage": "System design decisions, retrieval strategy, vector DB choices",
+      "status": "installed"
+    },
+    {
+      "id": "rag-engineer",
+      "name": "RAG Engineer",
+      "source": "https://github.com/icbn33/antigravity-awesome-skills",
+      "category": "core",
+      "phase": "week-2-3",
+      "purpose": "Implement and optimize RAG pipeline features",
+      "usage": "Build Contradiction Radar, Knowledge Gap Detection, Cross-Document Insights",
+      "status": "installed"
+    },
+    {
+      "id": "rag-implementation",
+      "name": "RAG Implementation",
+      "source": "https://github.com/oshoban/agents",
+      "category": "core",
+      "phase": "week-3-4",
+      "purpose": "Deploy and integrate RAG system into Streamlit frontend",
+      "usage": "Production integration, API endpoints, chat interface implementation",
+      "status": "installed"
+    }
+  ],
+  "complementarySkills": [
+    {
+      "id": "system-design",
+      "source": "internal",
+      "purpose": "Overall architecture validation"
+    },
+    {
+      "id": "testing-strategy",
+      "source": "internal",
+      "purpose": "Feature validation and testing"
+    },
+    {
+      "id": "documentation",
+      "source": "internal",
+      "purpose": "README and technical docs"
+    }
+  ],
+  "timeline": {
+    "week-1": ["rag-architect"],
+    "week-2-3": ["rag-architect", "rag-engineer", "testing-strategy"],
+    "week-3-4": ["rag-implementation", "documentation"],
+    "week-4": ["freelance-proposal"]
+  }
+}

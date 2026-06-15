@@ -42,7 +42,7 @@ def _load_system_prompt() -> str:
 
 
 SYSTEM_PROMPT = _load_system_prompt()
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v2"
 
 
 def format_context(chunks: list[RetrievedChunk]) -> str:
@@ -73,14 +73,6 @@ def format_context(chunks: list[RetrievedChunk]) -> str:
     return "\n\n".join(parts)
 
 
-# Appended to the system prompt when the UI locale is French so the whole answer
-# comes back in French — RAG quality on par with English.
-_FR_DIRECTIVE = (
-    "\n\nIMPORTANT: Respond entirely in French. Write the full answer in French, "
-    "keeping document names, citations, numbers, and figures exactly as they appear."
-)
-
-
 def build_messages(
     question: str,
     context: str,
@@ -89,16 +81,21 @@ def build_messages(
     """Build the message list for the LLM call.
 
     Uses the versioned system prompt and formats the user message with context
-    and question. When *language* is French, a directive forces a French answer.
+    and question. The system prompt already instructs the model to match the
+    user's language — the explicit language hint in the user turn reinforces it.
     """
-    user_content = f"Document excerpts:\n\n{context}\n\nQuestion: {question}"
+    lang_code = (language or "en").strip().lower()[:2]
 
-    system_prompt = SYSTEM_PROMPT
-    if (language or "en").strip().lower().startswith("fr"):
-        system_prompt = system_prompt + _FR_DIRECTIVE
+    # Explicit language reinforcement in the user turn (belt-and-suspenders)
+    lang_hint = (
+        "[Répondez en français.]\n" if lang_code == "fr"
+        else "[Please respond in English.]\n" if lang_code == "en"
+        else ""
+    )
+    user_content = f"{lang_hint}Document excerpts:\n\n{context}\n\nQuestion: {question}"
 
     return [
-        {"role": "system", "content": system_prompt},
+        {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
     ]
 

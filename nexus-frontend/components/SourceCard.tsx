@@ -10,13 +10,13 @@ interface Props {
 }
 
 const PALETTES = [
-  { chip: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40' },
-  { chip: 'bg-violet-500/20 text-violet-300 border-violet-500/40' },
-  { chip: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+  { chip: 'bg-[#C9973B]/20 text-[#D4A843] border-[#C9973B]/40' },
+  { chip: 'bg-[#9B6B3A]/20 text-[#C4A06A] border-[#9B6B3A]/40' },
+  { chip: 'bg-[#D4A843]/20 text-[#EDD270] border-[#D4A843]/40' },
   { chip: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
-  { chip: 'bg-rose-500/20 text-rose-300 border-rose-500/40' },
-  { chip: 'bg-sky-500/20 text-sky-300 border-sky-500/40' },
-  { chip: 'bg-teal-500/20 text-teal-300 border-teal-500/40' },
+  { chip: 'bg-[#C9973B]/15 text-[#C4B49A] border-[#C9973B]/30' },
+  { chip: 'bg-[#9B6B3A]/15 text-[#C4A06A] border-[#9B6B3A]/30' },
+  { chip: 'bg-[#D4A843]/15 text-[#D4A843] border-[#D4A843]/30' },
 ]
 
 function docPalette(name: string) {
@@ -30,21 +30,21 @@ export function SourceCard({ source }: Props) {
   const pal = docPalette(source.document_name)
 
   return (
-    <div className="rounded-lg overflow-hidden border border-slate-700/40 bg-slate-800/30">
+    <div className="rounded-lg overflow-hidden border border-[#C9973B]/20 bg-[#1A1208]/50">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3 py-2 hover:bg-slate-700/20 transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#C9973B]/[0.06] transition-colors"
       >
         <div className="flex items-center gap-2 min-w-0">
           {/* Colored doc chip */}
           <span className={`shrink-0 border rounded-full px-2 py-0.5 text-[10px] font-medium truncate max-w-[160px] ${pal.chip}`}>
             {source.document_name}
           </span>
-          <span className="text-slate-500 text-xs shrink-0">p.{source.page_number}</span>
+          <span className="text-[#6A5A42] text-xs shrink-0">p.{source.page_number}</span>
         </div>
         {open
-          ? <ChevronUp size={12} className="text-slate-500 shrink-0" />
-          : <ChevronDown size={12} className="text-slate-500 shrink-0" />}
+          ? <ChevronUp size={12} className="text-[#6A5A42] shrink-0" />
+          : <ChevronDown size={12} className="text-[#6A5A42] shrink-0" />}
       </button>
 
       <AnimatePresence>
@@ -56,8 +56,8 @@ export function SourceCard({ source }: Props) {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="overflow-hidden"
           >
-            <div className="px-3 py-2 border-t border-slate-700/40">
-              <p className="text-xs text-slate-500 italic leading-relaxed font-mono">
+            <div className="px-3 py-2 border-t border-[#C9973B]/15">
+              <p className="text-xs text-[#6A5A42] italic leading-relaxed font-mono">
                 &ldquo;{source.excerpt}&rdquo;
               </p>
             </div>

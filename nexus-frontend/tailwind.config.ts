@@ -7,13 +7,16 @@ const config: Config = {
     extend: {
       colors: {
         nexus: {
-          bg: '#020817',
-          card: '#0f172a',
-          accent: '#6366f1',
+          bg: '#0E0A05',
+          card: '#1A1208',
+          accent: '#C9973B',
+          bronze: '#9B6B3A',
           danger: '#ef4444',
           success: '#10b981',
-          info: '#3b82f6',
-          warning: '#f59e0b',
+          info: '#C9973B',
+          warning: '#D4A843',
+          ivory: '#EDE4D0',
+          muted: '#7A6A52',
         },
       },
     },

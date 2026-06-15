@@ -20,19 +20,24 @@ class LLMBackend(str, Enum):
 
     OLLAMA = "ollama"
     GROQ = "groq"
+    GEMINI = "gemini"
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # ── LLM Backend Switch ───────────────────────────
-    llm_backend: LLMBackend = LLMBackend.GROQ
+    llm_backend: LLMBackend = LLMBackend.GEMINI
 
-    # ── Groq (hosted demo) ───────────────────────────
+    # ── Gemini (primary — best free FR+EN quality) ───
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.0-flash"
+
+    # ── Groq (fallback) ──────────────────────────────
     groq_api_key: str = ""
     groq_model: str = "llama-3.3-70b-versatile"
 
-    @field_validator("groq_api_key", "supabase_key", "supabase_url", mode="before")
+    @field_validator("gemini_api_key", "groq_api_key", "supabase_key", "supabase_url", mode="before")
     @classmethod
     def strip_whitespace(cls, v: str) -> str:
         """Strip accidental whitespace/newlines from secrets (common paste issue)."""

@@ -13,9 +13,9 @@
 }
 
 @layer components {
-  /* Brand gradient text */
+  /* Brand gradient text — champagne: ivory → gold → bronze */
   .nx-grad {
-    background: linear-gradient(110deg, #818cf8, #a78bfa 55%, #c4b5fd);
+    background: linear-gradient(110deg, #EDE4D0, #D4A843 55%, #9B6B3A);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -31,7 +31,7 @@
     transition: opacity 0.4s;
     background: radial-gradient(
       400px circle at var(--mx, 50%) var(--my, 0%),
-      rgba(99, 102, 241, 0.14),
+      rgba(201, 151, 59, 0.14),
       transparent 45%
     );
     pointer-events: none;

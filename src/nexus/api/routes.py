@@ -334,6 +334,16 @@ async def _generate_stream(
 
         full_answer = "".join(answer_tokens)
 
+        # Guard: if the model returned nothing, surface a user-facing error
+        if not full_answer.strip():
+            empty_msg = (
+                "Le modèle n'a pas pu générer de réponse. Veuillez réessayer."
+                if (language or "en").strip().lower().startswith("fr")
+                else "The model returned an empty response. Please try again."
+            )
+            yield _sse("error", {"message": empty_msg})
+            return
+
         # Transparency — grounding / source verification of the generated answer
         if transparency:
             grounding = build_grounding(full_answer, chunks)

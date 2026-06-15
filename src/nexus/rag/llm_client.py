@@ -1,9 +1,11 @@
-"""LLM client — backend switch between Ollama (local) and Groq (hosted).
+"""LLM client — backend switch between Ollama, Groq, and Gemini.
 
-Uses LangChain integrations for both backends, supporting:
+Uses LangChain integrations for all backends, supporting:
 - Streaming token generation
 - Structured output via Pydantic models
 - Single (non-streaming) calls for feature modules
+
+Default backend: Gemini 2.0 Flash (best free-tier FR+EN quality).
 """
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ _llm_instance: BaseChatModel | None = None
 def get_llm() -> BaseChatModel:
     """Get the configured LLM instance (singleton).
 
-    Returns LangChain chat model for either Ollama or Groq backend.
+    Returns LangChain chat model for the configured backend.
     """
     global _llm_instance
     if _llm_instance is not None:
@@ -44,6 +46,18 @@ def get_llm() -> BaseChatModel:
             temperature=0.1,
         )
         logger.info("LLM initialized", backend="ollama", model=settings.ollama_model)
+
+    elif settings.llm_backend == LLMBackend.GEMINI:
+        from langchain_google_genai import ChatGoogleGenerativeAI
+
+        _llm_instance = ChatGoogleGenerativeAI(
+            model=settings.gemini_model,
+            google_api_key=settings.gemini_api_key,
+            temperature=0.1,
+            max_output_tokens=2048,
+        )
+        logger.info("LLM initialized", backend="gemini", model=settings.gemini_model)
+
     else:
         from langchain_groq import ChatGroq
 
@@ -58,6 +72,12 @@ def get_llm() -> BaseChatModel:
     return _llm_instance
 
 
+def reset_llm() -> None:
+    """Reset the singleton — used when switching backends at runtime or in tests."""
+    global _llm_instance
+    _llm_instance = None
+
+
 async def stream_tokens(
     messages: list[dict[str, str]],
 ) -> AsyncGenerator[str, None]:
@@ -67,7 +87,7 @@ async def stream_tokens(
         messages: List of message dicts with 'role' and 'content' keys.
 
     Yields:
-        Individual token strings.
+        Individual token strings. Raises if all retries yield empty content.
     """
     llm = get_llm()
     langchain_messages = _to_langchain_messages(messages)
@@ -75,10 +95,23 @@ async def stream_tokens(
     last_exc: Exception | None = None
     for attempt in range(3):
         try:
+            token_count = 0
             async for chunk in llm.astream(langchain_messages):
                 if chunk.content:
+                    token_count += 1
                     yield str(chunk.content)
-            return
+
+            if token_count > 0:
+                return  # Success — tokens were yielded
+
+            # Stream completed but returned zero content — treat as retriable failure
+            logger.warning("LLM stream returned empty content", attempt=attempt + 1)
+            if attempt < 2:
+                import asyncio
+                await asyncio.sleep(2 ** attempt * 2)
+            else:
+                raise RuntimeError("LLM returned empty content after 3 attempts")
+
         except Exception as exc:
             last_exc = exc
             if attempt < 2:
@@ -88,7 +121,7 @@ async def stream_tokens(
                 logger.warning("LLM stream error, retrying", attempt=attempt + 1, error=str(exc))
                 await asyncio.sleep(wait)
 
-    raise last_exc  # type: ignore[misc]
+    raise last_exc or RuntimeError("LLM stream failed after 3 attempts")
 
 
 async def single_call(
@@ -101,9 +134,14 @@ async def single_call(
     Used for feature modules (contradiction detection, gap analysis, etc.)
     """
     llm = get_llm()
+    settings = get_settings()
 
-    # Override temperature for deterministic feature calls
-    bound_llm = llm.bind(temperature=temperature, max_tokens=max_tokens)
+    # Gemini uses max_output_tokens; other backends use max_tokens
+    if settings.llm_backend == LLMBackend.GEMINI:
+        bound_llm = llm.bind(temperature=temperature, max_output_tokens=max_tokens)
+    else:
+        bound_llm = llm.bind(temperature=temperature, max_tokens=max_tokens)
+
     response = await bound_llm.ainvoke(prompt)
     return str(response.content)
 

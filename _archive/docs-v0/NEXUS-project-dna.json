@@ -1,0 +1,364 @@
+{
+  "project": {
+    "name": "NEXUS",
+    "tagline": "The Institutional Memory Engine",
+    "version": "1.0 (portfolio project)",
+    "created_date": "2026-04-15",
+    "creator": "SKAY",
+    "email": "oussamaiskia@gmail.com",
+    "location": "Morocco",
+    "status": "brainstorm_complete_ready_for_build"
+  },
+  "project_philosophy": {
+    "core_principle": "Don't just answer the question. Understand what the person actually needs, connect what should be connected, and be honest about what you don't know.",
+    "personality": "INFJ-flavored institutional memory advisor",
+    "positioning": "Companies lose 42% of their knowledge when senior employees leave. Nexus doesn't just answer questions — it preserves, connects, and surfaces institutional wisdom.",
+    "differentiation": "Treats documents as a connected knowledge system with personality, not just a search index"
+  },
+  "market_context": {
+    "market_analysis": "RAG is the #1 most in-demand AI skill in 2026",
+    "key_statistics": {
+      "ai_chatbot_growth": "+71% year-over-year on Upwork",
+      "ai_integration_growth": "+178% on Upwork",
+      "talent_gap_morocco": "35% annual demand growth vs 15-20% supply growth",
+      "moroccan_salary_range": "12k-60k MAD for AI Engineers",
+      "international_freelance_rates": "$50-$300+/hour"
+    },
+    "target_markets": [
+      "International freelance (Upwork, Toptal, Turing)",
+      "Morocco local market (banks, enterprises, ministries)"
+    ],
+    "moroccan_alignment": "Maroc Digital 2030 (9.95B MAD investment), Maroc IA 2030 (100B MAD value)"
+  },
+  "decision_log": {
+    "portfolio_project_selection": {
+      "decision": "Build RAG-Powered Enterprise Document Assistant FIRST",
+      "date": "2026-04-15",
+      "rationale": [
+        "RAG is the absolute #1 most in-demand AI engineering skill in 2026",
+        "Every company building with LLMs needs RAG expertise",
+        "Market demand proven by Upwork's 2026 official report",
+        "Universal pitch: 'Ask questions to your documents' works across all industries",
+        "Unlocks Project #2 (Customer Support Chatbot) automatically",
+        "Fastest path to freelance clients and job offers"
+      ],
+      "alternatives_rejected": [
+        {
+          "project": "Predictive Maintenance for IoT",
+          "reason": "Niche, requires industry contacts, slower to demo"
+        },
+        {
+          "project": "AI Customer Support Chatbot",
+          "reason": "Overlaps heavily with RAG; build after #1"
+        },
+        {
+          "project": "Resume Screener",
+          "reason": "Saturated market, seen as tutorial project"
+        }
+      ]
+    },
+    "product_naming": {
+      "name": "NEXUS",
+      "why": "Suggests connection, institutional intelligence, web of knowledge",
+      "alternative_names_considered": [
+        "Archivist",
+        "Oracle",
+        "MemoryVault",
+        "Synthesis",
+        "Clausus (legal focus)"
+      ]
+    }
+  },
+  "core_features": {
+    "v1_differentiators": [
+      {
+        "feature_id": 1,
+        "name": "Contradiction Radar",
+        "description": "Detects when two documents disagree and surfaces both sides",
+        "infj_angle": "You see what others miss. Refuse false-confidence answers.",
+        "enterprise_value": "Compliance, legal, HR teams would pay $10k for this alone",
+        "example": "HR Policy (2023) says 15 days notice. Employment Contract says 30 days. There is a conflict.",
+        "difficulty": "medium",
+        "priority": "p1"
+      },
+      {
+        "feature_id": 2,
+        "name": "Knowledge Gap Detective",
+        "description": "Proactively tells users what's MISSING from their documents",
+        "infj_angle": "INFJs see the unseen. Absence of information is itself information.",
+        "enterprise_value": "Risk management for enterprises. Legal and compliance teams love this.",
+        "example": "You asked about refund policy for international clients. Your documents don't contain any information on this topic — this may be a gap.",
+        "difficulty": "medium",
+        "priority": "p1"
+      },
+      {
+        "feature_id": 3,
+        "name": "Cross-Document Insight Engine",
+        "description": "Surfaces non-obvious connections across documents",
+        "infj_angle": "The intuitive leap, the connection no one asked for but everyone needed",
+        "enterprise_value": "What senior consultants charge $500/hr to do manually",
+        "example": "You asked about onboarding timelines. Documents B, C, F together suggest your onboarding conflicts with probation policy.",
+        "difficulty": "hard",
+        "priority": "p1"
+      },
+      {
+        "feature_id": 4,
+        "name": "Radical Transparency Mode",
+        "description": "Every answer includes visible confidence score + plain-English reasoning",
+        "infj_angle": "Radical honesty. Most systems fake confidence. Yours refuses to.",
+        "enterprise_value": "Wrong confident answer = millions in losses. Honest uncertainty is a feature.",
+        "example": "Confidence: 67% — Based on single source from 2021. Two documents partially contradict.",
+        "difficulty": "medium",
+        "priority": "p1"
+      }
+    ],
+    "v2_roadmap": [
+      {
+        "feature_id": 5,
+        "name": "Temporal Staleness Alerts",
+        "description": "Flags when answers are based on old content",
+        "priority": "p2"
+      },
+      {
+        "feature_id": 6,
+        "name": "The Devil's Advocate Mode",
+        "description": "Challenges your decision using the documents",
+        "priority": "p2"
+      },
+      {
+        "feature_id": 7,
+        "name": "Narrative Synthesis Mode",
+        "description": "Toggle between bullet points and flowing narrative storytelling",
+        "priority": "p2"
+      },
+      {
+        "feature_id": 8,
+        "name": "Session Memory + Continuity",
+        "description": "Remembers past questions, builds on them across sessions",
+        "priority": "p2"
+      },
+      {
+        "feature_id": 9,
+        "name": "Role-Based Knowledge Layers",
+        "description": "Different users see different documents based on role (HR/Engineering/Finance)",
+        "priority": "p2",
+        "note": "#1 enterprise requirement for deployment at scale"
+      },
+      {
+        "feature_id": 10,
+        "name": "What Would Change My Answer",
+        "description": "Tells users 'If documents contained X, my answer would be different'",
+        "priority": "p2"
+      }
+    ]
+  },
+  "technical_stack": {
+    "llm_models": {
+      "development": {
+        "tool": "Ollama",
+        "models": [
+          {
+            "name": "Llama 3.3 8B",
+            "reasoning": "Good balance for local development",
+            "tokens_per_second": "medium",
+            "cost": "free",
+            "command": "ollama pull llama3.3:8b"
+          },
+          {
+            "name": "Mistral Small 3 7B",
+            "reasoning": "Fastest local option (50 tokens/sec)",
+            "tokens_per_second": "fast",
+            "cost": "free",
+            "command": "ollama pull mistral-small:3b"
+          }
+        ]
+      },
+      "demo_deployment": {
+        "provider": "Groq",
+        "model": "Llama 3.3 70B",
+        "reasoning": "700+ tokens/sec, 14,400 daily requests free, 70B = smarter",
+        "cost": "free_tier",
+        "tokens_per_second": "700+",
+        "daily_limit": "14,400_requests",
+        "tokens_per_minute": "6000",
+        "setup": "Sign up at groq.com, get API key, use Groq Python SDK"
+      }
+    },
+    "rag_pipeline": {
+      "document_processing": [
+        "LangChain (document chunking, splitting)",
+        "Unstructured (PDF/DOCX parsing)"
+      ],
+      "embedding_model": "all-MiniLM-L6-v2 (free, open-source)",
+      "vector_database": [
+        "Chroma (free, local, easy)",
+        "Weaviate (free tier available)",
+        "Pinecone (free tier, cloud-based)"
+      ],
+      "retrieval": "Hybrid search (BM25 + semantic)",
+      "reranking": "Cross-encoder reranker (optional, for v2)"
+    },
+    "frontend": [
+      "Streamlit (fastest for demo)",
+      "Next.js + Tailwind (for polished portfolio version)",
+      "Gradio (lightweight alternative)"
+    ],
+    "deployment": [
+      "Local: Ollama + Python backend",
+      "Cloud: Vercel (frontend) + Groq API",
+      "Free hosting: Hugging Face Spaces, Replit"
+    ]
+  },
+  "roadmap": {
+    "phase_1_mvp": {
+      "duration": "2-3 weeks",
+      "goals": [
+        "Upload documents (PDF/DOCX)",
+        "Chat interface with source attribution",
+        "Basic RAG pipeline working"
+      ],
+      "features": [
+        "Document ingestion",
+        "Vector embedding + storage",
+        "Retrieval + LLM response",
+        "Source citation"
+      ],
+      "deliverable": "Streamlit demo on local machine"
+    },
+    "phase_2_portfolio_ready": {
+      "duration": "1 week",
+      "goals": [
+        "Deploy demo online",
+        "Add Contradiction Radar",
+        "Add Confidence Transparency"
+      ],
+      "features": [
+        "Contradiction detection algorithm",
+        "Confidence scoring + explanation",
+        "Knowledge gap detection (basic)"
+      ],
+      "deliverable": "Live demo on Vercel/Hugging Face Spaces"
+    },
+    "phase_3_polish": {
+      "duration": "1 week",
+      "goals": [
+        "Add Cross-Document Insights",
+        "Professional UI",
+        "README + documentation"
+      ],
+      "features": [
+        "Graph-based document relationships",
+        "Insight synthesis engine",
+        "Narrative mode (toggle)"
+      ],
+      "deliverable": "Production-ready portfolio project"
+    }
+  },
+  "creator_profile": {
+    "name": "SKAY",
+    "email": "oussamaiskia@gmail.com",
+    "location": "Morocco",
+    "role": "AI Engineer",
+    "personality_type": "INFJ",
+    "infj_traits_for_product": [
+      "Deep empathy and intuition",
+      "Pattern recognition across complexity",
+      "Sees what's invisible to others",
+      "Radical honesty about limitations",
+      "Meaning-making and significance-finding",
+      "Depth over breadth",
+      "Refusal to give false-confidence answers"
+    ],
+    "career_goals": [
+      "Build for international remote freelance market",
+      "Serve local Moroccan market",
+      "Align with Maroc IA 2030 & Maroc Digital 2030",
+      "Build a $5k-$15k value-based pricing portfolio"
+    ],
+    "target_income": {
+      "freelance_project_range": "$5,000-$15,000 per project",
+      "retainer_model": "$1,500+/month ongoing"
+    },
+    "freelance_platforms": {
+      "tier_1": ["Toptal", "Turing"],
+      "tier_2": ["Upwork", "Fiverr"],
+      "tier_3": ["AI-Search.io", "VibeHackers", "Botpool", "Wellfound"]
+    },
+    "payment_solution": "Payoneer (withdraw to MAD) + Wise (real exchange rates)"
+  },
+  "competition_landscape": {
+    "basic_rag_tools": [
+      "NotebookLM (struggles with 100+ documents)",
+      "ChatGPT + document upload (basic, no insights)"
+    ],
+    "enterprise_rag_platforms": [
+      "Cohere (expensive)",
+      "LlamaIndex (framework, not product)",
+      "Langchain (framework, not product)"
+    ],
+    "nexus_advantage": "INFJ-flavored advisor with contradiction detection, gap finding, and genuine insight synthesis — not just another search clone"
+  },
+  "revenue_potential": {
+    "freelance_projects": {
+      "target_price": "$8,500 per project",
+      "pitch": "I will build a RAG pipeline that reduces support tickets by 30% within 6 weeks. Project cost: $8,500.",
+      "examples": [
+        "Customer support automation",
+        "HR knowledge base assistant",
+        "Sales enablement tool",
+        "Legal document analysis",
+        "Regulatory compliance checker"
+      ]
+    },
+    "retainer_model": {
+      "monthly_price": "$1,500-$3,000/month",
+      "services": [
+        "Monitor model drift",
+        "Weekly document indexing",
+        "Performance optimization",
+        "Ongoing consultation"
+      ]
+    }
+  },
+  "success_metrics": {
+    "portfolio_level": [
+      "Live demo on internet",
+      "GitHub repo with 50+ stars",
+      "Clear README with business value explained",
+      "Used by 10+ testers",
+      "Measurable impact demonstrated"
+    ],
+    "freelance_level": [
+      "First client within 2 months",
+      "First $5k+ project within 3 months",
+      "First retainer client within 6 months"
+    ]
+  },
+  "next_steps": {
+    "immediate": [
+      "Set up development environment (Ollama + Python)",
+      "Create GitHub repo for NEXUS",
+      "Build MVP (Phase 1) in 2-3 weeks"
+    ],
+    "short_term": [
+      "Deploy demo online (Groq API)",
+      "Add V1 differentiators (Contradiction Radar, Confidence)",
+      "Write professional README",
+      "Create demo video (Loom)"
+    ],
+    "medium_term": [
+      "Start freelance prospecting on Upwork/Toptal",
+      "Pitch to Y Combinator startups (LinkedIn DMs)",
+      "Build case study from first client",
+      "Plan V2 features"
+    ]
+  },
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2026-04-15",
+    "created_by": "Claude (AI Assistant) + SKAY (Human Creator)",
+    "accessibility": "SKAY can reference this DNA anytime to remember the full context",
+    "update_frequency": "Every time major decisions are made",
+    "single_source_of_truth": true
+  }
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "question": "What is TechCorp's current remote work policy?",
+    "ground_truth": "TechCorp's remote work policy changed between 2023 and 2024. The 2023 HR Policy allowed up to 3 days per week remote. The 2024 HR Policy reduced this to a maximum of 2 days per week."
+  },
+  {
+    "question": "How many days per week can TechCorp employees work remotely?",
+    "ground_truth": "There is a contradiction in the documents. The 2023 HR Policy states 3 days/week maximum, while the 2024 HR Policy states 2 days/week maximum."
+  },
+  {
+    "question": "What was TechCorp's Q3 marketing budget?",
+    "ground_truth": "There is a discrepancy. The Q3 Financial Summary reports a marketing budget of $450,000. However, the Q4 Financial Summary confirms Q3 marketing spend at $380,000."
+  },
+  {
+    "question": "How much did TechCorp spend on marketing in Q3?",
+    "ground_truth": "The Q4 report confirmed Q3 marketing spend at $380,000, which contradicts the $450,000 figure stated in the Q3 Financial Summary."
+  },
+  {
+    "question": "What is Project Atlas?",
+    "ground_truth": "Project Atlas is referenced in the Product Roadmap 2024 as a completed initiative. However, no completion report for Project Atlas exists in the document library."
+  },
+  {
+    "question": "Has Project Atlas been completed?",
+    "ground_truth": "The Product Roadmap 2024 references Project Atlas as complete, but there is no completion report or supporting documentation available."
+  },
+  {
+    "question": "When did TechCorp change its remote work policy?",
+    "ground_truth": "The change occurred between 2023 and 2024. The 2023 HR Policy permitted 3 days remote per week. The 2024 HR Policy reduced this to 2 days per week."
+  },
+  {
+    "question": "What HR policies changed between 2023 and 2024?",
+    "ground_truth": "The remote work policy changed: from 3 days/week maximum in 2023 to 2 days/week maximum in 2024."
+  },
+  {
+    "question": "What is the total marketing budget discrepancy between Q3 and Q4 reports?",
+    "ground_truth": "The discrepancy is $70,000. Q3 Summary states $450,000; Q4 Summary confirms $380,000 was the actual Q3 spend."
+  },
+  {
+    "question": "Are there any contradictions in the financial documents?",
+    "ground_truth": "Yes. The Q3 Financial Summary states marketing budget was $450,000, while the Q4 Financial Summary confirms Q3 marketing spend was only $380,000 — a $70,000 discrepancy."
+  },
+  {
+    "question": "What projects are listed as complete in the 2024 roadmap?",
+    "ground_truth": "Project Atlas is listed as complete in the 2024 Product Roadmap. No completion report exists for it in the document library."
+  },
+  {
+    "question": "What is TechCorp's policy on working from home?",
+    "ground_truth": "The policy has changed. Per the 2023 HR Policy, employees could work from home up to 3 days per week. The 2024 HR Policy reduced this to 2 days per week."
+  },
+  {
+    "question": "What financial figures are reported for Q3?",
+    "ground_truth": "The Q3 Financial Summary reports a marketing budget of $450,000 for Q3. However, the Q4 Financial Summary contradicts this, showing Q3 marketing spend confirmed at $380,000."
+  },
+  {
+    "question": "Are there any knowledge gaps in the document library?",
+    "ground_truth": "Yes. The Product Roadmap 2024 references Project Atlas as complete, but no completion report or supporting documentation for Project Atlas exists in the library."
+  },
+  {
+    "question": "What does the Q4 report say about Q3 spending?",
+    "ground_truth": "The Q4 Financial Summary confirms Q3 marketing spend was $380,000, which contradicts the $450,000 figure in the Q3 Financial Summary."
+  },
+  {
+    "question": "What is TechCorp's remote work policy as of 2024?",
+    "ground_truth": "As of 2024, TechCorp's HR Policy caps remote work at 2 days per week, reduced from the 3 days/week limit in the 2023 policy."
+  },
+  {
+    "question": "Is there a conflict between the Q3 and Q4 financial reports?",
+    "ground_truth": "Yes. The Q3 Financial Summary states marketing budget was $450,000, while the Q4 Financial Summary confirms the actual Q3 marketing spend was $380,000 — a contradiction of $70,000."
+  },
+  {
+    "question": "What documents mention Project Atlas?",
+    "ground_truth": "The Product Roadmap 2024 mentions Project Atlas as a completed initiative. No other documents in the library reference Project Atlas or provide a completion report."
+  },
+  {
+    "question": "How many remote work days does TechCorp allow per week?",
+    "ground_truth": "This is contradicted across documents: the 2023 HR Policy allows 3 days/week, while the 2024 HR Policy allows only 2 days/week."
+  },
+  {
+    "question": "What was the marketing budget variance in Q3?",
+    "ground_truth": "The variance is $70,000. The Q3 Financial Summary planned/stated $450,000 for marketing, while the Q4 Financial Summary confirmed actual Q3 marketing spend was $380,000."
+  }
+]

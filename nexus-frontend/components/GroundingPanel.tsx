@@ -51,7 +51,7 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
       </div>
 
       {/* Coverage meter */}
-      <div className="h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[#C9973B]/20 rounded-full overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ background: v.color }}
@@ -65,7 +65,7 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
       {hasClaims && (
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+          className="flex items-center gap-1 text-[11px] text-[#8A7A62] hover:text-[#EDE4D0] transition-colors"
         >
           {open ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
           {open ? t('hideCheck') : t('showCheck')}
@@ -88,10 +88,10 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
                 ) : (
                   <AlertCircle size={13} className="mt-0.5 shrink-0 text-amber-400" />
                 )}
-                <span className={c.supported ? 'text-slate-300' : 'text-slate-400'}>
+                <span className={c.supported ? 'text-[#DDD0BB]' : 'text-[#8A7A62]'}>
                   {c.text}
                   {c.supported && c.source_index !== null && (
-                    <sup className="ml-0.5 text-indigo-400 font-semibold">[{c.source_index + 1}]</sup>
+                    <sup className="ml-0.5 text-[#C9973B] font-semibold">[{c.source_index + 1}]</sup>
                   )}
                 </span>
               </li>
@@ -101,7 +101,7 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
       </AnimatePresence>
 
       {grounding.single_source && (
-        <p className="text-[11px] text-slate-500 italic">{t('singleSource')}</p>
+        <p className="text-[11px] text-[#6A5A42] italic">{t('singleSource')}</p>
       )}
     </div>
   )

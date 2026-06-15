@@ -50,9 +50,9 @@ export function LanguageSwitcher() {
     <div
       role="group"
       aria-label={locale === 'fr' ? 'Langue' : 'Language'}
-      className="group relative inline-flex items-center gap-1.5 h-8 pl-2.5 pr-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md"
+      className="group relative inline-flex items-center gap-1.5 h-8 pl-2.5 pr-1 rounded-full bg-[#C9973B]/[0.06] border border-[#C9973B]/20 backdrop-blur-md"
     >
-      <span className="text-slate-500 transition-colors duration-200 group-hover:text-slate-300">
+      <span className="text-[#6A5A42] transition-colors duration-200 group-hover:text-[#C4B49A]">
         <GlobeGlyph />
       </span>
       <div className="relative flex items-center">
@@ -67,8 +67,8 @@ export function LanguageSwitcher() {
               aria-label={name}
               title={name}
               lang={code}
-              className="relative z-10 px-2.5 py-1 rounded-full text-[0.72rem] font-semibold tracking-wide outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-indigo-400/70"
-              style={{ color: isActive ? '#F8FAFC' : '#94A3B8' }}
+              className="relative z-10 px-2.5 py-1 rounded-full text-[0.72rem] font-semibold tracking-wide outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#C9973B]/60"
+              style={{ color: isActive ? '#0E0A05' : '#8A7A62' }}
             >
               {isActive && (
                 <motion.span
@@ -76,9 +76,9 @@ export function LanguageSwitcher() {
                   className="absolute inset-0 rounded-full"
                   style={{
                     background:
-                      'linear-gradient(135deg, rgba(99,102,241,0.95) 0%, rgba(124,92,255,0.8) 100%)',
+                      'linear-gradient(135deg, #D4A843 0%, #9B6B3A 100%)',
                     boxShadow:
-                      '0 0 0 1px rgba(99,102,241,0.5), 0 6px 16px -6px rgba(99,102,241,0.6)',
+                      '0 0 0 1px rgba(201,151,59,0.5), 0 6px 16px -6px rgba(201,151,59,0.5)',
                   }}
                   transition={
                     reduceMotion

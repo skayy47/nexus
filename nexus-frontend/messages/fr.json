@@ -36,8 +36,8 @@
     "step2Desc": "La recherche dense pgvector et la recherche creuse BM25 s'exécutent en parallèle, puis fusionnent via Reciprocal Rank Fusion (k=60) — surpassant le vectoriel seul sur les requêtes riches en mots-clés.",
     "step2Tag": "BM25 + pgvector · RRF",
     "step3Title": "3 · Génération",
-    "step3Desc": "Groq Llama 3.3 70B diffuse la réponse token par token via une chaîne LCEL — le contexte est encadré de balises documentaires pour neutraliser l'injection de prompt.",
-    "step3Tag": "Groq · LCEL · streaming SSE",
+    "step3Desc": "Gemini 2.0 Flash diffuse la réponse token par token via une chaîne LCEL — le contexte est encadré de balises documentaires pour neutraliser l'injection de prompt. Nativement bilingue : français et anglais.",
+    "step3Tag": "Gemini 2.0 Flash · LCEL · streaming SSE",
     "step4Title": "4 · Vérification",
     "step4Desc": "L'ancrage des réponses vérifie chaque affirmation par rapport aux sources citées, plus une seconde passe LLM qui les compare — révélant contradictions et lacunes avant que vous ne fassiez confiance à la réponse.",
     "step4Tag": "Ancrage · Radar de contradictions"
@@ -108,7 +108,20 @@
     "s3Badge": "🕳 Lacune",
     "s4Label": "Feuille de route produit 2024",
     "s4Question": "Quelles sont les priorités produit clés de la feuille de route 2024 ?",
-    "s4Badge": "📄 Sources"
+    "s4Badge": "📄 Sources",
+    "uploadTitle": "Importez votre premier document",
+    "uploadDesc": "Déposez vos fichiers dans le panneau ci-dessus — ou cliquez sur « Importer des documents » dans la barre du haut. PDF, DOCX, TXT et MD sont supportés.",
+    "uploadAction": "Importer des documents",
+    "workspaceReadyTitle": "Votre espace est prêt",
+    "workspaceReadyDesc": "{count, plural, one {# document indexé} other {# documents indexés}} — posez votre première question.",
+    "workspaceS1Label": "Sujets clés",
+    "workspaceS1Question": "Quels sont les principaux sujets abordés dans mes documents ?",
+    "workspaceS2Label": "Contradictions",
+    "workspaceS2Question": "Y a-t-il des contradictions ou des informations conflictuelles dans mes documents ?",
+    "workspaceS3Label": "Résumé",
+    "workspaceS3Question": "Faites-moi un résumé concis de tous mes documents.",
+    "modeBadgeDemo": "DÉMO",
+    "modeBadgeWorkspace": "MON ESPACE"
   },
   "grounding": {
     "grounded": "Ancré",

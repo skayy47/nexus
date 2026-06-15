@@ -10,18 +10,23 @@ import type { DocumentEntry } from '@/lib/api'
 
 interface Props {
   contradictionCount?: number
+  gapCount?: number
   documentCount?: number
   documents?: DocumentEntry[]
   onDeleteDocument?: () => void
+  isDemoMode?: boolean
 }
 
 export function InsightSidebar({
   contradictionCount = 0,
+  gapCount = 0,
   documentCount = 0,
   documents = [],
   onDeleteDocument,
+  isDemoMode = false,
 }: Props) {
   const t = useTranslations('sidebar')
+  const tw = useTranslations('chatWindow')
   const [docsOpen, setDocsOpen] = useState(true)
   const [deletingDoc, setDeletingDoc] = useState<string | null>(null)
 
@@ -44,12 +49,26 @@ export function InsightSidebar({
     if (url) {
       window.open(url, '_blank')
     }
-    // demo docs have no blob URL — clicking does nothing visible
   }
 
   return (
     <div className="p-4 h-full flex flex-col overflow-y-auto">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">
+      {/* Mode badge */}
+      <div className="mb-4 flex items-center gap-1.5">
+        {isDemoMode ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/12 border border-emerald-500/25 text-emerald-400">
+            <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+            {tw('modeBadgeDemo')}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#C9973B]/12 border border-[#C9973B]/25 text-[#C9973B]">
+            <span className="w-1 h-1 rounded-full bg-[#C9973B]" />
+            {tw('modeBadgeWorkspace')}
+          </span>
+        )}
+      </div>
+
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-[#6A5A42] mb-4">
         {t('insights')}
       </h2>
 
@@ -65,16 +84,17 @@ export function InsightSidebar({
         <StatRow
           icon={<Search size={14} />}
           label={t('gaps')}
-          value={0}
+          value={gapCount}
           accent="text-amber-400"
           bg="bg-amber-500/10"
+          animate={gapCount > 0}
         />
         <StatRow
           icon={<FileText size={14} />}
           label={t('documents')}
           value={documentCount}
-          accent="text-indigo-400"
-          bg="bg-indigo-500/10"
+          accent="text-[#C9973B]"
+          bg="bg-[#C9973B]/10"
         />
       </div>
 
@@ -83,7 +103,7 @@ export function InsightSidebar({
         <div className="mt-4">
           <button
             onClick={() => setDocsOpen(o => !o)}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors w-full mb-2"
+            className="flex items-center gap-1 text-xs text-[#6A5A42] hover:text-slate-300 transition-colors w-full mb-2"
           >
             {docsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             {t('loadedDocuments')}
@@ -105,41 +125,41 @@ export function InsightSidebar({
                   return (
                     <li
                       key={doc.name}
-                      className="group flex items-center gap-1 rounded-md px-1.5 py-1 transition-colors hover:bg-indigo-500/10"
+                      className="group flex items-center gap-1 rounded-md px-1.5 py-1 transition-colors hover:bg-[#C9973B]/10"
                     >
-                      {/* Doc name — clickable if blob URL exists */}
                       <button
                         onClick={() => handleOpenDoc(doc.name)}
                         className={`flex items-center gap-1 flex-1 min-w-0 text-left ${hasBlob ? 'cursor-pointer' : 'cursor-default'}`}
                         title={hasBlob ? `Open ${doc.name}` : doc.name}
                       >
-                        <span className="text-xs text-slate-400 truncate leading-tight">
+                        <span className="text-xs text-[#8A7A62] truncate leading-tight">
                           {doc.name}
                         </span>
                         {hasBlob && (
                           <ExternalLink
                             size={10}
-                            className="shrink-0 text-slate-600 group-hover:text-indigo-400 transition-colors"
+                            className="shrink-0 text-slate-600 group-hover:text-[#C9973B] transition-colors"
                           />
                         )}
                       </button>
 
-                      {/* Chunk pill */}
-                      <span className="shrink-0 px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] tabular-nums">
+                      <span className="shrink-0 px-1.5 py-0.5 rounded-full bg-[#C9973B]/10 text-[#C9973B] text-[10px] tabular-nums">
                         {doc.chunk_count}
                       </span>
 
-                      {/* Delete button */}
-                      <button
-                        onClick={e => handleDelete(e, doc.name)}
-                        disabled={isDeleting}
-                        className="shrink-0 opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all disabled:opacity-30"
-                        title={`Remove ${doc.name}`}
-                      >
-                        {isDeleting
-                          ? <span className="inline-block w-3 h-3 border border-slate-500 border-t-transparent rounded-full animate-spin" />
-                          : <X size={11} />}
-                      </button>
+                      {/* Delete only in workspace mode */}
+                      {!isDemoMode && (
+                        <button
+                          onClick={e => handleDelete(e, doc.name)}
+                          disabled={isDeleting}
+                          className="shrink-0 opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all disabled:opacity-30"
+                          title={`Remove ${doc.name}`}
+                        >
+                          {isDeleting
+                            ? <span className="inline-block w-3 h-3 border border-slate-500 border-t-transparent rounded-full animate-spin" />
+                            : <X size={11} />}
+                        </button>
+                      )}
                     </li>
                   )
                 })}
@@ -175,14 +195,14 @@ function StatRow({
   animate?: boolean
 }) {
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-slate-800/80">
-      <span className="flex items-center gap-2 text-sm text-slate-400">
+    <div className="flex items-center justify-between py-2.5 border-b border-[#C9973B]/10">
+      <span className="flex items-center gap-2 text-sm text-[#8A7A62]">
         <span className={`p-1 rounded ${bg} ${accent}`}>{icon}</span>
         {label}
       </span>
       <motion.span
         key={value}
-        initial={animate ? { scale: 1.4, color: '#ef4444' } : {}}
+        initial={animate && value > 0 ? { scale: 1.4, color: '#ef4444' } : {}}
         animate={{ scale: 1, color: 'inherit' }}
         className={`text-base font-bold tabular-nums ${accent}`}
       >
