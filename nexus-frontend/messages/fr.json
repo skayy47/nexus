@@ -110,7 +110,7 @@
     "s4Question": "Quelles sont les priorités produit clés de la feuille de route 2024 ?",
     "s4Badge": "📄 Sources",
     "uploadTitle": "Importez votre premier document",
-    "uploadDesc": "Déposez vos fichiers dans le panneau ci-dessus — ou cliquez sur « Importer des documents » dans la barre du haut. PDF, DOCX, TXT et MD sont supportés.",
+    "uploadDesc": "Déposez vos fichiers dans le panneau ci-dessus — ou cliquez sur « Importer des documents » dans la barre du haut. PDF, DOCX, XLSX, PPTX, CSV, TXT, MD, HTML, JSON, RTF et EML sont supportés.",
     "uploadAction": "Importer des documents",
     "workspaceReadyTitle": "Votre espace est prêt",
     "workspaceReadyDesc": "{count, plural, one {# document indexé} other {# documents indexés}} — posez votre première question.",
@@ -147,7 +147,7 @@
   "documentZone": {
     "dropFiles": "Déposez des fichiers ou",
     "browse": "parcourez",
-    "formats": "PDF, DOCX, TXT, MD — max 20 Mo · plusieurs fichiers possibles",
+    "formats": "PDF, DOCX, XLSX, PPTX, CSV, TXT, MD, HTML, JSON, RTF, EML — max 200 Mo · plusieurs fichiers",
     "clearing": "Suppression des documents précédents...",
     "processing": "Traitement {current}/{total} : {name}",
     "loaded": "{count, plural, one {# document chargé} other {# documents chargés}}",

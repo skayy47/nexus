@@ -110,7 +110,7 @@
     "s4Question": "What are the key product priorities in the 2024 roadmap?",
     "s4Badge": "📄 Sources",
     "uploadTitle": "Upload your first document",
-    "uploadDesc": "Drop your files into the panel above — or click \"Upload documents\" in the top bar. PDF, DOCX, TXT and MD are supported.",
+    "uploadDesc": "Drop your files into the panel above — or click \"Upload documents\" in the top bar. PDF, DOCX, XLSX, PPTX, CSV, TXT, MD, HTML, JSON, RTF and EML are supported.",
     "uploadAction": "Upload documents",
     "workspaceReadyTitle": "Your workspace is ready",
     "workspaceReadyDesc": "{count, plural, one {# document indexed} other {# documents indexed}} — ask your first question.",
@@ -147,7 +147,7 @@
   "documentZone": {
     "dropFiles": "Drop files or",
     "browse": "browse",
-    "formats": "PDF, DOCX, TXT, MD — max 20 MB · multiple files supported",
+    "formats": "PDF, DOCX, XLSX, PPTX, CSV, TXT, MD, HTML, JSON, RTF, EML — max 200 MB · multiple files",
     "clearing": "Clearing previous documents...",
     "processing": "Processing {current}/{total}: {name}",
     "loaded": "{count, plural, one {# document loaded} other {# documents loaded}}",

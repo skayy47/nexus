@@ -21,7 +21,7 @@ class TestChain:
     def test_prompt_loaded(self):
         """System prompt should be loaded from the versioned .md file."""
         assert "NEXUS" in SYSTEM_PROMPT
-        assert PROMPT_VERSION == "v1"
+        assert PROMPT_VERSION == "v2"
 
     def test_format_context_empty(self):
         assert format_context([]) == ""
@@ -53,3 +53,22 @@ class TestChain:
         assert msgs[1]["role"] == "user"
         assert "context here" in msgs[1]["content"]
         assert "What is the policy?" in msgs[1]["content"]
+
+    def test_build_messages_french_hint(self):
+        """French locale must inject the French response directive."""
+        msgs = build_messages("Quelle est la politique ?", "contexte ici", language="fr")
+        user_content = msgs[1]["content"]
+        assert "Répondez en français" in user_content
+
+    def test_build_messages_english_hint(self):
+        """English locale must inject the English response directive."""
+        msgs = build_messages("What is the policy?", "context here", language="en")
+        user_content = msgs[1]["content"]
+        assert "respond in English" in user_content
+
+    def test_build_messages_unknown_locale_no_hint(self):
+        """Unknown locale should not inject any directive."""
+        msgs = build_messages("¿Cuál es la política?", "contexto", language="es")
+        user_content = msgs[1]["content"]
+        assert "Répondez" not in user_content
+        assert "respond in English" not in user_content

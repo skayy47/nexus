@@ -97,14 +97,14 @@ export function DocumentZone({ onClear, onUpload }: Props) {
   const errorCount   = results.filter(r =>  r.error).length
 
   const borderColor = dragging
-    ? 'border-indigo-500'
+    ? 'border-[#C9973B]'
     : state === 'error'
     ? 'border-red-500/60'
     : state === 'done' && errorCount === 0
     ? 'border-emerald-500/60'
     : state === 'done' && errorCount > 0
     ? 'border-amber-500/60'
-    : 'border-slate-600 hover:border-indigo-500/60'
+    : 'border-[#C9973B]/20 hover:border-[#C9973B]/50'
 
   const clickable = state === 'idle' || state === 'done' || state === 'error'
 
@@ -120,7 +120,7 @@ export function DocumentZone({ onClear, onUpload }: Props) {
         <input
           ref={inputRef}
           type="file"
-          accept=".pdf,.docx,.txt,.md"
+          accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.csv,.rtf,.json,.eml,.txt,.md,.markdown,.html,.htm"
           multiple
           className="hidden"
           onChange={e => {
@@ -136,11 +136,11 @@ export function DocumentZone({ onClear, onUpload }: Props) {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-2"
             >
-              <UploadCloud size={24} className="text-slate-500" />
-              <p className="text-sm text-slate-400">
-                {t('dropFiles')} <span className="text-indigo-400">{t('browse')}</span>
+              <UploadCloud size={24} className="text-[#C9973B]/60" />
+              <p className="text-sm text-[#8A7A62]">
+                {t('dropFiles')} <span className="text-[#C9973B]">{t('browse')}</span>
               </p>
-              <p className="text-xs text-slate-600">{t('formats')}</p>
+              <p className="text-xs text-[#5E5040]">{t('formats')}</p>
             </motion.div>
           )}
 
@@ -162,13 +162,13 @@ export function DocumentZone({ onClear, onUpload }: Props) {
               className="flex flex-col items-center gap-2"
             >
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
-                <UploadCloud size={24} className="text-indigo-400" />
+                <UploadCloud size={24} className="text-[#C9973B]" />
               </motion.div>
-              <p className="text-sm text-slate-400">{progressText}</p>
+              <p className="text-sm text-[#8A7A62]">{progressText}</p>
               {/* Mini progress bar */}
-              <div className="w-48 h-1 bg-slate-700 rounded-full overflow-hidden mt-1">
+              <div className="w-48 h-1 bg-[#C9973B]/15 rounded-full overflow-hidden mt-1">
                 <motion.div
-                  className="h-full bg-indigo-500 rounded-full"
+                  className="h-full bg-[#C9973B] rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ duration: 0.8, ease: 'easeInOut' }}

@@ -163,18 +163,18 @@ def test_chat_tokens_and_transparency(client: httpx.Client) -> None:
     assert any(e["type"] == "token" for e in events), (
         "Expected at least one 'token' event"
     )
-    assert "transparency" in types, (
-        f"Expected a 'transparency' event. Got: {types}"
+    assert "grounding" in types, (
+        f"Expected a 'grounding' event. Got: {types}"
     )
     assert "done" in types, "Stream must end with a 'done' event"
 
-    transparency = next(e["data"] for e in events if e["type"] == "transparency")
+    grounding = next(e["data"] for e in events if e["type"] == "grounding")
 
-    score = transparency.get("confidence_score") or transparency.get("score", -1)
-    assert 0.0 <= score <= 1.0, f"confidence_score out of range: {score}"
+    score = grounding.get("coverage", -1)
+    assert 0.0 <= score <= 1.0, f"coverage out of range: {score}"
 
-    sources = transparency.get("sources", [])
-    assert sources, "Transparency event must include at least one source"
+    sources = grounding.get("sources", [])
+    assert sources, "Grounding event must include at least one source"
 
     source_docs = {s["document_name"] for s in sources}
     hr_docs = {"TechCorp_HR_Policy_2023.txt", "TechCorp_HR_Policy_2024.txt"}
