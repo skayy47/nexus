@@ -40,13 +40,39 @@ def load_pdf(content: bytes, filename: str) -> list[dict[str, str | int]]:
     """
     from pypdf import PdfReader
 
-    reader = PdfReader(io.BytesIO(content))
-    raw: list[tuple[int, str]] = []
+    # Attempt pypdf — catches corrupt headers, stream errors, unusual encodings.
+    try:
+        reader = PdfReader(io.BytesIO(content))
 
-    for i, page in enumerate(reader.pages, 1):
-        text = (page.extract_text() or "").strip()
-        if text:
-            raw.append((i, text))
+        if reader.is_encrypted:
+            # Try blank password (some "protected" PDFs use an empty owner password)
+            try:
+                reader.decrypt("")
+            except Exception:
+                pass
+            if reader.is_encrypted:
+                raise ValueError(
+                    "This PDF is password-protected. Remove the password and upload again."
+                )
+
+        raw: list[tuple[int, str]] = []
+        for i, page in enumerate(reader.pages, 1):
+            try:
+                text = (page.extract_text() or "").strip()
+            except Exception:
+                text = ""
+            if text:
+                raw.append((i, text))
+
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.warning(
+            "pypdf failed, trying Unstructured fallback",
+            filename=filename,
+            error=str(e),
+        )
+        return _load_with_unstructured(content, filename)
 
     if not raw:
         logger.info("pypdf extracted no text, falling back to Unstructured", filename=filename)
@@ -85,9 +111,22 @@ def load_pdf(content: bytes, filename: str) -> list[dict[str, str | int]]:
 
 def _load_with_unstructured(content: bytes, filename: str) -> list[dict[str, str | int]]:
     """Fallback loader using Unstructured for scanned/complex files."""
-    from unstructured.partition.auto import partition
+    try:
+        from unstructured.partition.auto import partition
+    except ImportError as exc:
+        raise ValueError(
+            "Advanced PDF parsing is unavailable. Try converting to DOCX or TXT and uploading again."
+        ) from exc
 
-    elements = partition(file=io.BytesIO(content), content_type=_mime_type(filename))
+    try:
+        elements = partition(file=io.BytesIO(content), content_type=_mime_type(filename))
+    except Exception as exc:
+        logger.error("Unstructured partition failed", filename=filename, error=str(exc))
+        raise ValueError(
+            "Could not extract text from this PDF. It may be image-only, corrupted, or use "
+            "unsupported encoding. Try converting to DOCX or TXT."
+        ) from exc
+
     pages: list[dict[str, str | int]] = []
 
     for element in elements:

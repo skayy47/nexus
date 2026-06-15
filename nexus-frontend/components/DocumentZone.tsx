@@ -188,17 +188,22 @@ export function DocumentZone({ onClear, onUpload }: Props) {
                 {errorCount > 0 && t('failed', { count: errorCount })}
               </p>
               {/* Per-file results */}
-              <ul className="w-full max-w-xs text-left space-y-0.5 mt-1">
+              <ul className="w-full max-w-xs text-left space-y-1 mt-1">
                 {results.map(r => (
-                  <li key={r.name} className="flex items-center gap-1.5 text-xs">
-                    {r.error
-                      ? <XCircle size={11} className="text-red-400 shrink-0" />
-                      : <CheckCircle size={11} className="text-emerald-400 shrink-0" />}
-                    <span className={`truncate ${r.error ? 'text-red-400' : 'text-slate-400'}`} title={r.name}>
-                      {r.name}
-                    </span>
-                    {r.chunks !== undefined && (
-                      <span className="text-slate-600 shrink-0">{t('chunks', { count: r.chunks })}</span>
+                  <li key={r.name} className="flex flex-col gap-0.5 text-xs">
+                    <div className="flex items-center gap-1.5">
+                      {r.error
+                        ? <XCircle size={11} className="text-red-400 shrink-0" />
+                        : <CheckCircle size={11} className="text-emerald-400 shrink-0" />}
+                      <span className={`truncate ${r.error ? 'text-red-400' : 'text-[#8A7A62]'}`} title={r.error || r.name}>
+                        {r.name}
+                      </span>
+                      {r.chunks !== undefined && (
+                        <span className="text-[#5E5040] shrink-0">{t('chunks', { count: r.chunks })}</span>
+                      )}
+                    </div>
+                    {r.error && (
+                      <p className="text-[10px] text-red-400/70 pl-[19px] leading-tight">{r.error}</p>
                     )}
                   </li>
                 ))}
