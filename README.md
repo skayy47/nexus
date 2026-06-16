@@ -10,7 +10,7 @@
 
 **[▶ Live demo](https://nexussss-two.vercel.app)** · **[API health](https://SKAY00-nexus-backend.hf.space/health)** · one click loads a corpus with built-in contradictions — no signup.
 
-NEXUS is a production-grade RAG system that goes **beyond question answering**. It retrieves with a hybrid dense+sparse engine, detects factual contradictions across documents, attributes every answer to its exact source, and **grounds every answer** — verifying claim-by-claim how much of the response is actually backed by the cited evidence. The full interface and the AI answers are **bilingual (EN / FR)**.
+NEXUS is a production-grade RAG system that goes **beyond question answering**. It retrieves with a hybrid dense+sparse engine, auto-summarises every uploaded document into 4 focused bullet points with clickable suggested questions, detects factual contradictions across documents, and attributes every answer to its exact source. The full interface and the AI answers are **bilingual (EN / FR)**.
 
 ---
 
@@ -18,8 +18,8 @@ NEXUS is a production-grade RAG system that goes **beyond question answering**. 
 
 Most RAG pipelines retrieve context and generate an answer. NEXUS adds three layers of **epistemic hygiene** on top:
 
+- **📋 Auto-Summary on Upload** — the moment a document is indexed, NEXUS calls Groq to produce a one-liner overview, 4 specific bullet points (facts, figures, policies), and 3 suggested questions, shown instantly in the upload panel. Question chips are clickable — one click fires a query into the chat.
 - **⚡ Contradiction Radar** — a second structured LLM pass compares retrieved chunks across documents and surfaces conflicts, with both sides quoted verbatim and a severity rating.
-- **📊 Answer Grounding** — every answer is verified claim-by-claim against its cited sources via a two-path algorithm: (1) citation-aware grounding (LLM inline citations are matched fuzzy against retrieved documents — tolerates spaces vs underscores in filenames), (2) semantic cosine similarity on claim embeddings. You get a coverage score, a verdict (grounded / partial / ungrounded), and inline `[n]` citations showing which statements are backed — not an opaque confidence number. Computed with the in-stack embeddings, no extra LLM call.
 - **🕳️ Knowledge Gaps** — when the corpus has no real answer, NEXUS says so instead of hallucinating one.
 - **🔀 Hybrid Retrieval** — BM25 keyword search fused with dense vector search via Reciprocal Rank Fusion (k=60), consistently outperforming either method alone on keyword-heavy queries.
 - **🌐 Bilingual (EN / FR)** — full `next-intl` localization with a premium animated language toggle. Choose French and the RAG answers, contradiction explanations, and knowledge-gap reports all come back in French — end-to-end, not just the labels.
@@ -52,8 +52,8 @@ graph LR
 1. **Embed** — the query is encoded with `all-MiniLM-L6-v2` (384-dim, CPU, baked into the Docker image).
 2. **Retrieve** — BM25 and pgvector each return top-k candidates; RRF merges the ranked lists.
 3. **Generate** — an LCEL chain streams an answer from Groq Llama 3.3 70B token-by-token via SSE (30-second per-token timeout guard; auto-fallback to Gemini 2.0 Flash if Groq key is absent).
-4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; a two-path grounding pass (citation-aware + semantic cosine) verifies each claim against cited sources (reusing `all-MiniLM`, no extra LLM call).
-5. **Stream** — four SSE event types (`token`, `grounding`, `contradiction`, `gap`) let the frontend update incrementally.
+4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; answer grounding (citation-aware + semantic cosine) still runs internally to power gap detection, but the user-facing feature is **Auto-Summary** (run at upload time, not query time).
+5. **Stream** — three SSE event types (`token`, `contradiction`, `gap`) let the frontend update incrementally; source cards come via the grounding pass.
 
 ---
 
@@ -169,7 +169,7 @@ PYTHONPATH=src pytest tests/integration/test_e2e.py -m integration # e2e — req
 pytest -m "not integration"                                      # CI mode
 ```
 
-**130 tests pass, 7 skipped** (Windows-only corrupt-PDF skip). The integration suite covers the full pipeline: demo corpus loading, hybrid retrieval, SSE token streaming, contradiction detection, and document management. Unit suite includes transparency (grounding + citation fuzzy-match), ingest (all 15 loaders, empty-PDF guard), and retrieval. CI runs ruff · black · mypy (strict on `features/`) · pytest on every push.
+**145 tests pass, 1 skipped** (Windows-only corrupt-PDF skip). The integration suite covers the full pipeline: demo corpus loading, hybrid retrieval, SSE token streaming, contradiction detection, and document management. Unit suite includes the analyzer (auto-summary: 14 tests), transparency (grounding + citation fuzzy-match), ingest (all 15 loaders, empty-PDF guard), and retrieval. CI runs ruff · black · mypy (strict on `features/`) · pytest on every push.
 
 ---
 
@@ -186,7 +186,7 @@ nexus/
 │   └── config.py          # Pydantic settings (whitespace-stripped secrets, env validation)
 ├── nexus-frontend/
 │   ├── app/               # Next.js App Router — [locale]/ landing + chat (EN/FR)
-│   ├── components/        # LandingHero, NeuralCanvas, ChatWindow, GroundingPanel, ContradictionBadge, SourceCard, LanguageSwitcher, DocumentZone …
+│   ├── components/        # LandingHero, NeuralCanvas, ChatWindow, DocumentSummaryCard, ContradictionBadge, SourceCard, LanguageSwitcher, DocumentZone …
 │   └── lib/               # API client (SSE + REST, cold-start warmup), blob store
 ├── demo_corpus/           # 5 curated documents with intentional contradictions
 ├── tests/                 # unit · integration · eval (RAGAS harness + 20 QA pairs)
