@@ -40,7 +40,7 @@ function ChatPage() {
   }, [refreshDocuments])
 
   return (
-    <div className="min-h-screen bg-[#0E0A05] text-[#EDE4D0] flex">
+    <div className="h-dvh overflow-hidden bg-[#0E0A05] text-[#EDE4D0] flex">
       {/* Sticky sidebar */}
       <aside className="fixed left-0 top-0 h-screen z-40 w-56 border-r border-[#C9973B]/15 hidden lg:flex flex-col bg-[#0E0A05]">
         <InsightSidebar
@@ -54,7 +54,7 @@ function ChatPage() {
       </aside>
 
       {/* Main — offset by sidebar width on large screens */}
-      <main className="flex-1 flex flex-col min-w-0 lg:ml-56">
+      <main className="flex-1 flex flex-col min-w-0 lg:ml-56 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-[#C9973B]/15 bg-[#0E0A05]/80 backdrop-blur-sm">
           <div className="flex items-center gap-2.5">

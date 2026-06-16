@@ -57,6 +57,11 @@ class TestNormalizeName:
             "chahbi zouhair cv final.pdf"
         )
 
+    def test_plus_signs_match_spaces(self):
+        assert _normalize_name("Hands+on+Lab+Section+5.pdf") == _normalize_name(
+            "Hands on Lab Section 5.pdf"
+        )
+
     def test_case_insensitive(self):
         assert _normalize_name("TechCorp_HR_Policy.txt") == _normalize_name(
             "techcorp hr policy.txt"

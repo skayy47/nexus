@@ -70,10 +70,11 @@ class GroundingResult(BaseModel):
 def _normalize_name(name: str) -> str:
     """Normalize a filename for fuzzy comparison: strip punctuation, lowercase.
 
-    "chahbi zouhair cv final.pdf" and "chahbi_zouhair_cv_final.pdf" both become
-    "chahbizouhaircvfinalpdf", so LLM-reformatted filenames still match.
+    "Hands+on+Lab.pdf", "Hands on Lab.pdf", and "Hands_on_Lab.pdf" all become
+    "handsonlabpdf", so LLM-reformatted filenames (spaces/underscores/+ signs)
+    still match the stored name.
     """
-    return re.sub(r"[\s_./()\-]+", "", name).lower()
+    return re.sub(r"[\s_+./()\-]+", "", name).lower()
 
 
 def _extract_cited_doc(text: str) -> str | None:
