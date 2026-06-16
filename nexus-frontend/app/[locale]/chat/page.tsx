@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Upload, X } from 'lucide-react'
-import { ChatWindow } from '@/components/ChatWindow'
+import { ChatWindow, ChatWindowHandle } from '@/components/ChatWindow'
 import { InsightSidebar } from '@/components/InsightSidebar'
 import { DocumentZone } from '@/components/DocumentZone'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
@@ -23,6 +23,9 @@ function ChatPage() {
   const [documents, setDocuments] = useState<DocumentEntry[]>([])
   const [showUpload, setShowUpload] = useState(mode === 'upload')
 
+  // Ref to ChatWindow so DocumentSummaryCard question chips can trigger a chat
+  const chatRef = useRef<ChatWindowHandle>(null)
+
   const refreshDocuments = useCallback(() => {
     getInsights()
       .then(d => {
@@ -38,6 +41,12 @@ function ChatPage() {
   useEffect(() => {
     refreshDocuments()
   }, [refreshDocuments])
+
+  function handleAskQuestion(question: string) {
+    setShowUpload(false)
+    // Small delay lets the upload panel animate closed before focus shifts to chat
+    setTimeout(() => chatRef.current?.ask(question), 150)
+  }
 
   return (
     <div className="h-dvh overflow-hidden bg-[#0E0A05] text-[#EDE4D0] flex">
@@ -106,15 +115,17 @@ function ChatPage() {
         </div>
 
         {showUpload && (
-          <div className="p-4 border-b border-[#C9973B]/15 bg-[#1A1208]/30">
+          <div className="p-4 border-b border-[#C9973B]/15 bg-[#1A1208]/30 overflow-y-auto max-h-[60vh]">
             <DocumentZone
               onClear={refreshDocuments}
               onUpload={refreshDocuments}
+              onAskQuestion={handleAskQuestion}
             />
           </div>
         )}
 
         <ChatWindow
+          ref={chatRef}
           onContradiction={() => setContradictionCount(n => n + 1)}
           isDemoMode={isDemoMode}
           documentCount={documentCount}

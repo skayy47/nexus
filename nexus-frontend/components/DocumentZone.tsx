@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { UploadCloud, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 import { uploadDocument, clearDocuments } from '@/lib/api'
 import { blobStore } from '@/lib/blobStore'
+import { DocumentSummaryCard } from './DocumentSummaryCard'
 
 type ZoneState = 'idle' | 'clearing' | 'processing' | 'done' | 'error'
 
@@ -13,14 +14,18 @@ interface FileResult {
   name: string
   chunks?: number
   error?: string
+  summary?: string
+  bullets?: string[]
+  questions?: string[]
 }
 
 interface Props {
   onClear?: () => void
   onUpload?: () => void
+  onAskQuestion?: (q: string) => void
 }
 
-export function DocumentZone({ onClear, onUpload }: Props) {
+export function DocumentZone({ onClear, onUpload, onAskQuestion }: Props) {
   const t = useTranslations('documentZone')
   const [state, setState] = useState<ZoneState>('idle')
   const [progressText, setProgressText] = useState('')
@@ -56,7 +61,13 @@ export function DocumentZone({ onClear, onUpload }: Props) {
       try {
         const result = await uploadDocument(file)
         blobStore.set(file.name, file)
-        newResults.push({ name: file.name, chunks: result.chunk_count })
+        newResults.push({
+          name: file.name,
+          chunks: result.chunk_count,
+          summary: result.summary || '',
+          bullets: result.bullets || [],
+          questions: result.suggested_questions || [],
+        })
         onUpload?.()
       } catch (err) {
         newResults.push({
@@ -107,6 +118,9 @@ export function DocumentZone({ onClear, onUpload }: Props) {
     : 'border-[#C9973B]/20 hover:border-[#C9973B]/50'
 
   const clickable = state === 'idle' || state === 'done' || state === 'error'
+
+  // Successful uploads that have summary content
+  const summaryResults = results.filter(r => !r.error && (r.summary || (r.bullets && r.bullets.length > 0)))
 
   return (
     <div className="space-y-2">
@@ -238,6 +252,18 @@ export function DocumentZone({ onClear, onUpload }: Props) {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Auto-Summary cards — one per successfully uploaded document */}
+      {summaryResults.map(r => (
+        <DocumentSummaryCard
+          key={r.name}
+          filename={r.name}
+          summary={r.summary ?? ''}
+          bullets={r.bullets ?? []}
+          questions={r.questions ?? []}
+          onAsk={onAskQuestion}
+        />
+      ))}
 
       {(state === 'idle' || state === 'done') && (
         <motion.button

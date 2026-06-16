@@ -107,7 +107,15 @@ export async function loadDemo(): Promise<void> {
   if (!res.ok) throw new Error(`Demo load failed: ${res.statusText}`)
 }
 
-export async function uploadDocument(file: File): Promise<{ document_id: string; chunk_count: number }> {
+export interface UploadResult {
+  document_id: string
+  chunk_count: number
+  summary: string
+  bullets: string[]
+  suggested_questions: string[]
+}
+
+export async function uploadDocument(file: File): Promise<UploadResult> {
   const form = new FormData()
   form.append('file', file)
   // 3-minute ceiling: HF free-CPU embedding can be slow for large docs.

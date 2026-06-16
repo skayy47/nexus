@@ -1,4 +1,4 @@
-"""Smart Document Analyzer — summary + question suggestions on upload."""
+"""Smart Document Analyzer — one-liner, bullet-point summary + question suggestions on upload."""
 
 from __future__ import annotations
 
@@ -15,36 +15,43 @@ Document: "{filename}"
 Content excerpt (first 3000 chars):
 {excerpt}
 
-Produce a concise analysis in JSON:
+Produce a concise analysis in JSON with exactly these keys:
 {{
-  "summary": "2-3 sentence overview of what this document covers",
-  "key_topics": ["topic1", "topic2", "topic3"],
+  "one_liner": "One sentence (max 15 words) capturing what this document is about.",
+  "bullets": [
+    "Specific key fact, policy, or insight from this document (10-20 words)",
+    "Another specific data point or decision found in this document (10-20 words)",
+    "A third concrete takeaway — a number, rule, or conclusion (10-20 words)",
+    "A fourth relevant detail that would surprise or inform a reader (10-20 words)"
+  ],
   "suggested_questions": [
     "A specific question this document can answer",
-    "Another specific question, especially one revealing interesting data",
-    "A third question — ideally one that might surface contradictions with other docs"
+    "Another specific question, especially one revealing interesting data or policy",
+    "A third question that might surface contradictions with other documents"
   ]
 }}
 
-Make the suggested_questions concrete and specific to THIS document's content.
-Good: "What is the approved remote work limit per week?"
-Bad: "What does this document say?"
+Rules:
+- bullets must have exactly 4 items, each 10-20 words, specific to THIS document.
+- suggested_questions must have exactly 3 items, concrete and answerable from this document.
+- Good bullet: "Remote work is capped at 3 days per week per the 2023 HR policy update."
+- Bad bullet: "This document covers company policies." (too vague)
+- Return only valid JSON, no markdown fences.
 """
 
 
 async def analyze_document(
     filename: str,
     chunks: list,
-) -> tuple[str, list[str]]:
-    """Generate document summary and suggested questions.
+) -> tuple[str, list[str], list[str]]:
+    """Generate a one-liner, 4 bullet-point summary, and 3 suggested questions.
 
-    Returns (summary, suggested_questions).
+    Returns (one_liner, bullets, suggested_questions).
     Falls back gracefully on any LLM error.
     """
     if not chunks:
-        return "", []
+        return "", [], []
 
-    # Build a representative excerpt from first 6 chunks
     excerpt = "\n\n".join(c.content[:500] for c in chunks[:6])[:3000]
 
     from nexus.rag.llm_client import single_call
@@ -52,18 +59,22 @@ async def analyze_document(
     prompt = _SUMMARY_PROMPT.format(filename=filename, excerpt=excerpt)
 
     try:
-        raw = await single_call(prompt, max_tokens=400, temperature=0.1)
+        raw = await single_call(prompt, max_tokens=600, temperature=0.1)
         raw = raw.strip()
+
+        # Strip markdown fences if the LLM added them anyway
         if "```" in raw:
-            raw = raw.split("```")[1]
+            parts = raw.split("```")
+            raw = parts[1] if len(parts) > 1 else parts[0]
             if raw.startswith("json"):
                 raw = raw[4:]
 
         data = json.loads(raw)
-        summary = data.get("summary", "")[:400]
-        questions = [q[:200] for q in data.get("suggested_questions", [])[:3]]
-        return summary, questions
+        one_liner = str(data.get("one_liner", ""))[:200]
+        bullets = [str(b)[:200] for b in data.get("bullets", [])[:4]]
+        questions = [str(q)[:200] for q in data.get("suggested_questions", [])[:3]]
+        return one_liner, bullets, questions
 
     except Exception as e:
         logger.warning("Document analysis failed", filename=filename, error=str(e))
-        return "", []
+        return "", [], []

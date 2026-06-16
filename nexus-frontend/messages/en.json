@@ -39,8 +39,8 @@
     "step3Desc": "Gemini 2.0 Flash streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection. Natively bilingual: English and French.",
     "step3Tag": "Gemini 2.0 Flash · LCEL · SSE streaming",
     "step4Title": "4 · Verify",
-    "step4Desc": "Answer grounding checks every claim against the cited sources, plus a second LLM pass that compares them — surfacing contradictions and knowledge gaps before you trust the answer.",
-    "step4Tag": "Grounding · Contradiction Radar"
+    "step4Desc": "Auto-summary captures 4 key bullet points from each uploaded document instantly, while a second LLM pass compares retrieved chunks — surfacing contradictions and knowledge gaps before you trust the answer.",
+    "step4Tag": "Auto-Summary · Contradiction Radar"
   },
   "features": {
     "eyebrow": "What NEXUS detects",
@@ -52,8 +52,8 @@
     "item2Desc": "Flags when the corpus has no real answer instead of hallucinating one — telling you what your documents are missing.",
     "item3Title": "Source Attribution",
     "item3Desc": "Every answer cites its exact document, page, and excerpt — expandable inline, never a black box.",
-    "item4Title": "Answer Grounding",
-    "item4Desc": "Checks how much of each answer is backed by the cited sources — a transparent coverage score, not an opaque confidence number."
+    "item4Title": "Auto-Summary",
+    "item4Desc": "Instantly generates 4 key bullet points when you upload a document — capturing the most important facts, policies, and data in seconds."
   },
   "showcase": {
     "eyebrow": "See it think",
@@ -159,6 +159,8 @@
     "tryAgain": "Try again",
     "clearAll": "Clear all documents",
     "uploadFailed": "Upload failed",
-    "clearFailed": "Clear failed."
+    "clearFailed": "Clear failed.",
+    "summaryTitle": "Document Summary",
+    "suggestedQuestions": "Try asking →"
   }
 }

@@ -39,8 +39,8 @@
     "step3Desc": "Gemini 2.0 Flash diffuse la réponse token par token via une chaîne LCEL — le contexte est encadré de balises documentaires pour neutraliser l'injection de prompt. Nativement bilingue : français et anglais.",
     "step3Tag": "Gemini 2.0 Flash · LCEL · streaming SSE",
     "step4Title": "4 · Vérification",
-    "step4Desc": "L'ancrage des réponses vérifie chaque affirmation par rapport aux sources citées, plus une seconde passe LLM qui les compare — révélant contradictions et lacunes avant que vous ne fassiez confiance à la réponse.",
-    "step4Tag": "Ancrage · Radar de contradictions"
+    "step4Desc": "Le résumé automatique capture 4 points clés de chaque document importé instantanément, tandis qu'une seconde passe LLM compare les fragments récupérés — révélant contradictions et lacunes avant que vous ne fassiez confiance à la réponse.",
+    "step4Tag": "Résumé automatique · Radar de contradictions"
   },
   "features": {
     "eyebrow": "Ce que NEXUS détecte",
@@ -52,8 +52,8 @@
     "item2Desc": "Signale quand le corpus n'a pas de vraie réponse au lieu d'en halluciner une — vous indiquant ce qui manque à vos documents.",
     "item3Title": "Attribution des sources",
     "item3Desc": "Chaque réponse cite son document, sa page et son extrait exacts — dépliable en ligne, jamais une boîte noire.",
-    "item4Title": "Ancrage des réponses",
-    "item4Desc": "Vérifie quelle part de chaque réponse est étayée par les sources citées — un taux de couverture transparent, pas un score de confiance opaque."
+    "item4Title": "Résumé automatique",
+    "item4Desc": "Génère instantanément 4 points clés lors de l'importation d'un document — capturant les faits, politiques et données les plus importants en quelques secondes."
   },
   "showcase": {
     "eyebrow": "Voyez-le réfléchir",
@@ -159,6 +159,8 @@
     "tryAgain": "Réessayer",
     "clearAll": "Effacer tous les documents",
     "uploadFailed": "Échec de l'importation",
-    "clearFailed": "Échec de la suppression."
+    "clearFailed": "Échec de la suppression.",
+    "summaryTitle": "Résumé du document",
+    "suggestedQuestions": "Posez une question →"
   }
 }

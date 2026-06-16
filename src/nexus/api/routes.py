@@ -53,6 +53,7 @@ class UploadResponse(BaseModel):
     filename: str
     chunk_count: int
     summary: str = ""
+    bullets: list[str] = []
     suggested_questions: list[str] = []
 
 
@@ -129,12 +130,13 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:  # no
         all_chunks = await get_all_chunks()
         get_bm25_index().build(all_chunks)
 
-        # Smart analysis: summary + question suggestions (non-blocking)
+        # Smart analysis: one-liner + bullets + question suggestions
         summary = ""
+        bullets: list[str] = []
         suggested_questions: list[str] = []
         try:
             from nexus.features.analyzer import analyze_document
-            summary, suggested_questions = await analyze_document(filename, chunks)
+            summary, bullets, suggested_questions = await analyze_document(filename, chunks)
         except Exception as e:
             logger.warning("Document analysis skipped", error=str(e))
 
@@ -149,6 +151,7 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:  # no
             filename=filename,
             chunk_count=len(chunks),
             summary=summary,
+            bullets=bullets,
             suggested_questions=suggested_questions,
         )
     except HTTPException:

@@ -1,22 +1,24 @@
 'use client'
 
-import { useState, useRef, useId, useCallback } from 'react'
+import { useState, useRef, useId, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Loader2, UploadCloud } from 'lucide-react'
 import { streamChat, GroundingResult, ContradictionResult, SourceRef } from '@/lib/api'
-import { GroundingPanel } from './GroundingPanel'
 import { ContradictionBadge } from './ContradictionBadge'
 import { SourceCard } from './SourceCard'
+
+export interface ChatWindowHandle {
+  ask: (question: string) => void
+}
 
 interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
   done?: boolean
-  grounding?: GroundingResult
-  contradiction?: ContradictionResult
   sources?: SourceRef[]
+  contradiction?: ContradictionResult
   isError?: boolean
 }
 
@@ -41,7 +43,10 @@ const WORKSPACE_SUGGESTION_META = [
   { key: 'workspaceS3', badgeClass: 'text-[#8A7A62] bg-[#8A7A62]/10 border-[#8A7A62]/20', dotClass: 'bg-[#8A7A62]' },
 ] as const
 
-export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onRequestUpload }: Props) {
+export const ChatWindow = forwardRef<ChatWindowHandle, Props>(function ChatWindow(
+  { onContradiction, isDemoMode, documentCount = 0, onRequestUpload },
+  ref
+) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -98,12 +103,11 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
           )
           setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 10)
         } else if (event.type === 'grounding') {
+          // Extract sources for source cards; grounding panel is replaced by Auto-Summary.
           const g = event.data as unknown as GroundingResult
           setMessages(prev =>
             prev.map(m =>
-              m.id === aid
-                ? { ...m, grounding: g, sources: g.sources ?? [] }
-                : m
+              m.id === aid ? { ...m, sources: g.sources ?? [] } : m
             )
           )
         } else if (event.type === 'contradiction') {
@@ -133,6 +137,11 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
       setStreaming(false)
     }
   }, [streaming, idPrefix, onContradiction, locale])
+
+  // Expose ask() so parent can trigger a question from DocumentSummaryCard chips
+  useImperativeHandle(ref, () => ({
+    ask: (question: string) => submitQuestion(question),
+  }), [submitQuestion])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -295,9 +304,6 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
                     )}
                   </p>
 
-                  {/* Grounding — source verification of the answer */}
-                  {msg.grounding && <GroundingPanel grounding={msg.grounding} />}
-
                   {/* Source cards */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="space-y-1">
@@ -370,4 +376,4 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
       </div>
     </div>
   )
-}
+})
