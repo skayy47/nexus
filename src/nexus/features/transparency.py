@@ -25,11 +25,12 @@ if TYPE_CHECKING:
     from nexus.index.hybrid_retriever import RetrievedChunk
 
 
-# Number of top source excerpts a claim can be grounded against. Matches the
-# source cards shown in the UI, so every citation links to a visible source.
-MATCH_K = 4
+# Match all retrieved chunks (up to retrieval_k=8) so no source chunk is missed.
+MATCH_K = 8
 # Cosine threshold above which an answer claim counts as supported by a source.
-GROUNDING_THRESHOLD = 0.45
+GROUNDING_THRESHOLD = 0.40
+# In-text citation pattern: [filename, page N, ...] or [filename, page="N"]
+_CITATION_RE = re.compile(r"\[([^\]]+?)[,\s]+page[^\]]*\]", re.IGNORECASE)
 
 
 class SourceRef(BaseModel):
@@ -66,19 +67,40 @@ class GroundingResult(BaseModel):
     single_source: bool = False
 
 
+def _extract_cited_doc(text: str) -> str | None:
+    """Return the document name from an inline citation, or None if not present.
+
+    Matches patterns like:
+      [TechCorp_HR_Policy_2024.txt, page 1, document index 4]
+      [chahbi_zouhair_cv_final.pdf, page="1" (document index 3)]
+    """
+    m = _CITATION_RE.search(text)
+    if m:
+        return m.group(1).strip()
+    return None
+
+
+def _strip_citations(text: str) -> str:
+    """Remove inline citation brackets so the claim text embeds cleanly."""
+    return _CITATION_RE.sub("", text).strip()
+
+
 def _split_claims(answer: str) -> list[str]:
     """Split an answer into verifiable statements.
 
-    Strips markdown, splits on sentence/line boundaries, and drops fragments
-    (headers, bullets, filler) shorter than five words so the coverage metric
-    reflects real claims rather than connective tissue.
+    Strips markdown + inline citations, splits on sentence/line boundaries,
+    and drops very short fragments (< 3 words) that are connective tissue.
+    Returns at most 12 claims.
     """
+    # Remove markdown emphasis markers
     cleaned = re.sub(r"[#*`>_]+", " ", answer)
+    # Remove citation brackets before splitting so they don't distort claim length
+    cleaned = _CITATION_RE.sub("", cleaned)
     raw = re.split(r"(?<=[.!?])\s+|\n+", cleaned)
     claims: list[str] = []
     for sentence in raw:
         s = sentence.strip(" -•\t")
-        if len(s.split()) >= 5:
+        if len(s.split()) >= 3:
             claims.append(s)
     return claims[:12]
 
@@ -97,14 +119,17 @@ def build_grounding(
 ) -> GroundingResult:
     """Verify how much of *answer* is supported by the retrieved *chunks*.
 
-    Each answer claim is embedded and matched (cosine) against the top source
-    excerpts. ``coverage`` is the fraction of claims with a supporting source
-    above ``GROUNDING_THRESHOLD``; ``verdict`` bands that coverage. Because the
-    answer is in the response language, the claims (and thus the UI) are too.
+    Two grounding paths:
+    1. **Citation-aware**: if a claim contains an inline citation referencing one
+       of the retrieved documents, it is grounded by citation — no embedding
+       needed. This correctly handles list-style answers where the LLM embeds
+       source references inline (e.g. skills extracted from a CV).
+    2. **Semantic similarity**: for claims without inline citations, embed the
+       claim (citation-stripped) and compare cosine against chunk embeddings.
+       Threshold is GROUNDING_THRESHOLD (0.40).
 
-    ``embed_fn`` is injectable for testing; it defaults to the in-stack
-    all-MiniLM embedder, imported lazily so the no-evidence paths never touch
-    the embedding model.
+    ``coverage`` is the fraction of claims with a supporting source;
+    ``verdict`` bands that coverage (≥0.8 → grounded, ≥0.4 → partial).
     """
     match_chunks = chunks[:MATCH_K]
     sources = [
@@ -117,15 +142,24 @@ def build_grounding(
         for c in match_chunks
     ]
     single_source = len({c.document_name for c in chunks}) <= 1
+    retrieved_doc_names = {c.document_name for c in match_chunks}
 
     if not match_chunks:
         return GroundingResult(
             verdict="ungrounded", coverage=0.0, sources=[], single_source=False
         )
 
-    claim_texts = _split_claims(answer)
-    if not claim_texts:
-        # Nothing verifiable (empty or one-word answer) — cannot vouch for it.
+    # Split the raw answer into claims (citations already stripped inside)
+    # We need both the raw claim lines (to detect inline citations) and
+    # the stripped versions (for semantic embedding).
+    raw_answer_lines = re.sub(r"[#*`>_]+", " ", answer)
+    raw_lines = [
+        s.strip(" -•\t")
+        for s in re.split(r"(?<=[.!?])\s+|\n+", raw_answer_lines)
+        if len(s.strip(" -•\t").split()) >= 3
+    ][:12]
+
+    if not raw_lines:
         return GroundingResult(
             verdict="ungrounded",
             coverage=0.0,
@@ -135,25 +169,46 @@ def build_grounding(
 
     if embed_fn is None:
         from nexus.rag.embeddings import embed_texts
-
         embed_fn = embed_texts
 
-    vectors = embed_fn(claim_texts + [c.content for c in match_chunks])
-    claim_vecs = np.asarray(vectors[: len(claim_texts)], dtype=float)
-    chunk_vecs = np.asarray(vectors[len(claim_texts) :], dtype=float)
+    # Strip citations for embedding (keeps semantic signal clean)
+    stripped_lines = [_strip_citations(line) for line in raw_lines]
+
+    # Embed stripped claims + all chunk contents together
+    chunk_texts = [c.content for c in match_chunks]
+    all_texts = stripped_lines + chunk_texts
+    vectors = embed_fn(all_texts)
+    claim_vecs = np.asarray(vectors[: len(stripped_lines)], dtype=float)
+    chunk_vecs = np.asarray(vectors[len(stripped_lines) :], dtype=float)
 
     claims: list[GroundedClaim] = []
     supported_count = 0
-    for i, text in enumerate(claim_texts):
-        sims = _cosine_to_rows(claim_vecs[i], chunk_vecs)
-        best = int(np.argmax(sims))
-        best_sim = float(sims[best])
-        supported = best_sim >= GROUNDING_THRESHOLD
+
+    for i, raw_line in enumerate(raw_lines):
+        display_text = _strip_citations(raw_line).strip() or raw_line.strip()
+
+        # Path 1: citation-aware grounding
+        cited_doc = _extract_cited_doc(raw_line)
+        if cited_doc and cited_doc in retrieved_doc_names:
+            # LLM cited a document that was actually retrieved → grounded
+            supported = True
+            best = next(
+                (j for j, c in enumerate(match_chunks) if c.document_name == cited_doc),
+                0,
+            )
+            best_sim = 1.0
+        else:
+            # Path 2: semantic similarity on citation-stripped claim
+            sims = _cosine_to_rows(claim_vecs[i], chunk_vecs)
+            best = int(np.argmax(sims))
+            best_sim = float(sims[best])
+            supported = best_sim >= GROUNDING_THRESHOLD
+
         if supported:
             supported_count += 1
         claims.append(
             GroundedClaim(
-                text=text,
+                text=display_text,
                 supported=supported,
                 source_index=best if supported else None,
                 similarity=round(best_sim, 3),

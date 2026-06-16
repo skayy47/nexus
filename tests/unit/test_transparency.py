@@ -147,15 +147,16 @@ class TestGrounding:
         )
         assert result.single_source is False
 
-    def test_sources_limited_to_4(self):
-        """Never expose more than MATCH_K (4) source cards."""
-        chunks = [_make_chunk(f"doc{i}.pdf") for i in range(10)]
+    def test_sources_limited_to_match_k(self):
+        """Never expose more than MATCH_K source cards (now 8)."""
+        from nexus.features.transparency import MATCH_K
+        chunks = [_make_chunk(f"doc{i}.pdf") for i in range(12)]
         result = build_grounding(
             TWO_CLAIM_ANSWER,
             chunks,
-            embed_fn=_embedder([[1.0, 0.0], [1.0, 0.0]], [[1.0, 0.0]] * 4),
+            embed_fn=_embedder([[1.0, 0.0], [1.0, 0.0]], [[1.0, 0.0]] * MATCH_K),
         )
-        assert len(result.sources) <= 4
+        assert len(result.sources) <= MATCH_K
 
     def test_valid_model_dump(self):
         """Result serializes with the grounding schema."""
