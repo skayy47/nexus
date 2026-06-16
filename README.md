@@ -18,7 +18,7 @@ NEXUS is a production-grade RAG system that goes **beyond question answering**. 
 
 Most RAG pipelines retrieve context and generate an answer. NEXUS adds three layers of **epistemic hygiene** on top:
 
-- **📋 Auto-Summary on Upload** — the moment a document is indexed, NEXUS calls Groq to produce a one-liner overview, 4 specific bullet points (facts, figures, policies), and 3 suggested questions, shown instantly in the upload panel. Question chips are clickable — one click fires a query into the chat.
+- **📋 Auto-Summary on Upload** — the moment a document is indexed, NEXUS calls the LLM to produce a one-liner overview, 4 specific bullet points (facts, figures, policies), and 3 suggested questions, shown instantly in the upload panel. Question chips are clickable — one click fires a query into the chat.
 - **⚡ Contradiction Radar** — a second structured LLM pass compares retrieved chunks across documents and surfaces conflicts, with both sides quoted verbatim and a severity rating.
 - **🕳️ Knowledge Gaps** — when the corpus has no real answer, NEXUS says so instead of hallucinating one.
 - **🔀 Hybrid Retrieval** — BM25 keyword search fused with dense vector search via Reciprocal Rank Fusion (k=60), consistently outperforming either method alone on keyword-heavy queries.
@@ -39,7 +39,7 @@ graph LR
     RET --> VEC[Supabase pgvector]
     RET --> RRF[RRF Fusion]
     RRF --> CTX[Context]
-    CTX --> LLM[Groq · Llama 3.3 70B]
+    CTX --> LLM[LLM · auto-select]
     CTX --> CD[Contradiction Detector]
     LLM --> GR[Answer Grounding]
     LLM -->|token stream · SSE| FE
@@ -51,7 +51,7 @@ graph LR
 
 1. **Embed** — the query is encoded with `all-MiniLM-L6-v2` (384-dim, CPU, baked into the Docker image).
 2. **Retrieve** — BM25 and pgvector each return top-k candidates; RRF merges the ranked lists.
-3. **Generate** — an LCEL chain streams an answer from Groq Llama 3.3 70B token-by-token via SSE (30-second per-token timeout guard; auto-fallback to Gemini 2.0 Flash if Groq key is absent).
+3. **Generate** — an LCEL chain streams tokens from the active LLM backend — Gemini 2.0 Flash (code default) or Groq Llama 3.3 70B — auto-selected at startup from whichever API key is present (Pydantic validator; no restart needed). Production deployment uses Groq. 30-second per-token timeout guard prevents indefinite SSE hang.
 4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; answer grounding (citation-aware + semantic cosine) still runs internally to power gap detection, but the user-facing feature is **Auto-Summary** (run at upload time, not query time).
 5. **Stream** — three SSE event types (`token`, `contradiction`, `gap`) let the frontend update incrementally; source cards come via the grounding pass.
 
@@ -66,7 +66,7 @@ graph LR
 | i18n | next-intl — bilingual EN / FR, premium toggle, locale-aware answers |
 | Backend | FastAPI · Python 3.11 · async throughout |
 | RAG framework | LangChain (LCEL only) |
-| LLM | Groq → Llama 3.3 70B (auto-fallback to Gemini 2.0 Flash) |
+| LLM | Gemini 2.0 Flash (code default) · Groq Llama 3.3 70B — auto-selects on available API key; **production: Groq** |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` |
 | Vector store | Supabase pgvector (IVFFlat · cosine) |
 | Keyword search | BM25 (`rank_bm25`) |
@@ -100,7 +100,7 @@ PYTHONPATH=src python tests/eval/ragas_eval.py   # writes tests/eval/results.jso
 ### Prerequisites
 
 - Python 3.11+ · Node.js 18+
-- A free [Supabase](https://supabase.com) project · a free [Groq](https://console.groq.com) API key
+- A free [Supabase](https://supabase.com) project · a [Groq](https://console.groq.com) API key **or** a [Gemini](https://aistudio.google.com) API key (the system auto-selects based on which is present in `.env`)
 
 ### Local setup
 
@@ -113,7 +113,7 @@ pip install -e ".[dev]"
 
 # 2. Environment
 cp .env.example .env
-# Edit .env — fill in GROQ_API_KEY, SUPABASE_URL, SUPABASE_KEY
+# Edit .env — set GROQ_API_KEY or GEMINI_API_KEY (or both), SUPABASE_URL, SUPABASE_KEY
 
 # 3. One-time DB migration
 #    Supabase Studio → SQL Editor → run:
@@ -201,6 +201,6 @@ nexus/
 
 MIT — see [`LICENSE`](LICENSE).
 
-**Part of a three-system portfolio:** [🎼 MAESTRO](https://github.com/skayy47/maestro) — multi-agent AI · 🧠 nexus · [🔬 AURA](https://github.com/skayy47/AURA) — full-stack data AI
+**Part of a three-system portfolio:** [🎼 MAESTRO](https://maestro-lac-theta.vercel.app) — multi-agent AI · 🧠 nexus · [🔬 AURA](https://aura-skayy47s-projects.vercel.app) — full-stack data AI
 
 Built by **[Oussama Skia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection · answer grounding.
