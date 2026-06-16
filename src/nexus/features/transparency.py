@@ -67,6 +67,15 @@ class GroundingResult(BaseModel):
     single_source: bool = False
 
 
+def _normalize_name(name: str) -> str:
+    """Normalize a filename for fuzzy comparison: strip punctuation, lowercase.
+
+    "chahbi zouhair cv final.pdf" and "chahbi_zouhair_cv_final.pdf" both become
+    "chahbizouhaircvfinalpdf", so LLM-reformatted filenames still match.
+    """
+    return re.sub(r"[\s_./()\-]+", "", name).lower()
+
+
 def _extract_cited_doc(text: str) -> str | None:
     """Return the document name from an inline citation, or None if not present.
 
@@ -187,13 +196,21 @@ def build_grounding(
     for i, raw_line in enumerate(raw_lines):
         display_text = _strip_citations(raw_line).strip() or raw_line.strip()
 
-        # Path 1: citation-aware grounding
+        # Path 1: citation-aware grounding (fuzzy name match handles LLM-reformatted filenames,
+        # e.g. "chahbi zouhair cv final.pdf" matching "chahbi_zouhair_cv_final.pdf")
         cited_doc = _extract_cited_doc(raw_line)
-        if cited_doc and cited_doc in retrieved_doc_names:
+        cited_doc_norm = _normalize_name(cited_doc) if cited_doc else None
+        if cited_doc_norm and any(
+            _normalize_name(n) == cited_doc_norm for n in retrieved_doc_names
+        ):
             # LLM cited a document that was actually retrieved → grounded
             supported = True
             best = next(
-                (j for j, c in enumerate(match_chunks) if c.document_name == cited_doc),
+                (
+                    j
+                    for j, c in enumerate(match_chunks)
+                    if _normalize_name(c.document_name) == cited_doc_norm
+                ),
                 0,
             )
             best_sim = 1.0

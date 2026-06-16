@@ -13,6 +13,7 @@ from nexus.features.transparency import (
     GroundedClaim,
     GroundingResult,
     SourceRef,
+    _normalize_name,
     _split_claims,
     build_grounding,
 )
@@ -48,6 +49,21 @@ TWO_CLAIM_ANSWER = (
     "The remote work policy allows three days each week. "
     "Employees may also work fully from home."
 )
+
+
+class TestNormalizeName:
+    def test_underscores_match_spaces(self):
+        assert _normalize_name("chahbi_zouhair_cv_final.pdf") == _normalize_name(
+            "chahbi zouhair cv final.pdf"
+        )
+
+    def test_case_insensitive(self):
+        assert _normalize_name("TechCorp_HR_Policy.txt") == _normalize_name(
+            "techcorp hr policy.txt"
+        )
+
+    def test_dashes_stripped(self):
+        assert _normalize_name("my-doc.pdf") == _normalize_name("mydoc.pdf")
 
 
 class TestSplitClaims:
@@ -215,6 +231,19 @@ class TestGrounding:
             embed_fn=_embedder([[1.0, 0.0], [1.0, 0.0]], [[1.0, 0.0]]),
         )
         assert result.claim_count == len(result.claims)
+
+    def test_citation_grounded_fuzzy_filename(self):
+        """Citation with spaces matches chunk stored with underscores."""
+        chunk = _make_chunk("chahbi_zouhair_cv_final.pdf")
+        # LLM reformats filename as "chahbi zouhair cv final.pdf" (spaces)
+        answer = "AWS EC2 S3 IAM [chahbi zouhair cv final.pdf, page 1, document index 0]."
+        result = build_grounding(
+            answer,
+            [chunk],
+            embed_fn=_embedder([[0.0, 1.0]], [[1.0, 0.0]]),  # semantic would fail
+        )
+        assert result.claims[0].supported is True
+        assert result.claims[0].similarity == 1.0
 
     def test_grounding_threshold_constant_in_range(self):
         """GROUNDING_THRESHOLD must be between 0 and 1 (sanity check on module constant)."""
