@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings
 
 # Project root = two levels up from this file (src/nexus/config.py → nexus/)
@@ -42,6 +42,17 @@ class Settings(BaseSettings):
     def strip_whitespace(cls, v: str) -> str:
         """Strip accidental whitespace/newlines from secrets (common paste issue)."""
         return v.strip() if isinstance(v, str) else v
+
+    @model_validator(mode="after")
+    def resolve_backend(self) -> "Settings":
+        """Auto-downgrade: if the configured backend has no key, fall back to the other."""
+        if self.llm_backend == LLMBackend.GEMINI and not self.gemini_api_key:
+            if self.groq_api_key:
+                object.__setattr__(self, "llm_backend", LLMBackend.GROQ)
+        elif self.llm_backend == LLMBackend.GROQ and not self.groq_api_key:
+            if self.gemini_api_key:
+                object.__setattr__(self, "llm_backend", LLMBackend.GEMINI)
+        return self
 
     # ── Ollama (local dev) ───────────────────────────
     ollama_base_url: str = "http://localhost:11434"

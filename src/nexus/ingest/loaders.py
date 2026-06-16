@@ -38,6 +38,9 @@ def load_pdf(content: bytes, filename: str) -> list[dict[str, str | int]]:
     Pages with fewer than _MIN_PAGE_CHARS of text (e.g. figure captions) are merged
     into the nearest substantive page rather than becoming isolated low-quality chunks.
     """
+    if not content:
+        raise ValueError("PDF file is empty.")
+
     from pypdf import PdfReader
 
     # Attempt pypdf — catches corrupt headers, stream errors, unusual encodings.

@@ -78,17 +78,37 @@ def reset_llm() -> None:
     _llm_instance = None
 
 
+async def _iter_with_timeout(aiter, timeout_secs: float):
+    """Wrap an async iterator and enforce a per-item wait timeout.
+
+    Raises asyncio.TimeoutError if any single __anext__() call exceeds
+    timeout_secs. Prevents indefinite hangs when an LLM API is unreachable.
+    """
+    import asyncio
+
+    while True:
+        try:
+            item = await asyncio.wait_for(aiter.__anext__(), timeout=timeout_secs)
+        except StopAsyncIteration:
+            return
+        yield item
+
+
 async def stream_tokens(
     messages: list[dict[str, str]],
+    token_timeout: float = 30.0,
 ) -> AsyncGenerator[str, None]:
     """Stream LLM response tokens with retry on transient errors.
 
     Args:
         messages: List of message dicts with 'role' and 'content' keys.
+        token_timeout: Seconds to wait for each token before aborting.
 
     Yields:
         Individual token strings. Raises if all retries yield empty content.
     """
+    import asyncio
+
     llm = get_llm()
     langchain_messages = _to_langchain_messages(messages)
 
@@ -96,7 +116,7 @@ async def stream_tokens(
     for attempt in range(3):
         try:
             token_count = 0
-            async for chunk in llm.astream(langchain_messages):
+            async for chunk in _iter_with_timeout(llm.astream(langchain_messages), token_timeout):
                 if chunk.content:
                     token_count += 1
                     yield str(chunk.content)
@@ -107,16 +127,20 @@ async def stream_tokens(
             # Stream completed but returned zero content — treat as retriable failure
             logger.warning("LLM stream returned empty content", attempt=attempt + 1)
             if attempt < 2:
-                import asyncio
                 await asyncio.sleep(2 ** attempt * 2)
             else:
                 raise RuntimeError("LLM returned empty content after 3 attempts")
 
+        except asyncio.TimeoutError:
+            backend = get_settings().llm_backend.value
+            raise RuntimeError(
+                f"LLM backend '{backend}' timed out after {token_timeout:.0f}s waiting for tokens. "
+                "Check that the API key is set and the endpoint is reachable."
+            ) from None
+
         except Exception as exc:
             last_exc = exc
             if attempt < 2:
-                import asyncio
-
                 wait = 2**attempt * 2  # 2s, 4s
                 logger.warning("LLM stream error, retrying", attempt=attempt + 1, error=str(exc))
                 await asyncio.sleep(wait)
@@ -128,11 +152,14 @@ async def single_call(
     prompt: str,
     max_tokens: int = 512,
     temperature: float = 0.0,
+    call_timeout: float = 30.0,
 ) -> str:
     """Non-streaming single LLM call.
 
     Used for feature modules (contradiction detection, gap analysis, etc.)
     """
+    import asyncio
+
     llm = get_llm()
     settings = get_settings()
 
@@ -142,7 +169,14 @@ async def single_call(
     else:
         bound_llm = llm.bind(temperature=temperature, max_tokens=max_tokens)
 
-    response = await bound_llm.ainvoke(prompt)
+    try:
+        response = await asyncio.wait_for(bound_llm.ainvoke(prompt), timeout=call_timeout)
+    except asyncio.TimeoutError:
+        backend = settings.llm_backend.value
+        raise RuntimeError(
+            f"LLM backend '{backend}' timed out after {call_timeout:.0f}s. "
+            "Check that the API key is set and the endpoint is reachable."
+        ) from None
     return str(response.content)
 
 
@@ -150,14 +184,23 @@ async def structured_call(
     prompt: str,
     output_schema: type[Any],
     max_tokens: int = 512,
+    call_timeout: float = 30.0,
 ) -> Any:
     """LLM call with structured output via Pydantic model.
 
     Uses LangChain's with_structured_output for reliable JSON parsing.
     """
+    import asyncio
+
     llm = get_llm()
     structured_llm = llm.with_structured_output(output_schema)
-    response = await structured_llm.ainvoke(prompt)
+    try:
+        response = await asyncio.wait_for(structured_llm.ainvoke(prompt), timeout=call_timeout)
+    except asyncio.TimeoutError:
+        backend = get_settings().llm_backend.value
+        raise RuntimeError(
+            f"LLM backend '{backend}' structured call timed out after {call_timeout:.0f}s."
+        ) from None
     return response
 
 

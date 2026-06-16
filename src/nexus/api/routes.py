@@ -153,6 +153,9 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:  # no
         )
     except HTTPException:
         raise
+    except ValueError as e:
+        # User-facing errors: unsupported type, bad content, encrypted PDF, etc.
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.error("Upload failed", filename=filename, error=str(e))
         raise HTTPException(status_code=500, detail=str(e)) from e
@@ -311,7 +314,11 @@ async def chat(request: ChatRequest) -> StreamingResponse:
             request.question, session_id, request.transparency_mode, request.language
         ),
         media_type="text/event-stream",
-        headers={"X-Session-ID": session_id},
+        headers={
+            "X-Session-ID": session_id,
+            "X-Accel-Buffering": "no",   # disable nginx proxy buffering
+            "Cache-Control": "no-cache",
+        },
     )
 
 
@@ -319,6 +326,9 @@ async def _generate_stream(
     question: str, session_id: str, transparency: bool, language: str = "en"
 ):
     try:
+        # Ping immediately so nginx/HF-Spaces proxy doesn't buffer the connection.
+        yield ": ping\n\n"
+
         query_vec = embed_query(question)
         chunks = await hybrid_retrieve(question, query_vec, k=settings.retrieval_k)
 
