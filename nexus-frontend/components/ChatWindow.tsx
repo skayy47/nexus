@@ -272,6 +272,8 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
                 </div>
               ) : (
                 <div
+                  aria-live="polite"
+                  aria-atomic="false"
                   className="max-w-2xl w-full rounded-2xl px-4 py-3 mr-8 bg-[#1A1208]/90 space-y-4"
                   style={{
                     border: msg.isError
@@ -348,18 +350,20 @@ export function ChatWindow({ onContradiction, isDemoMode, documentCount = 0, onR
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder={t('placeholder')}
+            aria-label={t('placeholder')}
             disabled={streaming || atLimit}
-            className="flex-1 bg-[#1A1208] text-[#EDE4D0] placeholder-[#5E5040] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9973B]/40 border border-[#C9973B]/15 disabled:opacity-50 transition"
+            className="flex-1 bg-[#1A1208] text-[#EDE4D0] placeholder-[#5E5040] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9973B]/60 border border-[#C9973B]/15 disabled:opacity-50 transition"
           />
           <button
             type="submit"
             disabled={streaming || !input.trim() || atLimit}
+            aria-label={streaming ? t('sending') : t('sendLabel')}
             className="px-4 py-2.5 bg-[#C9973B] hover:bg-[#B8882A] disabled:opacity-40 text-[#0E0A05] rounded-xl transition-colors"
           >
             {streaming ? (
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" aria-hidden />
             ) : (
-              <Send size={16} />
+              <Send size={16} aria-hidden />
             )}
           </button>
         </form>

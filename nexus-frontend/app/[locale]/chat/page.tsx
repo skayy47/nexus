@@ -86,6 +86,25 @@ function ChatPage() {
           </div>
         </div>
 
+        {/* Mobile insight stats — only visible on small screens where sidebar is hidden */}
+        <div className="lg:hidden flex items-center gap-4 px-4 py-2 border-b border-[#C9973B]/15 bg-[#0E0A05]/60 text-xs text-[#8A7A62]">
+          {contradictionCount > 0 && (
+            <span className="flex items-center gap-1 text-red-400 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              {contradictionCount} contradiction{contradictionCount !== 1 ? 's' : ''}
+            </span>
+          )}
+          {gapCount > 0 && (
+            <span className="flex items-center gap-1 text-amber-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              {gapCount} gap{gapCount !== 1 ? 's' : ''}
+            </span>
+          )}
+          {contradictionCount === 0 && gapCount === 0 && documentCount > 0 && (
+            <span className="text-[#5E5040]">No issues detected</span>
+          )}
+        </div>
+
         {showUpload && (
           <div className="p-4 border-b border-[#C9973B]/15 bg-[#1A1208]/30">
             <DocumentZone

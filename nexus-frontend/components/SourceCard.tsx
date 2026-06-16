@@ -33,6 +33,8 @@ export function SourceCard({ source }: Props) {
     <div className="rounded-lg overflow-hidden border border-[#C9973B]/20 bg-[#1A1208]/50">
       <button
         onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-label={`${open ? 'Collapse' : 'Expand'} source: ${source.document_name} page ${source.page_number}`}
         className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#C9973B]/[0.06] transition-colors"
       >
         <div className="flex items-center gap-2 min-w-0">
@@ -43,8 +45,8 @@ export function SourceCard({ source }: Props) {
           <span className="text-[#6A5A42] text-xs shrink-0">p.{source.page_number}</span>
         </div>
         {open
-          ? <ChevronUp size={12} className="text-[#6A5A42] shrink-0" />
-          : <ChevronDown size={12} className="text-[#6A5A42] shrink-0" />}
+          ? <ChevronUp size={12} className="text-[#6A5A42] shrink-0" aria-hidden />
+          : <ChevronDown size={12} className="text-[#6A5A42] shrink-0" aria-hidden />}
       </button>
 
       <AnimatePresence>

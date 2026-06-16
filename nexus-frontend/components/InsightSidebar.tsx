@@ -103,9 +103,10 @@ export function InsightSidebar({
         <div className="mt-4">
           <button
             onClick={() => setDocsOpen(o => !o)}
+            aria-expanded={docsOpen}
             className="flex items-center gap-1 text-xs text-[#6A5A42] hover:text-slate-300 transition-colors w-full mb-2"
           >
-            {docsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+            {docsOpen ? <ChevronDown size={12} aria-hidden /> : <ChevronRight size={12} aria-hidden />}
             {t('loadedDocuments')}
           </button>
 
@@ -152,12 +153,12 @@ export function InsightSidebar({
                         <button
                           onClick={e => handleDelete(e, doc.name)}
                           disabled={isDeleting}
-                          className="shrink-0 opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all disabled:opacity-30"
-                          title={`Remove ${doc.name}`}
+                          aria-label={`Remove ${doc.name}`}
+                          className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 text-slate-600 hover:text-red-400 transition-all disabled:opacity-30"
                         >
                           {isDeleting
-                            ? <span className="inline-block w-3 h-3 border border-slate-500 border-t-transparent rounded-full animate-spin" />
-                            : <X size={11} />}
+                            ? <span className="inline-block w-3 h-3 border border-slate-500 border-t-transparent rounded-full animate-spin" aria-label="Deleting…" />
+                            : <X size={11} aria-hidden />}
                         </button>
                       )}
                     </li>

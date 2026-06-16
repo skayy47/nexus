@@ -53,10 +53,10 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
       {/* Coverage meter */}
       <div className="h-1.5 bg-[#C9973B]/20 rounded-full overflow-hidden">
         <motion.div
-          className="h-full rounded-full"
+          className="h-full rounded-full origin-left"
           style={{ background: v.color }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: pct / 100 }}
           transition={{ duration: 0.9, ease: 'easeOut' }}
         />
       </div>
@@ -65,9 +65,10 @@ export function GroundingPanel({ grounding }: { grounding: GroundingResult }) {
       {hasClaims && (
         <button
           onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
           className="flex items-center gap-1 text-[11px] text-[#8A7A62] hover:text-[#EDE4D0] transition-colors"
         >
-          {open ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+          {open ? <ChevronUp size={11} aria-hidden /> : <ChevronDown size={11} aria-hidden />}
           {open ? t('hideCheck') : t('showCheck')}
         </button>
       )}

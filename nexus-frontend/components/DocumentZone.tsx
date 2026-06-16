@@ -111,8 +111,12 @@ export function DocumentZone({ onClear, onUpload }: Props) {
   return (
     <div className="space-y-2">
       <div
-        className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${clickable ? 'cursor-pointer' : ''} ${borderColor}`}
+        role={clickable ? 'button' : undefined}
+        tabIndex={clickable ? 0 : undefined}
+        aria-label="Upload documents — click or drag files here"
+        className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${clickable ? 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C9973B]/60' : ''} ${borderColor}`}
         onClick={() => clickable && inputRef.current?.click()}
+        onKeyDown={e => { if (clickable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); inputRef.current?.click() } }}
         onDragOver={e => { e.preventDefault(); setDragging(true) }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}

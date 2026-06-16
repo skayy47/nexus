@@ -96,6 +96,8 @@
     "askAnything": "Posez n'importe quelle question sur vos documents.",
     "sessionLimit": "Limite de session atteinte (20 requêtes). Actualisez pour démarrer une nouvelle session.",
     "placeholder": "Interrogez vos documents...",
+    "sendLabel": "Envoyer le message",
+    "sending": "Envoi en cours…",
     "tryLabel": "Essayez :",
     "s1Label": "Politique de télétravail",
     "s1Question": "Quelle est la politique de télétravail et combien de jours par semaine sont autorisés ?",

@@ -96,6 +96,8 @@
     "askAnything": "Ask anything about your documents.",
     "sessionLimit": "Session limit reached (20 queries). Refresh to start a new session.",
     "placeholder": "Ask about your documents...",
+    "sendLabel": "Send message",
+    "sending": "Sending…",
     "tryLabel": "Try:",
     "s1Label": "Remote work policy",
     "s1Question": "What is the remote work policy and how many days per week are allowed?",
