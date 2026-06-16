@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UploadCloud, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 import { uploadDocument, clearDocuments } from '@/lib/api'
@@ -27,6 +27,7 @@ interface Props {
 
 export function DocumentZone({ onClear, onUpload, onAskQuestion }: Props) {
   const t = useTranslations('documentZone')
+  const locale = useLocale()
   const [state, setState] = useState<ZoneState>('idle')
   const [progressText, setProgressText] = useState('')
   const [results, setResults] = useState<FileResult[]>([])
@@ -59,7 +60,7 @@ export function DocumentZone({ onClear, onUpload, onAskQuestion }: Props) {
       setProgressText(t('processing', { current: i + 1, total: files.length, name: file.name }))
 
       try {
-        const result = await uploadDocument(file)
+        const result = await uploadDocument(file, locale)
         blobStore.set(file.name, file)
         newResults.push({
           name: file.name,

@@ -8,8 +8,14 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
+_LANG_INSTRUCTION = {
+    "fr": "IMPORTANT: Respond entirely in French. All values in the JSON must be written in French.",
+    "en": "",
+}
+
 _SUMMARY_PROMPT = """\
 You are analyzing a document for an institutional memory system.
+{lang_instruction}
 
 Document: "{filename}"
 Content excerpt (first 3000 chars):
@@ -43,6 +49,7 @@ Rules:
 async def analyze_document(
     filename: str,
     chunks: list,
+    locale: str = "en",
 ) -> tuple[str, list[str], list[str]]:
     """Generate a one-liner, 4 bullet-point summary, and 3 suggested questions.
 
@@ -56,7 +63,8 @@ async def analyze_document(
 
     from nexus.rag.llm_client import single_call
 
-    prompt = _SUMMARY_PROMPT.format(filename=filename, excerpt=excerpt)
+    lang_instruction = _LANG_INSTRUCTION.get(locale, "")
+    prompt = _SUMMARY_PROMPT.format(filename=filename, excerpt=excerpt, lang_instruction=lang_instruction)
 
     try:
         raw = await single_call(prompt, max_tokens=600, temperature=0.1)

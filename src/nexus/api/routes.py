@@ -7,7 +7,7 @@ import uuid
 from collections import defaultdict
 
 import structlog
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -102,7 +102,10 @@ async def health() -> HealthResponse:
 
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_document(file: UploadFile = File(...)) -> UploadResponse:  # noqa: B008
+async def upload_document(
+    file: UploadFile = File(...),  # noqa: B008
+    locale: str = Query(default="en", pattern="^[a-z]{2}$"),
+) -> UploadResponse:
     """Upload and index a document. Supports PDF, DOCX, XLSX, PPTX, CSV, RTF, JSON, EML, TXT, MD, HTML."""
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
@@ -136,7 +139,7 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:  # no
         suggested_questions: list[str] = []
         try:
             from nexus.features.analyzer import analyze_document
-            summary, bullets, suggested_questions = await analyze_document(filename, chunks)
+            summary, bullets, suggested_questions = await analyze_document(filename, chunks, locale)
         except Exception as e:
             logger.warning("Document analysis skipped", error=str(e))
 
