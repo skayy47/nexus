@@ -30,7 +30,7 @@ const FEATURE_META = [
   { icon: ShieldCheck, color: '#9B6B3A', bg: 'rgba(155,107,58,0.1)' },
 ]
 
-const STACK = ['LangChain', 'Gemini 2.0 Flash', 'Supabase pgvector', 'BM25 + RRF', 'FastAPI', 'Next.js 14']
+const STACK = ['LangChain', 'Groq · Llama 3.3 70B', 'Supabase pgvector', 'BM25 + RRF', 'FastAPI', 'Next.js 14']
 const GH = 'https://github.com/skayy47/nexus'
 
 export function LandingHero() {
@@ -350,15 +350,6 @@ function TransparencyPanel() {
           {t('answerPre')}<b>{t('answer2days')}</b>{' '}
           <span className="text-[#D4A843] text-[12.5px]">[TechCorp_HR_Policy_2024 · p.1]</span>{t('answerMid')}
           <b>{t('answer3days')}</b> <span className="text-[#D4A843] text-[12.5px]">[TechCorp_HR_Policy_2023 · p.1]</span>{t('answerPost')}
-
-          <div className="mt-[18px]">
-            <div className="flex justify-between text-xs text-[#8A7A62] mb-1.5"><span>{t('groundingLabel')}</span><span className="text-[#D4A843]">{t('groundingValue')}</span></div>
-            <div className="h-[7px] rounded-full bg-[#C9973B]/[0.12] overflow-hidden">
-              <motion.div initial={{ width: 0 }} whileInView={{ width: '67%' }} viewport={{ once: true }}
-                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                className="h-full rounded-full bg-gradient-to-r from-amber-400 to-emerald-400" />
-            </div>
-          </div>
 
           <div className="mt-4 flex gap-3 bg-[rgba(251,113,133,0.07)] border border-[rgba(251,113,133,0.25)] rounded-xl p-[13px_15px]" style={{ padding: '13px 15px' }}>
             <AlertTriangle size={18} className="text-[#fb7185] shrink-0 mt-0.5" />

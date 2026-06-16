@@ -12,10 +12,13 @@ interface Props {
   onAsk?: (q: string) => void
 }
 
-export function DocumentSummaryCard({ summary, bullets, questions, onAsk }: Props) {
+export function DocumentSummaryCard({ filename, summary, bullets, questions, onAsk }: Props) {
   const t = useTranslations('documentZone')
 
   if (!summary && bullets.length === 0) return null
+
+  // Strip path separators, keep just the base name for display
+  const displayName = filename.split(/[\\/]/).pop() ?? filename
 
   return (
     <motion.div
@@ -27,9 +30,15 @@ export function DocumentSummaryCard({ summary, bullets, questions, onAsk }: Prop
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-[#C9973B]/10 bg-[#C9973B]/5">
         <BookOpen size={12} className="text-[#C9973B] shrink-0" />
-        <span className="text-[10px] font-semibold text-[#C9973B] uppercase tracking-wider">
-          {t('summaryTitle')}
-        </span>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-[10px] font-semibold text-[#C9973B] uppercase tracking-wider shrink-0">
+            {t('summaryTitle')}
+          </span>
+          <span className="text-[#6A5A42] text-[10px]">—</span>
+          <span className="text-[10px] text-[#8A7A62] truncate" title={displayName}>
+            {displayName}
+          </span>
+        </div>
       </div>
 
       <div className="p-3 space-y-3">

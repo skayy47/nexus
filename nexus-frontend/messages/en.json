@@ -36,8 +36,8 @@
     "step2Desc": "Dense pgvector search and sparse BM25 run in parallel, then fuse with Reciprocal Rank Fusion (k=60) — beating vector-only on keyword-heavy queries.",
     "step2Tag": "BM25 + pgvector · RRF",
     "step3Title": "3 · Generate",
-    "step3Desc": "Gemini 2.0 Flash streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection. Natively bilingual: English and French.",
-    "step3Tag": "Gemini 2.0 Flash · LCEL · SSE streaming",
+    "step3Desc": "Groq Llama 3.3 70B streams the answer token-by-token over an LCEL chain — context wrapped in document tags to neutralise prompt injection. Natively bilingual: English and French.",
+    "step3Tag": "Groq · Llama 3.3 70B · LCEL · SSE streaming",
     "step4Title": "4 · Verify",
     "step4Desc": "Auto-summary captures 4 key bullet points from each uploaded document instantly, while a second LLM pass compares retrieved chunks — surfacing contradictions and knowledge gaps before you trust the answer.",
     "step4Tag": "Auto-Summary · Contradiction Radar"
