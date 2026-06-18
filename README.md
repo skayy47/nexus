@@ -61,7 +61,7 @@ graph LR
 
 1. **Embed** — the query is encoded with `all-MiniLM-L6-v2` (384-dim, CPU, baked into the Docker image).
 2. **Retrieve** — BM25 and pgvector each return top-k candidates; RRF merges the ranked lists.
-3. **Generate** — an LCEL chain streams tokens from the active LLM backend — Gemini 2.0 Flash (code default) or Groq Llama 3.3 70B — auto-selected at startup from whichever API key is present (Pydantic validator; no restart needed). Production deployment uses Groq. 30-second per-token timeout guard prevents indefinite SSE hang.
+3. **Generate** — an LCEL chain streams tokens from **Groq Llama 3.3 70B** over SSE. A producer-queue pattern with a hard 30-second deadline prevents indefinite SSE hang regardless of API latency.
 4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; answer grounding (citation-aware + semantic cosine) still runs internally to power gap detection, but the user-facing feature is **Auto-Summary** (run at upload time, not query time).
 5. **Stream** — three SSE event types (`token`, `contradiction`, `gap`) let the frontend update incrementally; source cards come via the grounding pass.
 
@@ -76,7 +76,7 @@ graph LR
 | i18n | next-intl — bilingual EN / FR, premium toggle, locale-aware answers |
 | Backend | FastAPI · Python 3.11 · async throughout |
 | RAG framework | LangChain (LCEL only) |
-| LLM | Gemini 2.0 Flash (code default) · Groq Llama 3.3 70B — auto-selects on available API key; **production: Groq** |
+| LLM | **Groq Llama 3.3 70B** — sub-second first token, free tier, bilingual EN/FR |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` |
 | Vector store | Supabase pgvector (IVFFlat · cosine) |
 | Keyword search | BM25 (`rank_bm25`) |
@@ -110,7 +110,7 @@ PYTHONPATH=src python tests/eval/ragas_eval.py   # writes tests/eval/results.jso
 ### Prerequisites
 
 - Python 3.11+ · Node.js 18+
-- A free [Supabase](https://supabase.com) project · a [Groq](https://console.groq.com) API key **or** a [Gemini](https://aistudio.google.com) API key (the system auto-selects based on which is present in `.env`)
+- A free [Supabase](https://supabase.com) project · a free [Groq](https://console.groq.com) API key
 
 ### Local setup
 

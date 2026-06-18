@@ -39,13 +39,13 @@ If a feature request conflicts with shipping these three, flag it and defer.
 | Embeddings | all-MiniLM-L6-v2 | Free, runs on CPU, 384-dim |
 | Vector DB | Supabase pgvector | Replaces Chroma, free, CV value |
 | Keyword search | BM25 (rank_bm25) | Hybrid retrieval |
-| LLM | Groq → Llama 3.3 70B | Free, fastest inference |
+| LLM | Groq Llama 3.3 70B (primary) | Sub-second first token, free tier, bilingual EN/FR, proven in production |
 | Frontend deploy | Vercel | Free, CDN, custom domain |
-| Backend deploy | Railway | Always-on, no cold starts, $5 credit |
+| Backend deploy | Hugging Face Spaces (Docker) | Free 16 GB RAM, Docker SDK, always-on |
 | Evaluation | RAGAS | Faithfulness, answer relevancy, context recall |
 
 **Do not suggest**: Pinecone, OpenAI API, Weaviate, paid services of any kind.
-**Do not suggest**: Streamlit (UI is Next.js), AWS/GCP (deployment is Vercel+Railway).
+**Do not suggest**: Streamlit (UI is Next.js), AWS/GCP/Railway (deployment is Vercel + HF Spaces).
 
 ---
 
@@ -216,17 +216,18 @@ const streamResponse = async (question: string) => {
 
 ### Backend (.env)
 ```
+LLM_BACKEND=groq                 # groq (primary, production)
 GROQ_API_KEY=                    # Groq free tier
 SUPABASE_URL=                    # Supabase project URL
 SUPABASE_KEY=                    # Supabase anon key
-ALLOWED_ORIGINS=https://nexus.skay.dev,http://localhost:3000
-DEMO_DATA_PATH=./demo_data
+ALLOWED_ORIGINS=https://nexussss-two.vercel.app,http://localhost:3000
+DEMO_DATA_PATH=./demo_corpus
 MAX_QUERIES_PER_SESSION=20
 ```
 
 ### Frontend (.env.local)
 ```
-NEXT_PUBLIC_API_URL=https://nexus-backend.railway.app
+NEXT_PUBLIC_API_URL=https://SKAY00-nexus-backend.hf.space
 ```
 
 ---
@@ -264,12 +265,13 @@ NEXT_PUBLIC_API_URL=https://nexus-backend.railway.app
 
 ## Deployment Reference
 
-### Backend (Railway)
+### Backend (Hugging Face Spaces — Docker)
+Full runbook: `deploy/huggingface-spaces.md`
 ```bash
-railway login
-railway init
-railway volume add  # Mount at /data for Supabase local cache
-railway up
+git remote add space https://huggingface.co/spaces/SKAY00/nexus-backend
+git push space main
+# Space URL: https://SKAY00-nexus-backend.hf.space
+# Set HF Space secrets: LLM_BACKEND, GEMINI_API_KEY, GROQ_API_KEY, SUPABASE_URL, SUPABASE_KEY
 ```
 
 ### Frontend (Vercel)
