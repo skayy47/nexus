@@ -98,54 +98,69 @@ async def stream_tokens(
     messages: list[dict[str, str]],
     token_timeout: float = 30.0,
 ) -> AsyncGenerator[str, None]:
-    """Stream LLM response tokens with retry on transient errors.
+    """Stream LLM response tokens with a hard total-stream deadline.
 
-    Args:
-        messages: List of message dicts with 'role' and 'content' keys.
-        token_timeout: Seconds to wait for each token before aborting.
-
-    Yields:
-        Individual token strings. Raises if all retries yield empty content.
+    Uses asyncio.timeout() as the outer deadline so the entire streaming
+    call is bounded — not just individual tokens. This correctly cancels
+    the underlying HTTP connection even when the LangChain client doesn't
+    propagate per-item asyncio.wait_for cancellation cleanly.
     """
     import asyncio
 
     llm = get_llm()
     langchain_messages = _to_langchain_messages(messages)
 
-    last_exc: Exception | None = None
-    for attempt in range(3):
+    # Collect tokens in a queue — producer task streams from LLM,
+    # consumer yields with a hard deadline.
+    _SENTINEL = object()
+
+    async def _produce(queue: asyncio.Queue):
         try:
-            token_count = 0
-            async for chunk in _iter_with_timeout(llm.astream(langchain_messages), token_timeout):
+            async for chunk in llm.astream(langchain_messages):
                 if chunk.content:
-                    token_count += 1
-                    yield str(chunk.content)
-
-            if token_count > 0:
-                return  # Success — tokens were yielded
-
-            # Stream completed but returned zero content — treat as retriable failure
-            logger.warning("LLM stream returned empty content", attempt=attempt + 1)
-            if attempt < 2:
-                await asyncio.sleep(2 ** attempt * 2)
-            else:
-                raise RuntimeError("LLM returned empty content after 3 attempts")
-
-        except asyncio.TimeoutError:
-            backend = get_settings().llm_backend.value
-            raise RuntimeError(
-                f"LLM backend '{backend}' timed out after {token_timeout:.0f}s waiting for tokens. "
-                "Check that the API key is set and the endpoint is reachable."
-            ) from None
-
+                    await queue.put(str(chunk.content))
         except Exception as exc:
-            last_exc = exc
-            if attempt < 2:
-                wait = 2**attempt * 2  # 2s, 4s
-                logger.warning("LLM stream error, retrying", attempt=attempt + 1, error=str(exc))
-                await asyncio.sleep(wait)
+            await queue.put(exc)
+        finally:
+            await queue.put(_SENTINEL)
 
-    raise last_exc or RuntimeError("LLM stream failed after 3 attempts")
+    queue: asyncio.Queue = asyncio.Queue()
+    producer = asyncio.create_task(_produce(queue))
+
+    deadline = asyncio.get_event_loop().time() + token_timeout
+    token_count = 0
+    try:
+        while True:
+            remaining = deadline - asyncio.get_event_loop().time()
+            if remaining <= 0:
+                producer.cancel()
+                backend = get_settings().llm_backend.value
+                raise RuntimeError(
+                    f"LLM backend '{backend}' timed out after {token_timeout:.0f}s waiting for tokens. "
+                    "Check that the API key is set and the endpoint is reachable."
+                )
+            try:
+                item = await asyncio.wait_for(queue.get(), timeout=remaining)
+            except asyncio.TimeoutError:
+                producer.cancel()
+                backend = get_settings().llm_backend.value
+                raise RuntimeError(
+                    f"LLM backend '{backend}' timed out after {token_timeout:.0f}s waiting for tokens. "
+                    "Check that the API key is set and the endpoint is reachable."
+                ) from None
+
+            if item is _SENTINEL:
+                break
+            if isinstance(item, Exception):
+                raise item
+            token_count += 1
+            yield item
+    finally:
+        if not producer.done():
+            producer.cancel()
+
+    if token_count == 0:
+        raise RuntimeError("LLM returned empty content.")
 
 
 async def single_call(
