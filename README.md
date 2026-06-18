@@ -1,3 +1,12 @@
+---
+title: Nexus Backend
+emoji: 🧠
+colorFrom: indigo
+colorTo: yellow
+sdk: docker
+pinned: false
+---
+
 # NEXUS — The Institutional Memory Engine
 
 > **Chat with your documents — and catch them when they contradict each other.**
