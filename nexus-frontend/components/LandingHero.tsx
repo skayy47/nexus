@@ -3,10 +3,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter, Link } from '@/i18n/navigation'
-import { motion, useScroll, useTransform, useSpring, type Variants } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, type Variants } from 'framer-motion'
 import {
   Zap, Search, FileText, Github,
-  FileStack, GitMerge, Sparkles, ShieldCheck, AlertTriangle, ArrowRight,
+  FileStack, GitMerge, Sparkles, ShieldCheck, ArrowRight,
 } from 'lucide-react'
 import { loadDemo, warmupBackend } from '@/lib/api'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -180,7 +180,7 @@ export function LandingHero() {
           <div className="max-w-5xl mx-auto px-6">
             <SectionHead eyebrow={t('showcase.eyebrow')} title={<>{t('showcase.titlePre')}<span className="nx-grad">{t('showcase.titleAccent')}</span></>}
               lead={t('showcase.lead')} />
-            <TransparencyPanel />
+            <LiveDemoPanel />
           </div>
         </section>
 
@@ -327,44 +327,330 @@ function FeatureCard({ icon: Icon, title, desc, color, bg }: {
   )
 }
 
-/* ── Transparency panel ───────────────────────────────────────── */
-function TransparencyPanel() {
-  const t = useTranslations('showcase')
+/* ── Live Demo Panel (4-scene rotating) ──────────────────────── */
+const DEMO_STEP_MS = 1300
+const DEMO_STEPS = 7
+const DEMO_SCENES = 4
+const DEMO_CHAR_MS = 20
+
+function DemoScene0({ step, tx }: { step: number; tx: (k: string) => string }) {
   return (
-    <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-40px' }}
+    <motion.div className="flex flex-col gap-2.5"
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
+      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#6A5A42]">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #34d399' }} />
+        {tx('liveDemo.uploadLabel')}
+      </div>
+      {step >= 1 && (
+        <motion.div className="inline-flex items-center gap-1.5 text-[11.5px] font-mono text-[#C9973B] bg-[#C9973B]/10 border border-[#C9973B]/20 rounded-lg px-2.5 py-1 w-fit"
+          initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
+          <FileText size={11} />
+          {tx('liveDemo.filename')}
+        </motion.div>
+      )}
+      <div className="h-0.5 bg-white/[0.06] rounded-full overflow-hidden">
+        <motion.div className="h-full bg-gradient-to-r from-[#D4A843] to-[#C9973B] rounded-full"
+          initial={{ width: '0%' }} animate={{ width: step >= 1 ? '100%' : '0%' }}
+          transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }} />
+      </div>
+      {step === 2 && (
+        <motion.div className="flex items-center gap-2 text-[11px] font-mono text-[#8A7A62]"
+          initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          <span className="w-3 h-3 rounded-full border-2 border-[#C9973B]/30 border-t-[#C9973B] animate-spin" />
+          {tx('liveDemo.analyzingLabel')}
+        </motion.div>
+      )}
+      {step >= 3 && (
+        <motion.div className="bg-[#C9973B]/[0.04] border border-[rgba(201,151,59,0.2)] rounded-[14px] p-3.5 space-y-2"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <p className="text-[12px] font-medium text-[#D4A843]">{tx('liveDemo.oneLiner')}</p>
+          <ul className="space-y-1">
+            {[tx('liveDemo.bullet0'), tx('liveDemo.bullet1'), tx('liveDemo.bullet2')].map((b, i) => (
+              <motion.li key={i} className="flex items-start gap-1.5 text-[12px] text-[#8A7A62]"
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.12 }}>
+                <span className="text-[#C9973B] shrink-0 mt-0.5">·</span>
+                {b}
+              </motion.li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+      {step >= 5 && (
+        <motion.div className="flex flex-wrap gap-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {[tx('liveDemo.chip0'), tx('liveDemo.chip1'), tx('liveDemo.chip2')].map((c, i) => (
+            <motion.span key={i}
+              className={`text-[10.5px] font-mono px-2.5 py-1 rounded-lg border ${i === 0 && step >= 6 ? 'bg-[#C9973B]/20 border-[#C9973B]/50 text-[#D4A843]' : 'bg-white/[0.03] border-white/10 text-[#6A5A42]'}`}
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1 }}>
+              {c}
+            </motion.span>
+          ))}
+        </motion.div>
+      )}
+    </motion.div>
+  )
+}
+
+function DemoScene1({ step, displayedAnswer, answerDone, tx }: { step: number; displayedAnswer: string; answerDone: boolean; tx: (k: string) => string }) {
+  return (
+    <motion.div className="flex flex-col gap-2.5"
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
+      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#6A5A42]">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #34d399' }} />
+        nexus · chat
+      </div>
+      <div className="flex justify-end">
+        <div className="text-[#0E0A05] text-[13px] px-3.5 py-2 rounded-[14px_14px_4px_14px] max-w-[80%] bg-gradient-to-br from-[#D4A843] to-[#9B6B3A]">
+          {tx('liveDemo.srcQ')}
+        </div>
+      </div>
+      {step >= 1 && (
+        <motion.div className="space-y-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {step <= 3 && (
+            <div className="flex items-center gap-2 text-[11px] font-mono text-[#8A7A62]">
+              <span className="w-3 h-3 rounded-full border-2 border-[#C9973B]/30 border-t-[#C9973B] animate-spin" />
+              {tx('liveDemo.retrieving')}
+            </div>
+          )}
+          <div className="flex flex-wrap gap-1.5">
+            <motion.span className="inline-flex items-center gap-1.5 text-[10.5px] font-mono text-[#C9973B] bg-[#C9973B]/10 border border-[#C9973B]/20 rounded-lg px-2.5 py-1"
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+              <FileText size={10} />
+              {tx('liveDemo.srcSource')}
+            </motion.span>
+          </div>
+        </motion.div>
+      )}
+      {step === 3 && (
+        <motion.div className="flex gap-1 px-3 py-2.5 bg-[#C9973B]/[0.04] border border-[rgba(201,151,59,0.2)] rounded-[4px_14px_14px_14px] w-fit"
+          initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          {[0, 1, 2].map(i => (
+            <motion.span key={i} className="w-1.5 h-1.5 rounded-full bg-[#C9973B]/50"
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 0.55, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }} />
+          ))}
+        </motion.div>
+      )}
+      {step >= 4 && (
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="bg-[#C9973B]/[0.04] border border-[rgba(201,151,59,0.2)] rounded-[4px_14px_14px_14px] p-3 text-[13px] text-[#EDE4D0] leading-relaxed">
+            {displayedAnswer}
+            {!answerDone && <span className="inline-block w-0.5 h-3.5 bg-[#C9973B] ml-0.5 animate-pulse" />}
+          </div>
+          {answerDone && step >= 5 && (
+            <motion.div className="mt-1.5"
+              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <span className="inline-flex items-center gap-1.5 text-[10.5px] font-mono text-[#D4A843] bg-[#C9973B]/10 border border-[#C9973B]/20 rounded-lg px-2.5 py-1">
+                <FileText size={10} />
+                {tx('liveDemo.srcCitation')}
+              </span>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+    </motion.div>
+  )
+}
+
+function DemoScene2({ step, tx }: { step: number; tx: (k: string) => string }) {
+  return (
+    <motion.div className="flex flex-col gap-2.5"
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
+      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#6A5A42]">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #34d399' }} />
+        nexus · chat
+      </div>
+      <motion.div className="flex flex-wrap gap-1.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {[tx('liveDemo.contDocA'), tx('liveDemo.contDocB')].map((doc, i) => (
+          <motion.span key={doc} className="inline-flex items-center gap-1.5 text-[10.5px] font-mono text-[#C9973B] bg-[#C9973B]/10 border border-[#C9973B]/20 rounded-lg px-2.5 py-1"
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.12 }}>
+            <FileText size={10} />
+            {doc}
+          </motion.span>
+        ))}
+      </motion.div>
+      {step >= 1 && (
+        <motion.div className="flex justify-end" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
+          <div className="text-[#0E0A05] text-[13px] px-3.5 py-2 rounded-[14px_14px_4px_14px] max-w-[80%] bg-gradient-to-br from-[#D4A843] to-[#9B6B3A]">
+            {tx('liveDemo.contQ')}
+          </div>
+        </motion.div>
+      )}
+      {step >= 2 && step <= 3 && (
+        <motion.div className="flex items-center gap-2 text-[11px] font-mono text-[#8A7A62]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <span className="w-3 h-3 rounded-full border-2 border-[#C9973B]/30 border-t-[#C9973B] animate-spin" />
+          {tx('liveDemo.retrieving')}
+        </motion.div>
+      )}
+      {step >= 3 && (
+        <motion.div className="bg-[#C9973B]/[0.04] border border-[rgba(201,151,59,0.2)] rounded-[4px_14px_14px_14px] p-3 text-[13px] text-[#EDE4D0] leading-relaxed"
+          initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          {tx('liveDemo.contReplyA')}
+          {step >= 4 && (
+            <motion.span className="ml-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              {tx('liveDemo.contReplyB')}
+            </motion.span>
+          )}
+        </motion.div>
+      )}
+      {step >= 5 && (
+        <motion.div className="rounded-[14px] border p-3.5"
+          style={{ background: 'rgba(251,191,36,0.05)', borderColor: 'rgba(251,191,36,0.3)' }}
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-amber-500 text-[14px]">⚠</span>
+            <span className="text-[11px] font-mono text-amber-500">{tx('liveDemo.contLabel')}</span>
+          </div>
+          <p className="text-[11.5px] text-[#8A7A62] mb-2.5">{tx('liveDemo.contNote')}</p>
+          <div className="flex gap-2">
+            <div className="flex-1 bg-[#C9973B]/[0.04] border border-[#C9973B]/10 rounded-lg p-2">
+              <div className="text-[9.5px] font-mono text-[#6A5A42] mb-1 truncate">{tx('liveDemo.contDocA')}</div>
+              <div className="text-[11px] text-[#EDE4D0]">{tx('liveDemo.contValA')}</div>
+            </div>
+            <div className="flex-1 bg-[#C9973B]/[0.04] border border-[#C9973B]/10 rounded-lg p-2">
+              <div className="text-[9.5px] font-mono text-[#6A5A42] mb-1 truncate">{tx('liveDemo.contDocB')}</div>
+              <div className="text-[11px] text-[#EDE4D0]">{tx('liveDemo.contValB')}</div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
+  )
+}
+
+function DemoScene3({ step, tx }: { step: number; tx: (k: string) => string }) {
+  return (
+    <motion.div className="flex flex-col gap-2.5"
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
+      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#6A5A42]">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #34d399' }} />
+        nexus · chat
+      </div>
+      <div className="flex justify-end">
+        <div className="text-[#0E0A05] text-[13px] px-3.5 py-2 rounded-[14px_14px_4px_14px] max-w-[80%] bg-gradient-to-br from-[#D4A843] to-[#9B6B3A]">
+          {tx('liveDemo.gapQ')}
+        </div>
+      </div>
+      {step >= 1 && step <= 2 && (
+        <motion.div className="flex items-center gap-2 text-[11px] font-mono text-[#8A7A62]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <span className="w-3 h-3 rounded-full border-2 border-[#C9973B]/30 border-t-[#C9973B] animate-spin" />
+          {tx('liveDemo.gapSearching')}
+        </motion.div>
+      )}
+      {step >= 3 && (
+        <motion.div className="rounded-[14px] border p-3.5"
+          style={{ background: 'rgba(201,151,59,0.04)', borderColor: 'rgba(201,151,59,0.25)' }}
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <div className="flex items-center gap-2 mb-1.5">
+            <Search size={13} className="text-[#C9973B]" />
+            <span className="text-[11px] font-mono text-[#C9973B]">{tx('liveDemo.gapLabel')}</span>
+          </div>
+          <p className="text-[11.5px] text-[#8A7A62]">{tx('liveDemo.gapNote')}</p>
+        </motion.div>
+      )}
+    </motion.div>
+  )
+}
+
+function LiveDemoPanel() {
+  const t = useTranslations()
+  const tx = t as unknown as (key: string) => string
+  const ref = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(false)
+  const [scene, setScene] = useState(0)
+  const [step, setStep] = useState(0)
+  const [charCount, setCharCount] = useState(0)
+
+  useEffect(() => {
+    const el = ref.current; if (!el) return
+    const io = new IntersectionObserver(
+      entries => entries.forEach(x => setActive(x.isIntersecting)),
+      { threshold: 0.3 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  const srcAnswer = tx('liveDemo.srcAnswer')
+
+  useEffect(() => {
+    if (!active) return
+    let sc = 0, st = 0
+    let streamId: ReturnType<typeof setInterval> | null = null
+    setScene(0); setStep(0); setCharCount(0)
+
+    const stopStream = () => { if (streamId) { clearInterval(streamId); streamId = null } }
+    const startStream = () => {
+      stopStream(); let c = 0; setCharCount(0)
+      streamId = setInterval(() => {
+        c++; setCharCount(c)
+        if (c >= srcAnswer.length) stopStream()
+      }, DEMO_CHAR_MS)
+    }
+
+    const tick = setInterval(() => {
+      st++
+      if (st > DEMO_STEPS) {
+        stopStream(); st = 0; sc = (sc + 1) % DEMO_SCENES; setScene(sc); setCharCount(0)
+      }
+      setStep(st)
+      if (sc === 1 && st === 4) startStream()
+    }, DEMO_STEP_MS)
+
+    return () => { clearInterval(tick); stopStream() }
+  }, [active, srcAnswer.length])
+
+  const displayedAnswer = srcAnswer.slice(0, charCount)
+  const answerDone = charCount >= srcAnswer.length
+  const LABELS = [tx('liveDemo.label0'), tx('liveDemo.label1'), tx('liveDemo.label2'), tx('liveDemo.label3')]
+
+  return (
+    <motion.div
+      ref={ref}
+      variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-40px' }}
       className="max-w-2xl mx-auto rounded-[22px] overflow-hidden border border-[rgba(201,151,59,0.45)]"
-      style={{ background: 'linear-gradient(160deg, rgba(26,18,8,0.92), rgba(14,10,4,0.92))', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(201,151,59,0.12)' }}>
-      <div className="flex items-center gap-2 px-4.5 py-3.5 border-b border-white/[0.06] bg-white/[0.02]" style={{ padding: '14px 18px' }}>
+      style={{ background: 'linear-gradient(160deg, rgba(26,18,8,0.92), rgba(14,10,4,0.92))', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(201,151,59,0.12)' }}
+    >
+      {/* Window chrome + scene nav */}
+      <div className="flex items-center gap-2 border-b border-white/[0.06] bg-white/[0.02]" style={{ padding: '14px 18px' }}>
         <span className="w-[11px] h-[11px] rounded-full bg-[#fb7185]" />
         <span className="w-[11px] h-[11px] rounded-full bg-[#fbbf24]" />
         <span className="w-[11px] h-[11px] rounded-full bg-[#34d399]" />
-        <span className="ml-2 text-slate-500 text-xs font-mono">{t('tab')}</span>
-      </div>
-      <div className="p-6">
-        <div className="flex justify-end mb-4.5" style={{ marginBottom: 18 }}>
-          <span className="text-[#0E0A05] text-[14.5px] px-4 py-2.5 rounded-[14px_14px_4px_14px] max-w-[80%] bg-gradient-to-br from-[#D4A843] to-[#9B6B3A]">
-            {t('question')}
-          </span>
-        </div>
-        <div className="bg-[#C9973B]/[0.04] border border-[rgba(201,151,59,0.2)] rounded-[4px_14px_14px_14px] p-[18px] text-[14.5px] text-[#EDE4D0] leading-relaxed">
-          {t('answerPre')}<b>{t('answer2days')}</b>{' '}
-          <span className="text-[#D4A843] text-[12.5px]">[TechCorp_HR_Policy_2024 · p.1]</span>{t('answerMid')}
-          <b>{t('answer3days')}</b> <span className="text-[#D4A843] text-[12.5px]">[TechCorp_HR_Policy_2023 · p.1]</span>{t('answerPost')}
-
-          <div className="mt-4 flex gap-3 bg-[rgba(251,113,133,0.07)] border border-[rgba(251,113,133,0.25)] rounded-xl p-[13px_15px]" style={{ padding: '13px 15px' }}>
-            <AlertTriangle size={18} className="text-[#fb7185] shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <h4 className="text-[13.5px] text-[#fb7185] font-semibold mb-1">{t('contradictionTitle')}</h4>
-              <p className="text-[13px] text-[#8A7A62]">{t('contradictionDesc')}</p>
-              <div className="flex flex-col sm:flex-row gap-2.5 mt-2.5 text-xs">
-                <div className="flex-1 bg-[#C9973B]/[0.04] border border-[#C9973B]/10 rounded-lg p-2.5">
-                  <div className="text-[#6A5A42] text-[10.5px] mb-1">TechCorp_HR_Policy_2023</div>{t('policy2023Limit')}</div>
-                <div className="flex-1 bg-[#C9973B]/[0.04] border border-[#C9973B]/10 rounded-lg p-2.5">
-                  <div className="text-[#6A5A42] text-[10.5px] mb-1">TechCorp_HR_Policy_2024</div>{t('policy2024Limit')}</div>
-              </div>
-            </div>
+        <span className="ml-2 text-slate-500 text-xs font-mono">nexus · live demo</span>
+        <div className="ml-auto flex items-center gap-3">
+          <div className="flex gap-1.5">
+            {LABELS.map((_, i) => (
+              <span key={i} className="block w-1.5 h-1.5 rounded-full transition-all duration-300"
+                style={{ background: scene === i ? '#C9973B' : 'rgba(255,255,255,0.2)', transform: scene === i ? 'scale(1.35)' : undefined }} />
+            ))}
           </div>
+          <AnimatePresence mode="wait">
+            <motion.span key={scene} className="text-[10px] font-mono text-[#C9973B] hidden sm:block"
+              style={{ minWidth: 120, textAlign: 'right' }}
+              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}>
+              {LABELS[scene]}
+            </motion.span>
+          </AnimatePresence>
         </div>
+      </div>
+
+      {/* Scene content */}
+      <div className="p-5" style={{ minHeight: 280 }}>
+        <AnimatePresence mode="wait">
+          {scene === 0 && <DemoScene0 key="s0" step={step} tx={tx} />}
+          {scene === 1 && <DemoScene1 key="s1" step={step} displayedAnswer={displayedAnswer} answerDone={answerDone} tx={tx} />}
+          {scene === 2 && <DemoScene2 key="s2" step={step} tx={tx} />}
+          {scene === 3 && <DemoScene3 key="s3" step={step} tx={tx} />}
+        </AnimatePresence>
       </div>
     </motion.div>
   )
