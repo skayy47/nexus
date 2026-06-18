@@ -32,9 +32,8 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 # Runtime
 COPY demo_corpus/ ./demo_corpus/
 
-# Hosts inject $PORT (Render/Railway/Fly). HF Spaces: set app_port: 7860 in the
-# Space README and add a PORT=7860 variable. Default 8000 for local docker run.
-ENV PORT=8000
-EXPOSE 8000
+# HF Spaces Docker requires port 7860. Override with PORT env var for other hosts.
+ENV PORT=7860
+EXPOSE 7860
 
-CMD ["sh", "-c", "uvicorn nexus.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn nexus.api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
