@@ -71,6 +71,15 @@ async def upsert_chunks(
         for chunk, emb in zip(chunks, embeddings, strict=False)
     ]
 
+    # Deduplicate by id — duplicate chunk_ids in one batch cause a PG conflict error
+    seen: set[str] = set()
+    unique_rows: list[dict] = []
+    for row in rows:
+        if row["id"] not in seen:
+            seen.add(row["id"])
+            unique_rows.append(row)
+    rows = unique_rows
+
     # Upsert in batches of 100 to avoid payload limits
     batch_size = 100
     total = 0
