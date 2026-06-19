@@ -123,13 +123,15 @@ function ChatPage() {
           </div>
         )}
 
-        <ChatWindow
-          ref={chatRef}
-          onContradiction={() => setContradictionCount(n => n + 1)}
-          isDemoMode={isDemoMode}
-          documentCount={documentCount}
-          onRequestUpload={() => setShowUpload(true)}
-        />
+        <div className="flex-1 min-h-0">
+          <ChatWindow
+            ref={chatRef}
+            onContradiction={() => setContradictionCount(n => n + 1)}
+            isDemoMode={isDemoMode}
+            documentCount={documentCount}
+            onRequestUpload={() => setShowUpload(true)}
+          />
+        </div>
       </main>
     </div>
   )

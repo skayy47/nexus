@@ -360,9 +360,9 @@ export const ChatWindow = forwardRef<ChatWindowHandle, Props>(function ChatWindo
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="border-t border-[#C9973B]/15 p-4">
-        {/* Persistent suggestion chips — demo mode only, after first question */}
+      {/* Input bar */}
+      <div className="border-t border-[#C9973B]/12 px-4 pt-3 pb-4 bg-gradient-to-t from-[#0A0703] to-[#0E0A05]/80 backdrop-blur-md">
+        {/* Demo suggestion chips */}
         {isDemoMode && messages.length > 0 && !atLimit && (
           <div className="flex gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <span className="shrink-0 text-[11px] text-[#6A5A42] self-center pr-1">{t('tryLabel')}</span>
@@ -381,29 +381,31 @@ export const ChatWindow = forwardRef<ChatWindowHandle, Props>(function ChatWindo
           </div>
         )}
         {atLimit && (
-          <p className="text-xs text-amber-400 mb-2">
-            {t('sessionLimit')}
-          </p>
+          <p className="text-xs text-amber-400 mb-2">{t('sessionLimit')}</p>
         )}
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder={t('placeholder')}
-            aria-label={t('placeholder')}
-            disabled={streaming || atLimit}
-            className="flex-1 bg-[#1A1208] text-[#EDE4D0] placeholder-[#5E5040] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9973B]/60 border border-[#C9973B]/15 disabled:opacity-50 transition"
-          />
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder={t('placeholder')}
+              aria-label={t('placeholder')}
+              disabled={streaming || atLimit}
+              className="w-full bg-[#140E07] text-[#EDE4D0] placeholder-[#4A3C2A] rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9973B]/50 focus:border-[#C9973B]/50 border border-[#C9973B]/20 hover:border-[#C9973B]/35 disabled:opacity-40 transition-all duration-200 min-h-[52px] pr-4"
+              style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.4)' }}
+            />
+          </div>
           <button
             type="submit"
             disabled={streaming || !input.trim() || atLimit}
             aria-label={streaming ? t('sending') : t('sendLabel')}
-            className="px-4 py-2.5 bg-[#C9973B] hover:bg-[#B8882A] disabled:opacity-40 text-[#0E0A05] rounded-xl transition-colors"
+            className="shrink-0 w-12 h-12 flex items-center justify-center bg-[#C9973B] hover:bg-[#D4A843] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed text-[#0E0A05] rounded-2xl transition-all duration-150"
+            style={{ boxShadow: '0 4px 14px rgba(201,151,59,0.35)' }}
           >
             {streaming ? (
-              <Loader2 size={16} className="animate-spin" aria-hidden />
+              <Loader2 size={17} className="animate-spin" aria-hidden />
             ) : (
-              <Send size={16} aria-hidden />
+              <Send size={17} aria-hidden />
             )}
           </button>
         </form>
