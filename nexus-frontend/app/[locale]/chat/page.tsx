@@ -42,10 +42,9 @@ function ChatPage() {
     refreshDocuments()
   }, [refreshDocuments])
 
-  function handleAskQuestion(question: string) {
+  function handleSummaryReady(data: { filename: string; summary: string; bullets: string[]; questions: string[] }) {
+    chatRef.current?.addUploadSummary(data)
     setShowUpload(false)
-    // Small delay lets the upload panel animate closed before focus shifts to chat
-    setTimeout(() => chatRef.current?.ask(question), 150)
   }
 
   return (
@@ -119,7 +118,7 @@ function ChatPage() {
             <DocumentZone
               onClear={refreshDocuments}
               onUpload={refreshDocuments}
-              onAskQuestion={handleAskQuestion}
+              onSummaryReady={handleSummaryReady}
             />
           </div>
         )}

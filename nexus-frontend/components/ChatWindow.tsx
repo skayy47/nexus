@@ -7,19 +7,29 @@ import { Send, Loader2, UploadCloud } from 'lucide-react'
 import { streamChat, GroundingResult, ContradictionResult, SourceRef } from '@/lib/api'
 import { ContradictionBadge } from './ContradictionBadge'
 import { SourceCard } from './SourceCard'
+import { DocumentSummaryCard } from './DocumentSummaryCard'
+
+export interface UploadSummaryData {
+  filename: string
+  summary: string
+  bullets: string[]
+  questions: string[]
+}
 
 export interface ChatWindowHandle {
   ask: (question: string) => void
+  addUploadSummary: (data: UploadSummaryData) => void
 }
 
 interface Message {
   id: string
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'upload'
   content: string
   done?: boolean
   sources?: SourceRef[]
   contradiction?: ContradictionResult
   isError?: boolean
+  uploadData?: UploadSummaryData
 }
 
 interface Props {
@@ -138,10 +148,14 @@ export const ChatWindow = forwardRef<ChatWindowHandle, Props>(function ChatWindo
     }
   }, [streaming, idPrefix, onContradiction, locale])
 
-  // Expose ask() so parent can trigger a question from DocumentSummaryCard chips
   useImperativeHandle(ref, () => ({
     ask: (question: string) => submitQuestion(question),
-  }), [submitQuestion])
+    addUploadSummary: (data: UploadSummaryData) => {
+      const id = `${idPrefix}-upload-${Date.now()}`
+      setMessages(prev => [...prev, { id, role: 'upload', content: '', done: true, uploadData: data }])
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+    },
+  }), [submitQuestion, idPrefix])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -267,7 +281,27 @@ export const ChatWindow = forwardRef<ChatWindowHandle, Props>(function ChatWindo
             </motion.div>
           )}
 
-          {messages.map(msg => (
+          {messages.map(msg => msg.role === 'upload' ? (
+            <motion.div
+              key={msg.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="flex justify-start"
+            >
+              <div className="max-w-2xl w-full mr-8">
+                {msg.uploadData && (
+                  <DocumentSummaryCard
+                    filename={msg.uploadData.filename}
+                    summary={msg.uploadData.summary}
+                    bullets={msg.uploadData.bullets}
+                    questions={msg.uploadData.questions}
+                    onAsk={submitQuestion}
+                  />
+                )}
+              </div>
+            </motion.div>
+          ) : (
             <motion.div
               key={msg.id}
               initial={{ opacity: 0, y: 14 }}
