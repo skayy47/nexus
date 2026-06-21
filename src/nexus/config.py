@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     # ── Retrieval ────────────────────────────────────
     chunk_size: int = 800
     chunk_overlap: int = 120
-    retrieval_k: int = 8
+    retrieval_k: int = 10
     rerank_k: int = 4
 
     # ── API ──────────────────────────────────────────

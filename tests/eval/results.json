@@ -1,6 +1,5 @@
 {
-  "faithfulness": 0.0,
-  "answer_relevancy": 0.0,
-  "context_recall": 0.0,
-  "_note": "Placeholder — run `python tests/eval/ragas_eval.py` with the backend live and demo loaded to populate actual scores"
+  "faithfulness": 0.513,
+  "answer_relevancy": 0.6366,
+  "context_recall": 0.7
 }
