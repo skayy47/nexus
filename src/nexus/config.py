@@ -44,14 +44,13 @@ class Settings(BaseSettings):
         return v.strip() if isinstance(v, str) else v
 
     @model_validator(mode="after")
-    def resolve_backend(self) -> "Settings":
+    def resolve_backend(self) -> Settings:
         """Auto-downgrade: if the configured backend has no key, fall back to the other."""
         if self.llm_backend == LLMBackend.GEMINI and not self.gemini_api_key:
             if self.groq_api_key:
                 object.__setattr__(self, "llm_backend", LLMBackend.GROQ)
-        elif self.llm_backend == LLMBackend.GROQ and not self.groq_api_key:
-            if self.gemini_api_key:
-                object.__setattr__(self, "llm_backend", LLMBackend.GEMINI)
+        elif self.llm_backend == LLMBackend.GROQ and not self.groq_api_key and self.gemini_api_key:
+            object.__setattr__(self, "llm_backend", LLMBackend.GEMINI)
         return self
 
     # ── Ollama (local dev) ───────────────────────────

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import uuid
 from collections import defaultdict
@@ -293,10 +294,8 @@ async def load_demo() -> DemoResponse:
     get_bm25_index().build(all_chunks)
 
     # Scan demo corpus for contradictions
-    try:
+    with contextlib.suppress(Exception):
         await _scan_upload_contradictions(demo_files[-1].name, all_chunks)
-    except Exception:
-        pass
 
     return DemoResponse(status="ok", documents_loaded=len(demo_files), total_chunks=total_chunks)
 
@@ -429,7 +428,6 @@ def _sse(event: str, data: dict) -> str:
 async def get_insights():
     """Corpus insights — document count, contradictions (corpus + session), knowledge gaps."""
     # Count unique gaps across all sessions
-    total_gaps = sum(len(v) for v in _session_gaps.values())
     unique_gaps = len({g["topic"] for gaps in _session_gaps.values() for g in gaps})
 
     return {

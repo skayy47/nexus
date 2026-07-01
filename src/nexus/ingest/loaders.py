@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import io
 import re
 from pathlib import Path
@@ -49,10 +50,8 @@ def load_pdf(content: bytes, filename: str) -> list[dict[str, str | int]]:
 
         if reader.is_encrypted:
             # Try blank password (some "protected" PDFs use an empty owner password)
-            try:
+            with contextlib.suppress(Exception):
                 reader.decrypt("")
-            except Exception:
-                pass
             if reader.is_encrypted:
                 raise ValueError(
                     "This PDF is password-protected. Remove the password and upload again."
