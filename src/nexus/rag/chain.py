@@ -88,9 +88,9 @@ def build_messages(
 
     # Explicit language reinforcement in the user turn (belt-and-suspenders)
     lang_hint = (
-        "[Répondez en français.]\n" if lang_code == "fr"
-        else "[Please respond in English.]\n" if lang_code == "en"
-        else ""
+        "[Répondez en français.]\n"
+        if lang_code == "fr"
+        else "[Please respond in English.]\n" if lang_code == "en" else ""
     )
     user_content = f"{lang_hint}Document excerpts:\n\n{context}\n\nQuestion: {question}"
 

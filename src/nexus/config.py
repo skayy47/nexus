@@ -37,7 +37,9 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
     groq_model: str = "llama-3.3-70b-versatile"
 
-    @field_validator("gemini_api_key", "groq_api_key", "supabase_key", "supabase_url", mode="before")
+    @field_validator(
+        "gemini_api_key", "groq_api_key", "supabase_key", "supabase_url", mode="before"
+    )
     @classmethod
     def strip_whitespace(cls, v: str) -> str:
         """Strip accidental whitespace/newlines from secrets (common paste issue)."""

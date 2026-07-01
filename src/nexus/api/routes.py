@@ -140,6 +140,7 @@ async def upload_document(
         suggested_questions: list[str] = []
         try:
             from nexus.features.analyzer import analyze_document
+
             summary, bullets, suggested_questions = await analyze_document(filename, chunks, locale)
         except Exception as e:
             logger.warning("Document analysis skipped", error=str(e))
@@ -189,10 +190,14 @@ async def _scan_upload_contradictions(new_doc: str, all_chunks: list) -> None:
     retrieved = [
         RetrievedChunk(
             chunk_id=c.chunk_id if hasattr(c, "chunk_id") else c.get("id", ""),
-            document_name=c.document_name if hasattr(c, "document_name") else c.get("document_name", ""),
+            document_name=(
+                c.document_name if hasattr(c, "document_name") else c.get("document_name", "")
+            ),
             page_number=c.page_number if hasattr(c, "page_number") else c.get("page_number", 1),
             content=c.content if hasattr(c, "content") else c.get("content", ""),
-            section_header=c.section_header if hasattr(c, "section_header") else c.get("section_header", ""),
+            section_header=(
+                c.section_header if hasattr(c, "section_header") else c.get("section_header", "")
+            ),
             score=1.0,
         )
         for c in sample
@@ -230,7 +235,8 @@ async def delete_one_document(document_name: str):
     # Remove any contradictions involving this document
     global _corpus_contradictions
     _corpus_contradictions = [
-        c for c in _corpus_contradictions
+        c
+        for c in _corpus_contradictions
         if c.get("source_a") != document_name and c.get("source_b") != document_name
     ]
 
@@ -279,6 +285,7 @@ async def load_demo() -> DemoResponse:
             if chunks:
                 embeddings = embed_texts([c.content for c in chunks])
                 from nexus.index.supabase_store import upsert_chunks
+
                 await upsert_chunks(chunks, embeddings)
                 total_chunks += len(chunks)
         except Exception as e:
@@ -315,13 +322,11 @@ async def chat(request: ChatRequest) -> StreamingResponse:
     _session_counts[session_id] += 1
 
     return StreamingResponse(
-        _generate_stream(
-            request.question, session_id, request.transparency_mode, request.language
-        ),
+        _generate_stream(request.question, session_id, request.transparency_mode, request.language),
         media_type="text/event-stream",
         headers={
             "X-Session-ID": session_id,
-            "X-Accel-Buffering": "no",   # disable nginx proxy buffering
+            "X-Accel-Buffering": "no",  # disable nginx proxy buffering
             "Cache-Control": "no-cache",
         },
     )
@@ -400,19 +405,43 @@ def _answer_is_non_answer(text: str) -> bool:
     Used to suppress false knowledge-gap events when NEXUS actually found a good answer."""
     low = text.lower()
     signals = (
-        "cannot determine", "cannot find", "i cannot", "i can't",
-        "not available", "no information", "no mention", "no relevant",
-        "do not contain", "does not contain", "do not mention", "does not mention",
-        "not mentioned", "not provided", "not documented", "not found",
+        "cannot determine",
+        "cannot find",
+        "i cannot",
+        "i can't",
+        "not available",
+        "no information",
+        "no mention",
+        "no relevant",
+        "do not contain",
+        "does not contain",
+        "do not mention",
+        "does not mention",
+        "not mentioned",
+        "not provided",
+        "not documented",
+        "not found",
         "based on the available documents, i cannot",
-        "the documents do not", "the document does not",
-        "no relevant information", "unable to determine",
+        "the documents do not",
+        "the document does not",
+        "no relevant information",
+        "unable to determine",
         # French
-        "je ne peux pas", "je ne trouve pas", "aucune information",
-        "non mentionné", "ne mentionne pas", "ne mentionnent pas",
-        "ne contient pas", "ne contiennent pas", "non disponible",
-        "impossible de déterminer", "aucune mention", "non documenté",
-        "pas trouvé", "aucune information pertinente", "les documents ne",
+        "je ne peux pas",
+        "je ne trouve pas",
+        "aucune information",
+        "non mentionné",
+        "ne mentionne pas",
+        "ne mentionnent pas",
+        "ne contient pas",
+        "ne contiennent pas",
+        "non disponible",
+        "impossible de déterminer",
+        "aucune mention",
+        "non documenté",
+        "pas trouvé",
+        "aucune information pertinente",
+        "les documents ne",
     )
     return any(s in low for s in signals)
 

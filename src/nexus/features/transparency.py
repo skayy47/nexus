@@ -155,9 +155,7 @@ def build_grounding(
     retrieved_doc_names = {c.document_name for c in match_chunks}
 
     if not match_chunks:
-        return GroundingResult(
-            verdict="ungrounded", coverage=0.0, sources=[], single_source=False
-        )
+        return GroundingResult(verdict="ungrounded", coverage=0.0, sources=[], single_source=False)
 
     # Split the raw answer into claims (citations already stripped inside)
     # We need both the raw claim lines (to detect inline citations) and
@@ -179,6 +177,7 @@ def build_grounding(
 
     if embed_fn is None:
         from nexus.rag.embeddings import embed_texts
+
         embed_fn = embed_texts
 
     # Strip citations for embedding (keeps semantic signal clean)

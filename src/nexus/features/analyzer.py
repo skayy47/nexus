@@ -64,7 +64,9 @@ async def analyze_document(
     from nexus.rag.llm_client import single_call
 
     lang_instruction = _LANG_INSTRUCTION.get(locale, "")
-    prompt = _SUMMARY_PROMPT.format(filename=filename, excerpt=excerpt, lang_instruction=lang_instruction)
+    prompt = _SUMMARY_PROMPT.format(
+        filename=filename, excerpt=excerpt, lang_instruction=lang_instruction
+    )
 
     try:
         raw = await single_call(prompt, max_tokens=600, temperature=0.1)

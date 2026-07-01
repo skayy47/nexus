@@ -384,9 +384,7 @@ def load_document(content: bytes, filename: str) -> list[dict[str, str | int]]:
     loader = _LOADER_MAP.get(ext)
 
     if loader is None:
-        raise ValueError(
-            f"Unsupported file type: {ext}. Supported: {SUPPORTED_EXTENSIONS}"
-        )
+        raise ValueError(f"Unsupported file type: {ext}. Supported: {SUPPORTED_EXTENSIONS}")
 
     pages = loader(content, filename)
 
