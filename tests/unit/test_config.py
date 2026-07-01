@@ -22,7 +22,7 @@ class TestSettings:
         assert s.llm_backend == LLMBackend.GEMINI
         assert s.chunk_size == 800
         assert s.chunk_overlap == 120
-        assert s.retrieval_k == 8
+        assert s.retrieval_k == 10
         assert s.rerank_k == 4
         assert s.embed_dim == 384
         assert s.max_queries_per_session == 20
