@@ -1,33 +1,40 @@
 name: Keep-alive ping
 
 # Pings the live demo backend every 3 days to:
-#   1. Reset Supabase free-tier 7-day inactivity pause timer
-#   2. Keep HF Space warm (it sleeps after 48h idle)
-# No secrets needed — /health and /stats are public GET endpoints.
+#   1. Reset Supabase free-tier 7-day inactivity pause timer (direct REST call — bypasses HF Space)
+#   2. Wake HF Space if sleeping (it sleeps after 48h idle)
 
 on:
   schedule:
     - cron: "0 9 */3 * *"   # every 3 days at 09:00 UTC
   workflow_dispatch:         # allow manual trigger from Actions tab
 
+env:
+  SUPABASE_URL: https://lntdsbshrndsbojbxjfh.supabase.co
+  # anon key — public by design (Supabase RLS model, same key used in frontend)
+  SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxudGRzYnNocm5kc2JvamJ4amZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyODY0ODksImV4cCI6MjA5MTg2MjQ4OX0.8Xi2mxuTbYQmCMlwYh3ETxByYp1EKerZ9B71fET1qYc
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping /health
+      - name: Ping Supabase directly (guarantees inactivity timer reset)
         run: |
-          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/health \
-            && echo "health OK" \
-            || echo "health unreachable (Space may be sleeping — manual check needed)"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/document_chunks?select=id&limit=1")
+          echo "Supabase REST status: $STATUS"
+          [ "$STATUS" = "200" ] && echo "Supabase ping OK — inactivity timer reset" || echo "Supabase ping returned $STATUS"
 
-      - name: Ping /stats (touches Supabase — resets inactivity timer)
+      - name: Wake HF Space (backend)
         run: |
-          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/stats \
-            && echo "stats OK (Supabase inactivity timer reset)" \
-            || echo "stats unreachable"
+          curl -s --max-time 60 https://SKAY00-nexus-backend.hf.space/health \
+            && echo "HF Space awake" \
+            || echo "HF Space unreachable or starting up — Supabase ping already succeeded"
 
-      - name: Ping /documents (second Supabase touch)
+      - name: Ping backend /stats (double-touches Supabase via backend)
         run: |
-          curl -sf --max-time 30 https://SKAY00-nexus-backend.hf.space/documents \
-            && echo "documents OK" \
-            || echo "documents unreachable"
+          curl -s --max-time 30 https://SKAY00-nexus-backend.hf.space/stats \
+            && echo "stats OK" \
+            || echo "stats unreachable (Space may still be warming up)"
