@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import structlog
 
@@ -48,7 +49,7 @@ Rules:
 
 async def analyze_document(
     filename: str,
-    chunks: list,
+    chunks: list[Any],
     locale: str = "en",
 ) -> tuple[str, list[str], list[str]]:
     """Generate a one-liner, 4 bullet-point summary, and 3 suggested questions.

@@ -119,7 +119,7 @@ def _cosine_to_rows(vec: np.ndarray, matrix: np.ndarray) -> np.ndarray:
     """Cosine similarity of a single vector against each row of a matrix."""
     v = vec / (np.linalg.norm(vec) + 1e-9)
     m = matrix / (np.linalg.norm(matrix, axis=1, keepdims=True) + 1e-9)
-    return m @ v
+    return np.asarray(m @ v)
 
 
 def build_grounding(
