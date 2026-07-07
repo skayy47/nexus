@@ -211,6 +211,6 @@ nexus/
 
 MIT — see [`LICENSE`](LICENSE).
 
-**Part of a three-system portfolio:** [🎼 MAESTRO](https://maestro-lac-theta.vercel.app) — multi-agent AI · 🧠 nexus · [🔬 AURA](https://aura-skayy47s-projects.vercel.app) — full-stack data AI
+**Part of a three-system portfolio:** [🎼 MAESTRO](https://maestro-lac-theta.vercel.app) — multi-agent AI · 🧠 nexus · [🔬 AURA](https://aura-sooty-five-27.vercel.app) — full-stack data AI
 
 Built by **[Oussama Skia (SKAY)](https://github.com/skayy47)** — RAG · hybrid retrieval · contradiction detection · answer grounding.
