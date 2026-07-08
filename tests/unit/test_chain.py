@@ -28,7 +28,7 @@ class TestChain:
     def test_prompt_loaded(self):
         """System prompt should be loaded from the versioned .md file."""
         assert "NEXUS" in SYSTEM_PROMPT
-        assert PROMPT_VERSION == "v2"
+        assert PROMPT_VERSION == "v3"
 
     def test_format_context_empty(self):
         assert format_context([]) == ""

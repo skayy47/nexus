@@ -13,6 +13,14 @@ logger = structlog.get_logger(__name__)
 
 RRF_K = 60  # Standard RRF constant
 
+# BM25 is the more reliable signal for figures/entities buried in dense,
+# multi-line tabular chunks (e.g. one relevant dollar figure among five
+# unrelated OPEX line items in the same chunk dilutes dense similarity).
+# Weighting sparse slightly higher than dense compensates without needing
+# to touch k again.
+SPARSE_WEIGHT = 1.2
+DENSE_WEIGHT = 1.0
+
 
 @dataclass
 class RetrievedChunk:
@@ -63,13 +71,13 @@ async def hybrid_retrieve(
     id_to_chunk: dict[str, object] = {}
 
     for rank, chunk in enumerate(dense_results):
-        rrf_scores[chunk.chunk_id] = rrf_scores.get(chunk.chunk_id, 0) + 1 / (RRF_K + rank + 1)
+        rrf_scores[chunk.chunk_id] = rrf_scores.get(chunk.chunk_id, 0) + DENSE_WEIGHT / (RRF_K + rank + 1)
         dense_scores[chunk.chunk_id] = chunk.score
         id_to_chunk[chunk.chunk_id] = chunk
 
     for rank, bm25_result in enumerate(sparse_results):
         chunk = bm25_result.chunk
-        rrf_scores[chunk.chunk_id] = rrf_scores.get(chunk.chunk_id, 0) + 1 / (RRF_K + rank + 1)
+        rrf_scores[chunk.chunk_id] = rrf_scores.get(chunk.chunk_id, 0) + SPARSE_WEIGHT / (RRF_K + rank + 1)
         sparse_scores[chunk.chunk_id] = bm25_result.score
         id_to_chunk[chunk.chunk_id] = chunk
 

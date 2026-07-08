@@ -89,13 +89,15 @@ graph LR
 
 ## Evaluation
 
-A reproducible [RAGAS](https://github.com/explodinggradients/ragas) harness ships with the repo, scoring 20 QA pairs derived from the demo corpus.
+A reproducible [RAGAS](https://github.com/explodinggradients/ragas) harness ships with the repo, scoring 20 QA pairs derived from the demo corpus. Evaluated against the real production model (`llama-3.3-70b-versatile`), not a smaller substitute.
 
 | Metric | Target | Score |
 |--------|--------|-------|
-| Faithfulness | > 0.85 | _run to populate_ |
-| Answer Relevancy | > 0.80 | _run to populate_ |
-| Context Recall | > 0.75 | _run to populate_ |
+| Faithfulness | > 0.85 | 0.7678 — below target |
+| Answer Relevancy | > 0.80 | 0.8007 — pass |
+| Context Recall | > 0.75 | 0.90 — pass |
+
+An earlier run scored well below these numbers (0.51 / 0.64 / 0.70) due to two real bugs since fixed: the eval was silently running dense-only retrieval (BM25 wasn't built in the eval process), and it was scoring a smaller model than production actually serves. Fixing both, plus reweighting hybrid retrieval toward BM25 for numeric/tabular content and tightening the response prompt, closed most of the gap — 2 of 3 targets now pass. Faithfulness is next to improve.
 
 ```bash
 # Requires a running backend with the demo corpus loaded

@@ -8,11 +8,20 @@ Requires:
     - .env with GROQ_API_KEY set
 
 Notes:
-    - Answer generation uses llama-3.1-8b-instant (lower TPD cost) so the
-      100K/day limit is not exhausted before RAGAS scoring begins.
-    - Production answers use llama-3.3-70b-versatile; eval uses 8b to stay
-      within free-tier daily limits.
-    - Rows are cached to rows_cache.json — delete it to re-generate answers.
+    - Answer generation uses settings.groq_model — the exact model production
+      serves — so scores are honest and representative of what real users get.
+      Previously this hardcoded llama-3.1-8b-instant to save quota, which meant
+      the published scores never measured the real (70B) production model.
+    - A full 20-question run on the 70B model costs roughly 65-70K tokens
+      against Groq's 100K token-per-day free-tier limit for that model — tight
+      if anything else exercised the 70B model recently. This is a rolling
+      window, not a calendar-day reset: Groq's own error message states the
+      exact wait (e.g. "try again in 26m4s"), which this script now surfaces.
+      Rows are written to rows_cache.json after every successful row (not just
+      at the end), so a mid-run quota exhaustion preserves progress — re-run
+      this script after the stated wait to resume, not restart. Do not revert
+      to a smaller model to dodge this constraint.
+    - Delete rows_cache.json to force full regeneration.
 """
 
 from __future__ import annotations
@@ -20,6 +29,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -35,10 +45,6 @@ TEST_CASES_PATH = Path(__file__).parent / "test_cases.json"
 RESULTS_PATH = Path(__file__).parent / "results.json"
 ROWS_CACHE_PATH = Path(__file__).parent / "rows_cache.json"
 
-# Use 8b-instant for eval answer generation — same retrieval quality test,
-# but uses 6M TPD instead of 100K so scoring doesn't hit the daily limit.
-EVAL_ANSWER_MODEL = "llama-3.1-8b-instant"
-
 
 async def run_single(question: str, ground_truth: str) -> dict:
     """Run a single QA pair through the RAG pipeline."""
@@ -53,8 +59,8 @@ async def run_single(question: str, ground_truth: str) -> dict:
     chunks = await hybrid_retrieve(question, query_vec, k=settings.retrieval_k)
     contexts = [c.content for c in chunks]
 
-    # Use 8b-instant for eval generation (won't exhaust daily TPD limit)
-    llm = ChatGroq(model=EVAL_ANSWER_MODEL, api_key=settings.groq_api_key, temperature=0.1, max_tokens=512)
+    # Use the real production model so scores reflect what users actually get.
+    llm = ChatGroq(model=settings.groq_model, api_key=settings.groq_api_key, temperature=0.1, max_tokens=512)
     context_str = format_context(chunks)
     messages = build_messages(question, context_str)
     from langchain_core.messages import SystemMessage, HumanMessage
@@ -74,21 +80,41 @@ async def run_single(question: str, ground_truth: str) -> dict:
 
 
 async def generate_rows(test_cases: list[dict]) -> list[dict]:
-    """Generate answers for all test cases, using cache if available."""
-    if ROWS_CACHE_PATH.exists():
-        print("  (using cached rows — delete rows_cache.json to regenerate)")
-        return json.loads(ROWS_CACHE_PATH.read_text())
+    """Generate answers for all test cases, resuming from a partial cache if present.
 
-    rows = []
+    Rows are written to disk after every successful question, so a mid-run
+    quota exhaustion (Groq 429) preserves progress — re-running this script
+    picks up only the remaining questions instead of starting over.
+    """
+    rows: list[dict] = []
+    done_questions: set[str] = set()
+    if ROWS_CACHE_PATH.exists():
+        rows = json.loads(ROWS_CACHE_PATH.read_text())
+        done_questions = {r["user_input"] for r in rows}
+        if done_questions:
+            print(f"  (resuming — {len(done_questions)}/{len(test_cases)} rows already cached)")
+
     for i, tc in enumerate(test_cases, 1):
+        if tc["question"] in done_questions:
+            continue
         print(f"  [{i}/{len(test_cases)}] {tc['question'][:60]}...")
         try:
             row = await run_single(tc["question"], tc["ground_truth"])
             rows.append(row)
+            ROWS_CACHE_PATH.write_text(json.dumps(rows, indent=2))
         except Exception as e:
+            msg = str(e)
+            if "429" in msg or "rate_limit" in msg.lower() or "rate limit" in msg.lower():
+                # Groq's TPD limit is a rolling window, not a calendar-day reset —
+                # the error message includes the real wait time, e.g. "try again
+                # in 26m4.704s". Surface it instead of assuming "tomorrow".
+                wait_match = re.search(r"try again in ([\d.]+m[\d.]+s|[\d.]+s)", msg)
+                wait_str = f" — retry in {wait_match.group(1)}" if wait_match else " — re-run once quota resets"
+                print(f"  QUOTA EXHAUSTED after {len(rows)}/{len(test_cases)} rows{wait_str}.")
+                print("  Progress saved to rows_cache.json — re-running this script will resume, not restart.")
+                return rows
             print(f"  ERROR: {e}")
 
-    ROWS_CACHE_PATH.write_text(json.dumps(rows, indent=2))
     return rows
 
 
@@ -96,10 +122,34 @@ async def main() -> None:
     test_cases = json.loads(TEST_CASES_PATH.read_text())
     print(f"Running RAGAS evaluation on {len(test_cases)} test cases...")
 
+    # The BM25 index is an in-memory singleton built by the API process when
+    # /demo is called — it does NOT persist across separate process runs.
+    # Running this script fresh (as its own process) previously meant BM25
+    # was silently empty for the entire eval (sparse_hits=0 every query),
+    # meaning "hybrid" retrieval was actually dense-only. Build it here so
+    # this script's process has real sparse search too.
+    from nexus.index.bm25_index import get_bm25_index
+    from nexus.index.supabase_store import get_all_chunks
+
+    all_chunks = await get_all_chunks()
+    if not all_chunks:
+        print("No chunks found in Supabase — load the demo corpus first (POST /demo).")
+        return
+    get_bm25_index().build(all_chunks)
+    print(f"  BM25 index built from {len(all_chunks)} chunks.")
+
     rows = await generate_rows(test_cases)
 
     if not rows:
         print("No rows collected — aborting.")
+        return
+
+    if len(rows) < len(test_cases):
+        print(
+            f"\nOnly {len(rows)}/{len(test_cases)} rows collected (quota exhausted mid-run). "
+            "Not scoring a partial set — re-run this script to finish the remaining "
+            "questions before publishing results."
+        )
         return
 
     # ragas 0.2 API
@@ -138,7 +188,7 @@ async def main() -> None:
         metrics=[Faithfulness(llm=ragas_llm), AnswerRelevancy(llm=ragas_llm), ContextRecall(llm=ragas_llm)],
         embeddings=embeddings,
         raise_exceptions=False,
-        run_config=RunConfig(timeout=120, max_retries=3, max_wait=60, max_workers=4),
+        run_config=RunConfig(timeout=120, max_retries=2, max_wait=30, max_workers=1),
     )
 
     def safe_mean(values) -> float:

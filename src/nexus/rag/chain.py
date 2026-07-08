@@ -42,7 +42,7 @@ def _load_system_prompt() -> str:
 
 
 SYSTEM_PROMPT = _load_system_prompt()
-PROMPT_VERSION = "v2"
+PROMPT_VERSION = "v3"
 
 
 def format_context(chunks: list[RetrievedChunk]) -> str:
