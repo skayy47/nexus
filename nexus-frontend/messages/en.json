@@ -115,7 +115,7 @@
     "errorRetry": "Server's waking up — retry →"
   },
   "footer": {
-    "tagline": "Built by Oussama Skia (SKAY) · RAG · hybrid retrieval · contradiction detection · MIT licensed"
+    "tagline": "RAG · hybrid retrieval · contradiction detection · MIT licensed"
   },
   "chat": {
     "docsInContext": "{count} documents in context",

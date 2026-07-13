@@ -115,7 +115,7 @@
     "errorRetry": "Le serveur se réveille — réessayer →"
   },
   "footer": {
-    "tagline": "Conçu par Oussama Skia (SKAY) · RAG · récupération hybride · détection de contradictions · sous licence MIT"
+    "tagline": "RAG · récupération hybride · détection de contradictions · sous licence MIT"
   },
   "chat": {
     "docsInContext": "{count} documents dans le contexte",

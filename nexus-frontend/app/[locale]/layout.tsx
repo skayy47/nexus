@@ -14,7 +14,6 @@ export async function generateMetadata({
     title: t('title'),
     description: t('description'),
     metadataBase: new URL('https://nexussss-two.vercel.app'),
-    authors: [{ name: 'Oussama Skia', url: 'https://github.com/skayy47' }],
     openGraph: {
       title: t('title'),
       description: t('description'),

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter, Link } from '@/i18n/navigation'
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, type Variants } from 'framer-motion'
 import {
-  Zap, Search, FileText, Github,
+  Zap, Search, FileText,
   FileStack, GitMerge, Sparkles, ShieldCheck, ArrowRight,
 } from 'lucide-react'
 import { loadDemo, warmupBackend } from '@/lib/api'
@@ -31,7 +31,6 @@ const FEATURE_META = [
 ]
 
 const STACK = ['LangChain', 'Groq · Llama 3.3 70B', 'Supabase pgvector', 'BM25 + RRF', 'FastAPI', 'Next.js 14']
-const GH = 'https://github.com/skayy47/nexus'
 
 export function LandingHero() {
   const t = useTranslations()
@@ -101,10 +100,6 @@ export function LandingHero() {
             <a href="#features" className="hidden sm:block text-sm text-[#8A7A62] hover:text-[#EDE4D0] transition-colors">{t('nav.features')}</a>
             <a href="#proof" className="hidden sm:block text-sm text-[#8A7A62] hover:text-[#EDE4D0] transition-colors">{t('nav.liveDemo')}</a>
             <LanguageSwitcher />
-            <a href={GH} target="_blank" rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 text-sm font-semibold text-[#C4B49A] hover:text-[#EDE4D0] border border-[#C9973B]/20 hover:border-[#C9973B]/50 rounded-xl px-4 py-2 transition-all hover:-translate-y-0.5">
-              <Github size={16} /> {t('nav.github')}
-            </a>
           </nav>
         </header>
 
