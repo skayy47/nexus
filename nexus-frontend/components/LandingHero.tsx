@@ -198,10 +198,6 @@ export function LandingHero() {
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold text-white rounded-xl bg-gradient-to-br from-[#D4A843] to-[#9B6B3A] shadow-xl shadow-[#C9973B]/30 hover:-translate-y-0.5 hover:shadow-[#C9973B]/50 disabled:opacity-60 disabled:cursor-wait transition-all">
                 {spinner}{demoLabel}{!loading && <ArrowRight size={16} />}
               </button>
-              <a href={GH} target="_blank" rel="noopener noreferrer"
-                className="px-7 py-3.5 text-[15px] font-semibold text-[#C4B49A] hover:text-[#EDE4D0] border border-[#C9973B]/20 hover:border-[#C9973B]/50 rounded-xl hover:-translate-y-0.5 transition-all">
-                {t('hero.viewSource')}
-              </a>
             </div>
             {demoStatus === 'error' && (
               <button onClick={handleTryDemo} className="text-xs font-medium text-[#C9973B] underline hover:text-[#D4A843]">
@@ -252,10 +248,6 @@ function HeroSection({ loading, demoStatus, demoLabel, spinner, onTryDemo }: {
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold text-white rounded-xl bg-gradient-to-br from-[#D4A843] to-[#9B6B3A] shadow-xl shadow-[#C9973B]/30 hover:-translate-y-0.5 hover:shadow-[#C9973B]/50 disabled:opacity-60 disabled:cursor-wait transition-all">
               {spinner}{demoLabel}{!loading && <ArrowRight size={16} />}
             </button>
-            <a href={GH} target="_blank" rel="noopener noreferrer"
-              className="px-7 py-3.5 text-[15px] font-semibold text-[#C4B49A] hover:text-[#EDE4D0] border border-[#C9973B]/20 hover:border-[#C9973B]/50 rounded-xl hover:-translate-y-0.5 transition-all">
-              {t('viewSource')}
-            </a>
           </div>
           <Link href="/chat?mode=upload"
             className="text-[13px] text-[#5E5040] hover:text-[#D4A843] transition-colors">
