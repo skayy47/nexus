@@ -61,7 +61,7 @@ graph LR
 
 1. **Embed** — the query is encoded with `all-MiniLM-L6-v2` (384-dim, CPU, baked into the Docker image).
 2. **Retrieve** — BM25 and pgvector each return top-k candidates; RRF merges the ranked lists.
-3. **Generate** — an LCEL chain streams tokens from **Groq Llama 3.3 70B** over SSE. A producer-queue pattern with a hard 30-second deadline prevents indefinite SSE hang regardless of API latency.
+3. **Generate** — an LCEL chain streams tokens from **Groq GPT-OSS 120B** over SSE. A producer-queue pattern with a hard 30-second deadline prevents indefinite SSE hang regardless of API latency.
 4. **Analyse** — a parallel LLM call checks retrieved chunks for contradictions; answer grounding (citation-aware + semantic cosine) still runs internally to power gap detection, but the user-facing feature is **Auto-Summary** (run at upload time, not query time).
 5. **Stream** — three SSE event types (`token`, `contradiction`, `gap`) let the frontend update incrementally; source cards come via the grounding pass.
 
@@ -76,7 +76,7 @@ graph LR
 | i18n | next-intl — bilingual EN / FR, premium toggle, locale-aware answers |
 | Backend | FastAPI · Python 3.11 · async throughout |
 | RAG framework | LangChain (LCEL only) |
-| LLM | **Groq Llama 3.3 70B** — sub-second first token, free tier, bilingual EN/FR |
+| LLM | **Groq GPT-OSS 120B** — sub-second first token, free tier, bilingual EN/FR |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` |
 | Vector store | Supabase pgvector (IVFFlat · cosine) |
 | Keyword search | BM25 (`rank_bm25`) |
@@ -89,13 +89,15 @@ graph LR
 
 ## Evaluation
 
-A reproducible [RAGAS](https://github.com/explodinggradients/ragas) harness ships with the repo, scoring 20 QA pairs derived from the demo corpus. Evaluated against the real production model (`llama-3.3-70b-versatile`), not a smaller substitute.
+A reproducible [RAGAS](https://github.com/explodinggradients/ragas) harness ships with the repo, scoring 20 QA pairs derived from the demo corpus.
 
 | Metric | Target | Score |
 |--------|--------|-------|
 | Faithfulness | > 0.85 | 0.7678 — below target |
 | Answer Relevancy | > 0.80 | 0.8007 — pass |
 | Context Recall | > 0.75 | 0.90 — pass |
+
+> Scores were measured on `llama-3.3-70b-versatile`, which Groq deprecated for free/dev tier on 2026-06-17. Generation now runs on `openai/gpt-oss-120b` (Groq's recommended migration). Context Recall is retrieval-only and unaffected; a re-run of the generation metrics on the new model is pending.
 
 An earlier run scored well below these numbers (0.51 / 0.64 / 0.70) due to two real bugs since fixed: the eval was silently running dense-only retrieval (BM25 wasn't built in the eval process), and it was scoring a smaller model than production actually serves. Fixing both, plus reweighting hybrid retrieval toward BM25 for numeric/tabular content and tightening the response prompt, closed most of the gap — 2 of 3 targets now pass. Faithfulness is next to improve.
 

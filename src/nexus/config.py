@@ -34,8 +34,10 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-2.0-flash"
 
     # ── Groq (fallback) ──────────────────────────────
+    # NOTE: Groq deprecated llama-3.3-70b-versatile + llama-3.1-8b-instant for
+    # free/dev tier on 2026-06-17. gpt-oss-120b is Groq's recommended migration.
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-120b"
 
     @field_validator(
         "gemini_api_key", "groq_api_key", "supabase_key", "supabase_url", mode="before"

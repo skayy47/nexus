@@ -39,7 +39,7 @@ If a feature request conflicts with shipping these three, flag it and defer.
 | Embeddings | all-MiniLM-L6-v2 | Free, runs on CPU, 384-dim |
 | Vector DB | Supabase pgvector | Replaces Chroma, free, CV value |
 | Keyword search | BM25 (rank_bm25) | Hybrid retrieval |
-| LLM | Groq Llama 3.3 70B (primary) | Sub-second first token, free tier, bilingual EN/FR, proven in production |
+| LLM | Groq GPT-OSS 120B (primary) | Sub-second first token, free tier, bilingual EN/FR. Migrated from llama-3.3-70b-versatile (Groq deprecated it for free tier 2026-06-17) |
 | Frontend deploy | Vercel | Free, CDN, custom domain |
 | Backend deploy | Hugging Face Spaces (Docker) | Free 16 GB RAM, Docker SDK, always-on |
 | Evaluation | RAGAS | Faithfulness, answer relevancy, context recall |

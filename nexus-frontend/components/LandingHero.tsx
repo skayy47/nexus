@@ -30,7 +30,7 @@ const FEATURE_META = [
   { icon: ShieldCheck, color: '#9B6B3A', bg: 'rgba(155,107,58,0.1)' },
 ]
 
-const STACK = ['LangChain', 'Groq · Llama 3.3 70B', 'Supabase pgvector', 'BM25 + RRF', 'FastAPI', 'Next.js 14']
+const STACK = ['LangChain', 'Groq · GPT-OSS 120B', 'Supabase pgvector', 'BM25 + RRF', 'FastAPI', 'Next.js 14']
 
 export function LandingHero() {
   const t = useTranslations()

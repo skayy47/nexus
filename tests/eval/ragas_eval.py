@@ -9,14 +9,15 @@ Requires:
 
 Notes:
     - Answer generation uses settings.groq_model — the exact model production
-      serves — so scores are honest and representative of what real users get.
-      Previously this hardcoded llama-3.1-8b-instant to save quota, which meant
-      the published scores never measured the real (70B) production model.
-    - A full 20-question run on the 70B model costs roughly 65-70K tokens
-      against Groq's 100K token-per-day free-tier limit for that model — tight
-      if anything else exercised the 70B model recently. This is a rolling
-      window, not a calendar-day reset: Groq's own error message states the
-      exact wait (e.g. "try again in 26m4s"), which this script now surfaces.
+      serves (currently openai/gpt-oss-120b) — so scores are honest and
+      representative of what real users get. Do not hardcode a smaller model
+      to save quota; that decouples the published scores from production.
+      (History: an earlier version hardcoded llama-3.1-8b-instant; the prod
+      model was llama-3.3-70b-versatile until Groq deprecated it 2026-06-17.)
+    - A full 20-question run costs tens of thousands of tokens against Groq's
+      free-tier rolling window (not a calendar-day reset): Groq's own error
+      message states the exact wait (e.g. "try again in 26m4s"), which this
+      script surfaces.
       Rows are written to rows_cache.json after every successful row (not just
       at the end), so a mid-run quota exhaustion preserves progress — re-run
       this script after the stated wait to resume, not restart. Do not revert

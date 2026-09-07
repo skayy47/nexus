@@ -39,7 +39,7 @@ class TestSettings:
         with patch.dict(os.environ, {"LLM_BACKEND": "groq"}, clear=False):
             s = Settings(_env_file=None)
         assert s.llm_backend == LLMBackend.GROQ
-        assert s.groq_model == "llama-3.3-70b-versatile"
+        assert s.groq_model == "openai/gpt-oss-120b"
 
     def test_origins_list(self):
         """Should parse comma-separated origins."""
