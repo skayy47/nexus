@@ -183,7 +183,7 @@ PYTHONPATH=src pytest tests/integration/test_e2e.py -m integration # e2e — req
 pytest -m "not integration"                                      # CI mode
 ```
 
-**145 tests pass, 1 skipped** (Windows-only corrupt-PDF skip). The integration suite covers the full pipeline: demo corpus loading, hybrid retrieval, SSE token streaming, contradiction detection, and document management. Unit suite includes the analyzer (auto-summary: 14 tests), transparency (grounding + citation fuzzy-match), ingest (all 15 loaders, empty-PDF guard), and retrieval. CI runs ruff · black · mypy (strict on `features/`) · pytest on every push.
+**147 tests pass, 7 skipped** (re-run 2026-10-28; skips are environment-specific, e.g. integration tests that need live services and the Windows-only corrupt-PDF case). The integration suite covers the full pipeline: demo corpus loading, hybrid retrieval, SSE token streaming, contradiction detection, and document management. Unit suite includes the analyzer (auto-summary: 14 tests), transparency (grounding + citation fuzzy-match), ingest (all 15 loaders, empty-PDF guard), and retrieval. CI runs ruff · black · mypy (strict on `features/`) · pytest on every push.
 
 ---
 

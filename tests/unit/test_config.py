@@ -19,7 +19,7 @@ class TestSettings:
             s = Settings(
                 _env_file=None,  # Don't load .env in tests
             )
-        assert s.llm_backend == LLMBackend.GEMINI
+        assert s.llm_backend == LLMBackend.GROQ
         assert s.chunk_size == 800
         assert s.chunk_overlap == 120
         assert s.retrieval_k == 10

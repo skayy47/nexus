@@ -27,11 +27,14 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # ── LLM Backend Switch ───────────────────────────
-    llm_backend: LLMBackend = LLMBackend.GEMINI
+    # Groq is the default: it is what the deployed backend runs (see /health).
+    llm_backend: LLMBackend = LLMBackend.GROQ
 
-    # ── Gemini (primary — best free FR+EN quality) ───
+    # ── Gemini (optional) ────────────────────────────
+    # gemini-2.0-flash was retired (HTTP 404 "no longer available", checked
+    # 2026-10-28); Google points at the 3.x Flash line as the replacement.
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.6-flash"
 
     # ── Groq (fallback) ──────────────────────────────
     # NOTE: Groq deprecated llama-3.3-70b-versatile + llama-3.1-8b-instant for
