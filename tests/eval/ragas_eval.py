@@ -165,15 +165,16 @@ async def main() -> None:
     from nexus.config import get_settings
 
     settings = get_settings()
-    # Use Qwen3-32b — separate quota bucket, strong reasoning model.
+    # Judge = Qwen3.8-27B: a different model from the generator (gpt-oss-120b),
+    # so the system is not grading itself. qwen/qwen3-32b was retired (404, 2026-10-28).
     # Disable thinking mode so RAGAS can parse clean JSON responses.
     from langchain_groq import ChatGroq
     ragas_llm = LangchainLLMWrapper(
         ChatGroq(
-            model="qwen/qwen3-32b",
+            model="qwen/qwen3.8-27b",
             api_key=settings.groq_api_key,
             temperature=0.0,
-            max_tokens=1024,
+            max_tokens=900,  # qwen3.8-27b free tier caps output at 1000 tokens/min
             model_kwargs={"reasoning_effort": "none"},
         )
     )
@@ -194,7 +195,7 @@ async def main() -> None:
 
     def safe_mean(values) -> float:
         valid = [v for v in values if v is not None and isinstance(v, (int, float)) and not math.isnan(v)]
-        return round(sum(valid) / len(valid), 4) if valid else 0.0
+        return round(sum(valid) / len(valid), 4) if valid else float("nan")
 
     def extract(key: str) -> float:
         val = result[key]
@@ -207,6 +208,14 @@ async def main() -> None:
         "answer_relevancy": extract("answer_relevancy"),
         "context_recall": extract("context_recall"),
     }
+
+    # A metric where every judgment failed is not a score of 0 — it is no score.
+    # Refuse to overwrite the published results with it (this once wrote 0.0s
+    # over real numbers when the judge model had been retired).
+    missing = [k for k, v in scores.items() if math.isnan(v)]
+    if missing:
+        print(f"No valid judgments for {missing} — results.json NOT written.")
+        sys.exit(1)
 
     RESULTS_PATH.write_text(json.dumps(scores, indent=2))
 
